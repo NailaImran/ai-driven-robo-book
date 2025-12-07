@@ -5,6 +5,10 @@ sidebar_position: 2
 keywords: [urdf, sdf, robot-modeling, kinematics, robot-description]
 ---
 
+import { Lesson22 } from '@site/src/components/chapter-2/Lesson22Wrapper';
+
+<Lesson22 />
+
 # Lesson 2.2: Humanoid Modeling with URDF/SDF
 
 **Reading Time**: 40 minutes | **Coding Time**: 85 minutes | **Total**: 2-3 hours

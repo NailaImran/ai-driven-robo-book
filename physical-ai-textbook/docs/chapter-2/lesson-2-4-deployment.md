@@ -5,6 +5,10 @@ sidebar_position: 4
 keywords: [deployment, jetson, edge-computing, ros2-control]
 ---
 
+import { Lesson24 } from '@site/src/components/chapter-2/Lesson24Wrapper';
+
+<Lesson24 />
+
 # Lesson 2.4: Sim-to-Real Deployment Pipeline
 
 **Reading Time**: 35 minutes | **Coding Time**: 90 minutes

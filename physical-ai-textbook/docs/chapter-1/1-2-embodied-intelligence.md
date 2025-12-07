@@ -5,6 +5,10 @@ sidebar_position: 3
 keywords: [embodied-intelligence, sensorimotor, physical-ai, embodiment, neuroscience, physics-simulation]
 ---
 
+import { Lesson12 } from '@site/src/components/chapter-1/Lesson12Wrapper';
+
+<Lesson12 />
+
 # 1.2 Embodied Intelligence Theory
 
 ## The Concept of Embodiment

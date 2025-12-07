@@ -5,6 +5,10 @@ sidebar_position: 5
 keywords: [lab-setup, ros2, jetson, cloud, cost-analysis, safety, workspace, installation]
 ---
 
+import { Lesson14 } from '@site/src/components/chapter-1/Lesson14Wrapper';
+
+<Lesson14 />
+
 # 1.4 Lab Setup Guide
 
 You've learned what Physical AI is, why embodiment matters, and what hardware components exist. Now comes the practical question: **How do I set up my own lab to start building robots?**

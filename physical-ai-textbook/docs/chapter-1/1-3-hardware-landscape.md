@@ -5,6 +5,10 @@ sidebar_position: 4
 keywords: [sensors, actuators, compute, lidar, imu, ros2, jetson, hardware, robotics]
 ---
 
+import { Lesson13 } from '@site/src/components/chapter-1/Lesson13Wrapper';
+
+<Lesson13 />
+
 # 1.3 Hardware Landscape Deep Dive
 
 Now that you understand **what** Physical AI is (Section 1.1) and **why** embodiment matters (Section 1.2), it's time to get hands-on with the **hardware** that makes it possible.

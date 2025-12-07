@@ -5,6 +5,10 @@ sidebar_position: 2
 keywords: [physical-ai, embodied-ai, humanoid-robotics, definition, history, applications]
 ---
 
+import { Lesson11 } from '@site/src/components/chapter-1/Lesson11Wrapper';
+
+<Lesson11 />
+
 # 1.1 Introduction to Physical AI
 
 ## What is Physical AI?

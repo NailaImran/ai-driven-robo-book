@@ -13,9 +13,36 @@ interface TranslationContextType {
 
 const TranslationContext = createContext<TranslationContextType | null>(null);
 
-// Translation dictionary - full Chapter 3 translations
+// Translation dictionary - Complete book translations (All Chapters)
 export const translations: Record<Language, Record<string, any>> = {
   en: {
+    // ========== CHAPTER 1: FOUNDATIONS ==========
+    // Chapter 1 Header
+    'chapter-1-title': 'Chapter 1: Foundations of Physical AI & Embodied Intelligence',
+    'chapter-1-overview': 'Foundations of Physical AI & Embodied Intelligence',
+    'chapter-1-intro': 'Welcome to the first chapter of our journey into Physical AI and Humanoid Robotics! In this chapter, you\'ll learn the foundations of embodied intelligence and the hardware landscape.',
+
+    // Chapter 1 Lessons
+    'lesson-1-1-title': 'Lesson 1.1: Introduction to Physical AI',
+    'lesson-1-2-title': 'Lesson 1.2: Embodied Intelligence Theory',
+    'lesson-1-3-title': 'Lesson 1.3: Hardware Landscape',
+    'lesson-1-4-title': 'Lesson 1.4: Lab Setup Guide',
+    'chapter-1-quiz-title': 'Chapter 1 Assessment Quiz',
+
+    // ========== CHAPTER 2: ROS2 & CONTROL ==========
+    // Chapter 2 Header
+    'chapter-2-title': 'Chapter 2: ROS 2 Fundamentals & Control Theory',
+    'chapter-2-overview': 'ROS 2 Fundamentals & Control Theory',
+    'chapter-2-intro': 'Welcome to Chapter 2! In this chapter, you\'ll master ROS 2 fundamentals, URDF modeling, control theory, and robot deployment strategies.',
+
+    // Chapter 2 Lessons
+    'lesson-2-1-title': 'Lesson 2.1: ROS 2 Fundamentals',
+    'lesson-2-2-title': 'Lesson 2.2: URDF Modeling',
+    'lesson-2-3-title': 'Lesson 2.3: Control Theory',
+    'lesson-2-4-title': 'Lesson 2.4: Deployment Strategies',
+    'chapter-2-quiz-title': 'Chapter 2 Assessment Quiz',
+
+    // ========== CHAPTER 3: SIMULATION ==========
     // Chapter 3 Header
     'chapter-3-title': 'Chapter 3: Simulation & Digital Twins',
     'chapter-3-overview': 'Simulation & Digital Twins',
@@ -132,6 +159,33 @@ export const translations: Record<Language, Record<string, any>> = {
   },
 
   ur: {
+    // ========== CHAPTER 1: FOUNDATIONS (URDU) ==========
+    // Chapter 1 Header (Urdu)
+    'chapter-1-title': 'باب 1: جسمانی AI اور جسمانی ذہانت کی بنیادیں',
+    'chapter-1-overview': 'جسمانی AI اور جسمانی ذہانت کی بنیادیں',
+    'chapter-1-intro': 'جسمانی AI اور انسان نما روبوٹکس کی ہماری سفر میں خوش آمدید! اس باب میں، آپ جسمانی ذہانت اور ہارڈ ویئر کی بنیادیں سیکھیں گے۔',
+
+    // Chapter 1 Lessons (Urdu)
+    'lesson-1-1-title': 'درس 1.1: جسمانی AI کا تعارف',
+    'lesson-1-2-title': 'درس 1.2: جسمانی ذہانت کا نظریہ',
+    'lesson-1-3-title': 'درس 1.3: ہارڈ ویئر منظر نامہ',
+    'lesson-1-4-title': 'درس 1.4: لیب سیٹ اپ گائیڈ',
+    'chapter-1-quiz-title': 'باب 1 کی تشخیص کوئز',
+
+    // ========== CHAPTER 2: ROS2 & CONTROL (URDU) ==========
+    // Chapter 2 Header (Urdu)
+    'chapter-2-title': 'باب 2: ROS 2 کی بنیادیں اور کنٹرول تھیوری',
+    'chapter-2-overview': 'ROS 2 کی بنیادیں اور کنٹرول تھیوری',
+    'chapter-2-intro': 'باب 2 میں خوش آمدید! اس باب میں، آپ ROS 2 کی بنیادیں، URDF ماڈلنگ، کنٹرول تھیوری اور روبوٹ کو تعینات کرنے کی حکمت عملیں سیکھیں گے۔',
+
+    // Chapter 2 Lessons (Urdu)
+    'lesson-2-1-title': 'درس 2.1: ROS 2 کی بنیادیں',
+    'lesson-2-2-title': 'درس 2.2: URDF ماڈلنگ',
+    'lesson-2-3-title': 'درس 2.3: کنٹرول تھیوری',
+    'lesson-2-4-title': 'درس 2.4: تعیناتی کی حکمت عملیں',
+    'chapter-2-quiz-title': 'باب 2 کی تشخیص کوئز',
+
+    // ========== CHAPTER 3: SIMULATION (URDU) ==========
     // Chapter 3 Header (Urdu)
     'chapter-3-title': 'باب 3: نقل اور ڈیجیٹل ٹوڑے',
     'chapter-3-overview': 'نقل اور ڈیجیٹل ٹوڑے',

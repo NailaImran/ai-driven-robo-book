@@ -6,6 +6,9 @@ keywords: [ros2, humble, nodes, topics, middleware]
 ---
 
 import NodeVisualizer from '@site/src/components/chapter-2/NodeVisualizer/NodeVisualizer';
+import { Lesson21 } from '@site/src/components/chapter-2/Lesson21Wrapper';
+
+<Lesson21 />
 
 # Lesson 2.1: ROS 2 Fundamentals - The Robot Middleware
 

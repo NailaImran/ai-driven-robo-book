@@ -5,6 +5,10 @@ sidebar_position: 3
 keywords: [pid-control, zero-moment-point, gait-generation, balance-control, imu-feedback]
 ---
 
+import { Lesson23 } from '@site/src/components/chapter-2/Lesson23Wrapper';
+
+<Lesson23 />
+
 # Lesson 2.3: Control Theory for Bipedal Locomotion
 
 **Reading Time**: 45 minutes | **Coding Time**: 90 minutes | **Total**: 2.5-3 hours
