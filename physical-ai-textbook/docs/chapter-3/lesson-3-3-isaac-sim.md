@@ -5,7 +5,13 @@ sidebar_position: 3
 keywords: [isaac-sim, omniverse, photorealistic-rendering, synthetic-data, domain-randomization, sim-to-real]
 ---
 
-# Lesson 3.3: NVIDIA Isaac Sim Platform
+import { Lesson33 } from '@site/src/components/chapter-3/Lesson33Wrapper';
+
+<Lesson33 />
+
+---
+
+# Lesson 3.3: NVIDIA Isaac Sim Platform (Detailed Content)
 
 ## Overview
 

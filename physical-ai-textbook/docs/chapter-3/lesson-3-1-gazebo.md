@@ -5,7 +5,13 @@ sidebar_position: 1
 keywords: [gazebo, physics-simulation, SDF, joint-control, ROS2-bridge, collision-detection]
 ---
 
-# Lesson 3.1: Physics Simulation with Gazebo
+import { Lesson31 } from '@site/src/components/chapter-3/Lesson31Wrapper';
+
+<Lesson31 />
+
+---
+
+# Lesson 3.1: Physics Simulation with Gazebo (Detailed Content)
 
 ## Overview
 

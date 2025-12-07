@@ -5,7 +5,13 @@ sidebar_position: 4
 keywords: [sensor-simulation, lidar, depth-camera, imu, synthetic-data, point-cloud, image-processing]
 ---
 
-# Lesson 3.4: Sensor Simulation & Synthetic Data
+import { Lesson34 } from '@site/src/components/chapter-3/Lesson34Wrapper';
+
+<Lesson34 />
+
+---
+
+# Lesson 3.4: Sensor Simulation & Synthetic Data (Detailed Content)
 
 ## Overview
 

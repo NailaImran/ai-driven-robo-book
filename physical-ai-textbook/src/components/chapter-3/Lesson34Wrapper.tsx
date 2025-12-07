@@ -105,7 +105,7 @@ export const Lesson34DataGeneration: React.FC = () => {
       </ul>
 
       <h3>{t('export-formats')}</h3>
-      <p>{{t('export-formats')}}</p>
+      <p>{t('export-formats')}</p>
 
       <h3>{t('synthetic-dataset')}</h3>
       <p>Generate 5000+ labeled images with automatic groundtruth labels.</p>

@@ -5,7 +5,13 @@ sidebar_position: 2
 keywords: [unity, high-fidelity-rendering, robotics-hub, ros-tcp, materials, lighting]
 ---
 
-# Lesson 3.2: High-Fidelity Rendering with Unity
+import { Lesson32 } from '@site/src/components/chapter-3/Lesson32Wrapper';
+
+<Lesson32 />
+
+---
+
+# Lesson 3.2: High-Fidelity Rendering with Unity (Detailed Content)
 
 ## Overview
 
