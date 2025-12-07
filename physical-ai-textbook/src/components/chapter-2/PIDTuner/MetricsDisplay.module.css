@@ -1,0 +1,139 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.container h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ifm-heading-color);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.metric {
+  height: 100%;
+}
+
+.card {
+  height: 100%;
+  padding: 1.25rem;
+  border-radius: 6px;
+  border: 2px solid var(--ifm-toc-border-color);
+  background: var(--ifm-card-background-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-2px);
+}
+
+.card.excellent {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.card.good {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.card.fair {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.card.poor {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ifm-heading-color);
+}
+
+.value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--ifm-color-primary);
+}
+
+.quality {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+.card.excellent .quality {
+  background: #10b981;
+  color: white;
+}
+
+.card.good .quality {
+  background: #3b82f6;
+  color: white;
+}
+
+.card.fair .quality {
+  background: #f59e0b;
+  color: white;
+}
+
+.card.poor .quality {
+  background: #ef4444;
+  color: white;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ifm-text-color-secondary);
+  line-height: 1.4;
+}
+
+.recommendations {
+  background: var(--ifm-pre-background);
+  padding: 1.25rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--ifm-color-warning);
+}
+
+.recommendations h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--ifm-heading-color);
+  font-size: 0.95rem;
+}
+
+.recommendations ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recommendations li {
+  padding: 0.5rem 0;
+  color: var(--ifm-text-color-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.recommendations li:last-child {
+  border-bottom: none;
+}

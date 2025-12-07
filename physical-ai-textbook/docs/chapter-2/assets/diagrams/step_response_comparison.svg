@@ -1,0 +1,148 @@
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="500" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">
+    PID Tuning Effects on Step Response
+  </text>
+
+  <!-- Graph 1: P Only (Kp=2, Ki=0, Kd=0) -->
+  <g>
+    <text x="250" y="80" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">
+      P Only: Oscillates
+    </text>
+    <rect x="50" y="100" width="400" height="150" fill="white" stroke="#ccc" stroke-width="1"/>
+
+    <!-- Axes -->
+    <line x1="70" y1="230" x2="430" y2="230" stroke="#333" stroke-width="2"/>
+    <line x1="70" y1="110" x2="70" y2="230" stroke="#333" stroke-width="2"/>
+
+    <!-- Grid -->
+    <line x1="70" y1="170" x2="430" y2="170" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+    <line x1="70" y1="215" x2="430" y2="215" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+
+    <!-- Setpoint line -->
+    <line x1="70" y1="170" x2="430" y2="170" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+
+    <!-- P response (oscillates) -->
+    <path d="M 70 230 Q 120 210 150 165 Q 180 155 200 170 Q 220 185 240 165 Q 260 155 280 170 Q 300 185 320 165 Q 340 150 360 165 Q 380 175 410 170"
+          fill="none" stroke="#3b82f6" stroke-width="2"/>
+
+    <!-- Labels -->
+    <text x="75" y="245" font-size="9" fill="#666">0</text>
+    <text x="420" y="245" font-size="9" fill="#666">Time →</text>
+    <text x="60" y="175" font-size="9" fill="#666">1.0</text>
+    <text x="60" y="235" font-size="9" fill="#666">0</text>
+
+    <!-- Characteristics -->
+    <text x="250" y="260" font-size="10" fill="#333">Fast response, overshoots</text>
+    <text x="250" y="275" font-size="10" fill="#333">Oscillation, slow settling</text>
+  </g>
+
+  <!-- Graph 2: Balanced PID -->
+  <g>
+    <text x="750" y="80" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">
+      Balanced PID: Smooth
+    </text>
+    <rect x="550" y="100" width="400" height="150" fill="white" stroke="#ccc" stroke-width="1"/>
+
+    <!-- Axes -->
+    <line x1="570" y1="230" x2="930" y2="230" stroke="#333" stroke-width="2"/>
+    <line x1="570" y1="110" x2="570" y2="230" stroke="#333" stroke-width="2"/>
+
+    <!-- Grid -->
+    <line x1="570" y1="170" x2="930" y2="170" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+    <line x1="570" y1="215" x2="930" y2="215" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+
+    <!-- Setpoint line -->
+    <line x1="570" y1="170" x2="930" y2="170" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+
+    <!-- Balanced response (smooth) -->
+    <path d="M 570 230 Q 620 200 650 175 Q 680 168 710 169 Q 750 170 800 170 Q 850 170 900 170"
+          fill="none" stroke="#8b5cf6" stroke-width="2"/>
+
+    <!-- Labels -->
+    <text x="575" y="245" font-size="9" fill="#666">0</text>
+    <text x="920" y="245" font-size="9" fill="#666">Time →</text>
+    <text x="560" y="175" font-size="9" fill="#666">1.0</text>
+    <text x="560" y="235" font-size="9" fill="#666">0</text>
+
+    <!-- Characteristics -->
+    <text x="750" y="260" font-size="10" fill="#333">Fast rise, minimal overshoot</text>
+    <text x="750" y="275" font-size="10" fill="#333">Quick settling time</text>
+  </g>
+
+  <!-- Graph 3: D Only (High Damping) -->
+  <g>
+    <text x="250" y="350" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">
+      High Kd: Slow
+    </text>
+    <rect x="50" y="370" width="400" height="150" fill="white" stroke="#ccc" stroke-width="1"/>
+
+    <!-- Axes -->
+    <line x1="70" y1="500" x2="430" y2="500" stroke="#333" stroke-width="2"/>
+    <line x1="70" y1="380" x2="70" y2="500" stroke="#333" stroke-width="2"/>
+
+    <!-- Grid -->
+    <line x1="70" y1="440" x2="430" y2="440" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+    <line x1="70" y1="485" x2="430" y2="485" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+
+    <!-- Setpoint line -->
+    <line x1="70" y1="440" x2="430" y2="440" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+
+    <!-- Slow response (high damping) -->
+    <path d="M 70 500 Q 120 490 150 470 Q 180 455 210 445 Q 250 440 300 440 Q 350 440 430 440"
+          fill="none" stroke="#f59e0b" stroke-width="2"/>
+
+    <!-- Labels -->
+    <text x="75" y="515" font-size="9" fill="#666">0</text>
+    <text x="420" y="515" font-size="9" fill="#666">Time →</text>
+    <text x="60" y="445" font-size="9" fill="#666">1.0</text>
+    <text x="60" y="505" font-size="9" fill="#666">0</text>
+
+    <!-- Characteristics -->
+    <text x="250" y="530" font-size="10" fill="#333">No overshoot, very stable</text>
+    <text x="250" y="545" font-size="10" fill="#333">Slow rising, sluggish response</text>
+  </g>
+
+  <!-- Graph 4: Unstable (High Kp) -->
+  <g>
+    <text x="750" y="350" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">
+      High Kp: Unstable
+    </text>
+    <rect x="550" y="370" width="400" height="150" fill="white" stroke="#ccc" stroke-width="1"/>
+
+    <!-- Axes -->
+    <line x1="570" y1="500" x2="930" y2="500" stroke="#333" stroke-width="2"/>
+    <line x1="570" y1="380" x2="570" y2="500" stroke="#333" stroke-width="2"/>
+
+    <!-- Grid -->
+    <line x1="570" y1="440" x2="930" y2="440" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+    <line x1="570" y1="485" x2="930" y2="485" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+
+    <!-- Setpoint line -->
+    <line x1="570" y1="440" x2="930" y2="440" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+
+    <!-- Unstable response (diverging) -->
+    <path d="M 570 500 Q 600 450 630 390 Q 660 350 690 420 Q 720 490 750 350 Q 780 380 800 420 Q 820 480 850 370"
+          fill="none" stroke="#ef4444" stroke-width="2"/>
+
+    <!-- Labels -->
+    <text x="575" y="515" font-size="9" fill="#666">0</text>
+    <text x="920" y="515" font-size="9" fill="#666">Time →</text>
+    <text x="560" y="445" font-size="9" fill="#666">1.0</text>
+    <text x="560" y="505" font-size="9" fill="#666">0</text>
+
+    <!-- Characteristics -->
+    <text x="750" y="530" font-size="10" fill="#333">Diverging oscillations</text>
+    <text x="750" y="545" font-size="10" fill="#333">System becomes unstable</text>
+  </g>
+
+  <!-- Legend -->
+  <g>
+    <text x="50" y="580" font-size="11" font-weight="bold" fill="#333">Legend:</text>
+    <line x1="140" y1="575" x2="170" y2="575" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="180" y="580" font-size="10" fill="#333">Target setpoint</text>
+
+    <line x1="380" y1="575" x2="410" y2="575" stroke="#3b82f6" stroke-width="2"/>
+    <text x="420" y="580" font-size="10" fill="#333">System response</text>
+  </g>
+</svg>

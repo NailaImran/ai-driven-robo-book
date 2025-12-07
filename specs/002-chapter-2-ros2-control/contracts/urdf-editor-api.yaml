@@ -1,0 +1,434 @@
+openapi: 3.0.3
+info:
+  title: URDF Editor & 3D Viewer API
+  description: API for validating and parsing URDF robot models
+  version: 1.0.0
+  contact:
+    name: Physical AI Textbook
+    url: https://github.com/panaversity/physical-ai-textbook
+
+servers:
+  - url: http://localhost:8000
+    description: FastAPI URDF validation service
+
+paths:
+  /api/urdf/validate:
+    post:
+      summary: Validate URDF XML syntax and semantics
+      description: Uses ROS 2 check_urdf tool to validate URDF structure, physics constraints, and transform tree
+      operationId: validateURDF
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          text/xml:
+            schema:
+              type: string
+              example: |
+                <?xml version="1.0"?>
+                <robot name="simple_robot">
+                  <link name="base_link">
+                    <visual>
+                      <geometry>
+                        <box size="0.5 0.5 0.1"/>
+                      </geometry>
+                    </visual>
+                    <inertial>
+                      <mass value="10.0"/>
+                      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+                    </inertial>
+                  </link>
+                </robot>
+      responses:
+        '200':
+          description: Validation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+              examples:
+                valid:
+                  value:
+                    valid: true
+                    errors: []
+                    warnings: []
+                invalid:
+                  value:
+                    valid: false
+                    errors:
+                      - line: 12
+                        column: 5
+                        message: "Joint 'hip_joint' references non-existent link 'left_leg'"
+                      - line: 18
+                        message: "Inertia matrix must be positive definite"
+                    warnings:
+                      - message: "Link 'torso' has no collision geometry"
+        '400':
+          description: Invalid XML format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: check_urdf tool error
+
+  /api/urdf/parse:
+    post:
+      summary: Parse URDF to JSON for 3D rendering
+      description: Converts URDF XML to structured JSON for Three.js visualization
+      operationId: parseURDF
+      tags:
+        - Parsing
+      requestBody:
+        required: true
+        content:
+          text/xml:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: URDF parsed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/URDFModel'
+        '400':
+          description: Invalid URDF XML
+        '500':
+          description: Parsing error
+
+  /api/urdf/templates:
+    get:
+      summary: List preset URDF templates
+      description: Returns available robot templates (biped, quadruped, arm) for quick start
+      operationId: listTemplates
+      tags:
+        - Templates
+      responses:
+        '200':
+          description: List of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/URDFTemplate'
+              example:
+                - id: "biped-simple"
+                  name: "Simple Bipedal Robot"
+                  description: "2-leg robot with 6 DOF for balance control"
+                  preview: "/assets/templates/biped-simple-preview.png"
+                  linkCount: 7
+                  jointCount: 6
+                - id: "quadruped-basic"
+                  name: "Basic Quadruped"
+                  description: "4-leg robot with 12 DOF for walking"
+                  preview: "/assets/templates/quadruped-basic-preview.png"
+                  linkCount: 13
+                  jointCount: 12
+
+  /api/urdf/templates/{templateId}:
+    get:
+      summary: Get specific URDF template
+      description: Returns the complete URDF XML for a template
+      operationId: getTemplate
+      tags:
+        - Templates
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "biped-simple"
+      responses:
+        '200':
+          description: Template URDF
+          content:
+            text/xml:
+              schema:
+                type: string
+        '404':
+          description: Template not found
+
+  /api/urdf/compute-fk:
+    post:
+      summary: Compute forward kinematics
+      description: Calculate end-effector pose given joint angles
+      operationId: computeFK
+      tags:
+        - Kinematics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FKRequest'
+      responses:
+        '200':
+          description: Forward kinematics result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FKResult'
+
+components:
+  schemas:
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Overall validation result
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationWarning'
+      required:
+        - valid
+        - errors
+
+    ValidationError:
+      type: object
+      properties:
+        line:
+          type: integer
+          description: Line number in XML (if applicable)
+        column:
+          type: integer
+          description: Column number in XML (if applicable)
+        message:
+          type: string
+          description: Error description
+        severity:
+          type: string
+          enum: ["error", "fatal"]
+          default: "error"
+      required:
+        - message
+
+    ValidationWarning:
+      type: object
+      properties:
+        message:
+          type: string
+        suggestion:
+          type: string
+          description: Recommended fix
+
+    URDFModel:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "simple_biped"
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        joints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Joint'
+        materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Material'
+      required:
+        - name
+        - links
+        - joints
+
+    Link:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "torso"
+        visual:
+          $ref: '#/components/schemas/Geometry'
+        collision:
+          $ref: '#/components/schemas/Geometry'
+        inertial:
+          $ref: '#/components/schemas/Inertial'
+
+    Geometry:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ["box", "cylinder", "sphere", "mesh"]
+        size:
+          type: array
+          items:
+            type: number
+          description: For box [x, y, z]
+        radius:
+          type: number
+          description: For cylinder/sphere
+        length:
+          type: number
+          description: For cylinder
+        meshPath:
+          type: string
+          description: For mesh geometry
+
+    Inertial:
+      type: object
+      properties:
+        mass:
+          type: number
+          example: 10.0
+        inertia:
+          type: object
+          properties:
+            ixx: { type: number }
+            ixy: { type: number }
+            ixz: { type: number }
+            iyy: { type: number }
+            iyz: { type: number }
+            izz: { type: number }
+
+    Joint:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "left_hip"
+        type:
+          type: string
+          enum: ["revolute", "continuous", "prismatic", "fixed", "floating", "planar"]
+        parent:
+          type: string
+          description: Parent link name
+        child:
+          type: string
+          description: Child link name
+        origin:
+          type: object
+          properties:
+            xyz:
+              type: array
+              items:
+                type: number
+              minItems: 3
+              maxItems: 3
+            rpy:
+              type: array
+              items:
+                type: number
+              minItems: 3
+              maxItems: 3
+        axis:
+          type: array
+          items:
+            type: number
+          minItems: 3
+          maxItems: 3
+          description: Joint axis (for revolute/prismatic)
+        limit:
+          type: object
+          properties:
+            lower: { type: number }
+            upper: { type: number }
+            effort: { type: number }
+            velocity: { type: number }
+
+    Material:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: object
+          properties:
+            rgba:
+              type: array
+              items:
+                type: number
+              minItems: 4
+              maxItems: 4
+
+    URDFTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        preview:
+          type: string
+          description: Path to preview image
+        linkCount:
+          type: integer
+        jointCount:
+          type: integer
+      required:
+        - id
+        - name
+        - description
+
+    FKRequest:
+      type: object
+      properties:
+        urdf:
+          type: string
+          description: URDF XML content
+        jointAngles:
+          type: object
+          additionalProperties:
+            type: number
+          example:
+            left_hip: 0.5
+            left_knee: -1.0
+            left_ankle: 0.3
+        endEffectorLink:
+          type: string
+          example: "left_foot"
+      required:
+        - urdf
+        - jointAngles
+        - endEffectorLink
+
+    FKResult:
+      type: object
+      properties:
+        position:
+          type: array
+          items:
+            type: number
+          minItems: 3
+          maxItems: 3
+          example: [0.1, 0.2, 0.5]
+        orientation:
+          type: array
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+          description: Quaternion [x, y, z, w]
+          example: [0, 0, 0, 1]
+        transformMatrix:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+          description: 4x4 transformation matrix
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+      required:
+        - error

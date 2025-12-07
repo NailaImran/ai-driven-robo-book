@@ -1,0 +1,143 @@
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  color: var(--ifm-heading-color);
+}
+
+.header p {
+  margin: 0;
+  color: var(--ifm-text-color-secondary);
+  font-size: 1rem;
+}
+
+.controlBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--ifm-card-background-color);
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+  flex-wrap: wrap;
+}
+
+.viewModes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modeButton {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid var(--ifm-color-primary-light);
+  background: transparent;
+  color: var(--ifm-heading-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.modeButton:hover {
+  background-color: var(--ifm-color-primary-light);
+}
+
+.modeButton.active {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border-color: var(--ifm-color-primary);
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.autoPlayLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--ifm-heading-color);
+}
+
+.autoPlayLabel input[type='checkbox'] {
+  cursor: pointer;
+}
+
+.content {
+  background: var(--ifm-card-background-color);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+  min-height: 400px;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  text-align: center;
+  color: var(--ifm-text-color-secondary);
+  font-style: italic;
+}
+
+.info {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--ifm-card-background-color);
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-left: 4px solid var(--ifm-color-info);
+}
+
+.info summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+  padding: 0.5rem 0;
+  user-select: none;
+}
+
+.info summary:hover {
+  color: var(--ifm-color-primary);
+}
+
+.infoContent {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+.infoContent h4 {
+  margin: 1rem 0 0.5rem 0;
+  color: var(--ifm-heading-color);
+}
+
+.infoContent ul {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+}
+
+.infoContent li {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}

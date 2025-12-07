@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "فزیکل AI ٹیکسٹ بک",
+    "description": "The title in the navbar"
+  },
+  "item.label.Chapters": {
+    "message": "ابواب",
+    "description": "Navbar item with label Chapters"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

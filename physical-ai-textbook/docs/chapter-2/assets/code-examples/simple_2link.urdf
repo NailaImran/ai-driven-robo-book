@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<robot name="simple_2link_arm">
+  <!--
+    Simple 2-link robot arm for learning URDF basics
+    
+    Structure:
+    base_link (fixed to ground)
+      ├─ joint_1 (revolute, ±90°)
+      └─ link_1
+           ├─ joint_2 (revolute, ±90°)
+           └─ link_2 (end-effector)
+    
+    This is the minimal example from Lesson 2.2
+  -->
+
+  <!-- Link 0: Base (fixed to ground) -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.05"/>
+      </geometry>
+      <material name="base_color">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.05"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!-- Link 1: First segment -->
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <cylinder length="0.5" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.0 0.0 -0.25" rpy="0.0 0.0 0.0"/>
+      <material name="link_color">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.5" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.0 0.0 -0.25" rpy="0.0 0.0 0.0"/>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0.0" ixz="0.0"
+               iyy="0.005" iyz="0.0"
+               izz="0.001"/>
+    </inertial>
+  </link>
+
+  <!-- Link 2: Second segment (end-effector) -->
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <cylinder length="0.4" radius="0.025"/>
+      </geometry>
+      <origin xyz="0.0 0.0 -0.2" rpy="0.0 0.0 0.0"/>
+      <material name="ee_color">
+        <color rgba="0.7 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.4" radius="0.025"/>
+      </geometry>
+      <origin xyz="0.0 0.0 -0.2" rpy="0.0 0.0 0.0"/>
+    </collision>
+    <inertial>
+      <mass value="0.3"/>
+      <inertia ixx="0.003" ixy="0.0" ixz="0.0"
+               iyy="0.003" iyz="0.0"
+               izz="0.0005"/>
+    </inertial>
+  </link>
+
+  <!-- Joint 1: Base to Link 1 (revolute around Y-axis) -->
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link_1"/>
+    <origin xyz="0.0 0.0 0.025" rpy="0.0 0.0 0.0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="50" velocity="2.0"/>
+    <dynamics damping="5.0" friction="0.1"/>
+  </joint>
+
+  <!-- Joint 2: Link 1 to Link 2 (revolute around Y-axis) -->
+  <joint name="joint_2" type="revolute">
+    <parent link="link_1"/>
+    <child link="link_2"/>
+    <origin xyz="0.0 0.0 -0.5" rpy="0.0 0.0 0.0"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="40" velocity="2.0"/>
+    <dynamics damping="3.0" friction="0.1"/>
+  </joint>
+
+</robot>

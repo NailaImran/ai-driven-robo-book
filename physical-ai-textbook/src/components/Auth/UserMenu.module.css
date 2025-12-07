@@ -1,0 +1,203 @@
+.container {
+  position: relative;
+}
+
+.authButtons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.signInButton,
+.signUpButton {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.signInButton {
+  color: var(--ifm-color-primary);
+  background: transparent;
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.signInButton:hover {
+  background: var(--ifm-color-primary-light);
+}
+
+.signUpButton {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+.signUpButton:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.userButton:hover {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-pre-background);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ifm-text-color);
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 250px;
+  z-index: 1000;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.userInfo {
+  padding: 1rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.userInfo .userName {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--ifm-heading-color);
+}
+
+.userEmail {
+  font-size: 0.85rem;
+  color: var(--ifm-text-color-secondary);
+  display: block;
+}
+
+.menuItem {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  font-size: 0.9rem;
+}
+
+.label {
+  color: var(--ifm-text-color-secondary);
+  font-weight: 600;
+}
+
+.value {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.menuLink {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--ifm-text-color);
+  text-decoration: none;
+  transition: all 0.2s;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  font-size: 0.9rem;
+}
+
+.menuLink:hover {
+  background: var(--ifm-pre-background);
+  color: var(--ifm-color-primary);
+}
+
+.divider {
+  height: 1px;
+  background: var(--ifm-toc-border-color);
+}
+
+.logoutButton {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #d32f2f;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.logoutButton:hover {
+  background: #ffebee;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+@media (max-width: 768px) {
+  .userButton {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .menu {
+    right: -1rem;
+  }
+
+  .authButtons {
+    gap: 0.5rem;
+  }
+
+  .signInButton,
+  .signUpButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}

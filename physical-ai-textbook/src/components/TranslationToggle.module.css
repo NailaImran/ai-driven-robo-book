@@ -1,0 +1,66 @@
+.toggleButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);
+}
+
+.toggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.6);
+}
+
+.toggleButton:active {
+  transform: translateY(0);
+}
+
+.icon {
+  font-size: 18px;
+  display: inline-block;
+  animation: rotate 0.3s ease;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+.label {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* RTL support for Urdu */
+[dir='rtl'] .toggleButton {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .toggleButton {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .label {
+    display: none;
+  }
+
+  .icon {
+    font-size: 20px;
+  }
+}

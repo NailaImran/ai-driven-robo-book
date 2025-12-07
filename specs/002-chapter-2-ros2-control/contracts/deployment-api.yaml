@@ -1,0 +1,415 @@
+openapi: 3.0.3
+info:
+  title: Deployment Dashboard API
+  description: API for monitoring and managing ROS 2 nodes on edge hardware (Jetson)
+  version: 1.0.0
+  contact:
+    name: Physical AI Textbook
+    url: https://github.com/panaversity/physical-ai-textbook
+
+servers:
+  - url: ws://localhost:9091
+    description: WebSocket server on Jetson (via SSH tunnel)
+
+# Note: Primary communication via WebSocket for real-time updates
+# HTTP endpoints used for one-time operations (upload, restart)
+
+paths:
+  /api/deployment/upload:
+    post:
+      summary: Upload and deploy ROS 2 package
+      description: Upload a ROS 2 package tarball or zip file to Jetson and install it
+      operationId: uploadPackage
+      tags:
+        - Deployment
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                package:
+                  type: string
+                  format: binary
+                  description: ROS 2 package archive (.tar.gz or .zip)
+                packageName:
+                  type: string
+                  description: Package name (e.g., "student_controller")
+                buildType:
+                  type: string
+                  enum: ["ament_python", "ament_cmake"]
+                  default: "ament_python"
+              required:
+                - package
+                - packageName
+      responses:
+        '200':
+          description: Package deployed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentResult'
+              example:
+                success: true
+                message: "Package 'student_controller' deployed successfully"
+                buildLog: "Starting >>> student_controller\nFinished <<< student_controller [0.45s]"
+        '400':
+          description: Invalid package format
+        '500':
+          description: Deployment failed
+
+  /api/deployment/restart:
+    post:
+      summary: Restart specific ROS 2 node
+      description: Stop and restart a running ROS 2 node
+      operationId: restartNode
+      tags:
+        - Node Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nodeName:
+                  type: string
+                  description: Fully qualified node name
+                  example: "/gait_controller"
+              required:
+                - nodeName
+      responses:
+        '200':
+          description: Node restarted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "Node /gait_controller restarted"
+        '404':
+          description: Node not found
+        '500':
+          description: Restart failed
+
+  /api/deployment/logs:
+    get:
+      summary: Fetch logs with filtering
+      description: Retrieve ROS 2 logs from Jetson with optional filtering by level and time range
+      operationId: getLogs
+      tags:
+        - Logs
+      parameters:
+        - name: level
+          in: query
+          schema:
+            type: string
+            enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+          description: Minimum log level to include
+        - name: node
+          in: query
+          schema:
+            type: string
+          description: Filter by node name
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+          description: Maximum number of log entries
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Only logs after this timestamp
+      responses:
+        '200':
+          description: Log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntry'
+              example:
+                - timestamp: "2025-12-06T10:30:15.123Z"
+                  level: "INFO"
+                  node: "/gait_controller"
+                  message: "Gait cycle completed successfully"
+                - timestamp: "2025-12-06T10:30:18.456Z"
+                  level: "WARN"
+                  node: "/imu_reader"
+                  message: "IMU drift detected: 0.05 rad/s"
+
+  /api/deployment/status:
+    get:
+      summary: Get current deployment status (snapshot)
+      description: One-time status check (use WebSocket for real-time updates)
+      operationId: getStatus
+      tags:
+        - Status
+      responses:
+        '200':
+          description: Current status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+
+components:
+  schemas:
+    DeploymentResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        buildLog:
+          type: string
+          description: Output from colcon build
+        errors:
+          type: array
+          items:
+            type: string
+      required:
+        - success
+        - message
+
+    DeploymentStatus:
+      type: object
+      properties:
+        hardware:
+          $ref: '#/components/schemas/HardwareStatus'
+        ros2Nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeStatus'
+        systemMetrics:
+          $ref: '#/components/schemas/SystemMetrics'
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - hardware
+        - ros2Nodes
+        - systemMetrics
+
+    HardwareStatus:
+      type: object
+      properties:
+        jetson:
+          type: object
+          properties:
+            connected:
+              type: boolean
+            model:
+              type: string
+              example: "Jetson Orin Nano"
+            ipAddress:
+              type: string
+              example: "192.168.1.100"
+            uptime:
+              type: number
+              description: Seconds since boot
+            temperature:
+              type: number
+              format: float
+              description: CPU temperature in Celsius
+        sensors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum: ["imu", "camera", "lidar", "force", "encoder"]
+              connected:
+                type: boolean
+              lastUpdate:
+                type: string
+                format: date-time
+        actuators:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum: ["servo", "motor", "pneumatic"]
+              connected:
+                type: boolean
+              status:
+                type: string
+                enum: ["idle", "active", "error"]
+
+    NodeStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "/gait_controller"
+        state:
+          type: string
+          enum: ["inactive", "configuring", "active", "finalized", "unconfigured"]
+          example: "active"
+        pid:
+          type: integer
+          description: Process ID
+        cpuPercent:
+          type: number
+          format: float
+          description: CPU usage percentage
+        memoryMB:
+          type: number
+          format: float
+          description: Memory usage in MB
+        uptime:
+          type: number
+          description: Seconds since node started
+
+    SystemMetrics:
+      type: object
+      properties:
+        cpu:
+          type: object
+          properties:
+            usage:
+              type: number
+              format: float
+              description: Overall CPU usage percentage
+              example: 82.5
+            perCore:
+              type: array
+              items:
+                type: number
+              description: Per-core usage
+        memory:
+          type: object
+          properties:
+            total:
+              type: number
+              description: Total RAM in MB
+            used:
+              type: number
+              description: Used RAM in MB
+            percent:
+              type: number
+              format: float
+              description: Usage percentage
+        network:
+          type: object
+          properties:
+            bytesRecv:
+              type: number
+              description: Total bytes received
+            bytesSent:
+              type: number
+              description: Total bytes sent
+            packetsRecv:
+              type: number
+            packetsSent:
+              type: number
+        disk:
+          type: object
+          properties:
+            total:
+              type: number
+              description: Total disk space in GB
+            used:
+              type: number
+              description: Used disk space in GB
+            percent:
+              type: number
+              format: float
+
+    LogEntry:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        level:
+          type: string
+          enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+        node:
+          type: string
+          description: Node name that generated the log
+        message:
+          type: string
+        file:
+          type: string
+          description: Source file (if available)
+        line:
+          type: integer
+          description: Line number (if available)
+      required:
+        - timestamp
+        - level
+        - node
+        - message
+
+# WebSocket Events
+#
+# Connection: ws://localhost:9091 (via SSH tunnel: ssh -L 9091:localhost:9091 jetson@<IP>)
+#
+# Events sent by server (Jetson):
+#
+#   - hardware_status: HardwareStatus
+#     Sent every 1 second with current hardware state
+#
+#   - system_metrics: SystemMetrics
+#     Sent every 1 second with CPU/RAM/network stats
+#
+#   - node_status: { nodes: NodeStatus[] }
+#     Sent every 2 seconds with all ROS 2 node statuses
+#
+#   - node_started: { name: string, pid: number }
+#     Sent when new ROS 2 node is detected
+#
+#   - node_stopped: { name: string, exitCode: number }
+#     Sent when ROS 2 node terminates
+#
+#   - log_entry: LogEntry
+#     Sent in real-time as logs are generated
+#
+#   - error: { message: string, details?: string }
+#     Sent when error occurs
+#
+# Events sent by client (Dashboard):
+#
+#   - subscribe_logs: { node?: string, level?: string }
+#     Request to receive log stream (optionally filtered)
+#
+#   - unsubscribe_logs: {}
+#     Stop receiving log stream
+#
+#   - request_status: {}
+#     Request immediate status update
+#
+# Example Client Code:
+#
+# const ws = new WebSocket('ws://localhost:9091');
+# ws.onmessage = (event) => {
+#   const data = JSON.parse(event.data);
+#   if (data.type === 'system_metrics') {
+#     updateMetricsDisplay(data.metrics);
+#   } else if (data.type === 'log_entry') {
+#     appendLogEntry(data.log);
+#   }
+# };
+# ws.send(JSON.stringify({ type: 'subscribe_logs', node: '/gait_controller' }));

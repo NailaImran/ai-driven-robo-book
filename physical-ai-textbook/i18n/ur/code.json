@@ -1,0 +1,74 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "یہ صفحہ کریش ہو گیا۔",
+    "description": "The title of the fallback page when the page crashed"
+  },
+  "theme.NotFound.title": {
+    "message": "صفحہ نہیں ملا",
+    "description": "The title of the 404 page"
+  },
+  "theme.NotFound.p1": {
+    "message": "ہم وہ نہیں ڈھونڈ سکے جو آپ تلاش کر رہے تھے۔",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "براہ کرم اس سائٹ کے مالک سے رابطہ کریں جس نے آپ کو اصل URL سے لنک کیا تھا اور انہیں بتائیں کہ ان کا لنک ٹوٹا ہوا ہے۔",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "اوپر واپس جائیں",
+    "description": "The ARIA label for the back to top button"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "سائیڈبار کو سکیڑیں",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "سائیڈبار کو سکیڑیں",
+    "description": "The ARIA label for collapse button of doc sidebar"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "ورژن",
+    "description": "The label for the navbar versions dropdown on mobile view"
+  },
+  "theme.common.editThisPage": {
+    "message": "اس صفحہ میں ترمیم کریں",
+    "description": "The link label to edit the current page"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "عنوان کا براہ راست لنک",
+    "description": "Title for link to heading"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " {date} کو",
+    "description": "The words used to describe on which date a page has been last updated"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " {user} کے ذریعے",
+    "description": "The words used to describe by who the page has been last updated"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "آخری بار {atDate}{byUser} اپ ڈیٹ کیا گیا",
+    "description": "The sentence used to display when a page has been last updated, and by who"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "زبانیں",
+    "description": "The label for the mobile language switcher dropdown"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "اس صفحہ پر",
+    "description": "The label used by the button on the collapsible TOC component"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "دستاویزات کی نیویگیشن",
+    "description": "The ARIA label for the docs pagination"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "پچھلا",
+    "description": "The label used to navigate to the previous doc"
+  },
+  "theme.docs.paginator.next": {
+    "message": "اگلا",
+    "description": "The label used to navigate to the next doc"
+  }
+}

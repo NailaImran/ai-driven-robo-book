@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: PID Controller Tuner API
+  description: Client-side PID simulation API (no backend required)
+  version: 1.0.0
+  contact:
+    name: Physical AI Textbook
+    url: https://github.com/panaversity/physical-ai-textbook
+
+# NOTE: This component runs entirely client-side in the browser
+# No HTTP endpoints are exposed - all simulation runs in JavaScript
+# This OpenAPI spec documents the TypeScript/JavaScript API
+
+components:
+  schemas:
+    PIDParameters:
+      type: object
+      description: PID controller gains
+      properties:
+        Kp:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 10
+          default: 1.0
+          description: Proportional gain
+        Ki:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          default: 0.1
+          description: Integral gain
+        Kd:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 2
+          default: 0.05
+          description: Derivative gain
+      required:
+        - Kp
+        - Ki
+        - Kd
+
+    SystemModel:
+      type: object
+      description: Transfer function or state-space model
+      properties:
+        type:
+          type: string
+          enum: ["first-order", "second-order", "custom"]
+          default: "second-order"
+        parameters:
+          type: object
+          description: Model-specific parameters
+          additionalProperties: true
+          example:
+            K: 1.0
+            zeta: 0.7
+            omega_n: 2.0
+      required:
+        - type
+
+    SimulationConfig:
+      type: object
+      properties:
+        dt:
+          type: number
+          format: float
+          description: Simulation time step in seconds
+          default: 0.01
+          minimum: 0.001
+          maximum: 0.1
+        duration:
+          type: number
+          format: float
+          description: Total simulation time in seconds
+          default: 10.0
+          minimum: 1
+          maximum: 60
+        referenceType:
+          type: string
+          enum: ["step", "ramp", "sine"]
+          default: "step"
+          description: Type of reference input signal
+        referenceParams:
+          type: object
+          description: Parameters for reference signal
+          additionalProperties: true
+          example:
+            amplitude: 1.0
+            frequency: 0.5
+      required:
+        - dt
+        - duration
+
+    SimulationResult:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: number
+          description: Time vector (seconds)
+        setpoint:
+          type: array
+          items:
+            type: number
+          description: Reference trajectory
+        output:
+          type: array
+          items:
+            type: number
+          description: System output (controlled variable)
+        error:
+          type: array
+          items:
+            type: number
+          description: Tracking error over time
+        controlSignal:
+          type: array
+          items:
+            type: number
+          description: PID controller output (u)
+        metrics:
+          $ref: '#/components/schemas/PerformanceMetrics'
+      required:
+        - time
+        - setpoint
+        - output
+
+    PerformanceMetrics:
+      type: object
+      description: PID performance evaluation metrics
+      properties:
+        riseTime:
+          type: number
+          format: float
+          description: Time to reach 90% of setpoint (seconds)
+          example: 0.82
+        settlingTime:
+          type: number
+          format: float
+          description: Time to stay within 2% of setpoint (seconds)
+          example: 2.35
+        overshoot:
+          type: number
+          format: float
+          description: Maximum overshoot as percentage
+          example: 15.3
+        steadyStateError:
+          type: number
+          format: float
+          description: Final tracking error
+          example: 0.01
+        peakTime:
+          type: number
+          format: float
+          description: Time of maximum overshoot (seconds)
+          example: 1.2
+
+    PresetConfiguration:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Critically Damped"
+        description:
+          type: string
+          example: "Fastest response without overshoot"
+        pidParams:
+          $ref: '#/components/schemas/PIDParameters'
+        systemModel:
+          $ref: '#/components/schemas/SystemModel'
+      required:
+        - name
+        - pidParams
+        - systemModel
+
+# TypeScript/JavaScript API (not REST endpoints)
+
+# Class: PIDController
+#
+# Methods:
+#   constructor(Kp: number, Ki: number, Kd: number)
+#   compute(setpoint: number, measurement: number, dt: number): number
+#   reset(): void
+#   setGains(Kp: number, Ki: number, Kd: number): void
+#
+# Example:
+#   const pid = new PIDController(1.0, 0.1, 0.05);
+#   const output = pid.compute(1.0, 0.5, 0.01);
+
+# Class: SystemSimulator
+#
+# Methods:
+#   constructor(model: SystemModel)
+#   step(input: number, dt: number): number
+#   getState(): number[]
+#   reset(): void
+#
+# Example:
+#   const system = new SystemSimulator({ type: 'second-order', parameters: { K: 1, zeta: 0.7, omega_n: 2 }});
+#   const output = system.step(controlSignal, 0.01);
+
+# Function: runSimulation
+#
+# Signature:
+#   runSimulation(
+#     pidParams: PIDParameters,
+#     systemModel: SystemModel,
+#     config: SimulationConfig
+#   ): SimulationResult
+#
+# Example:
+#   const result = runSimulation(
+#     { Kp: 1.5, Ki: 0.3, Kd: 0.5 },
+#     { type: 'second-order', parameters: { K: 1, zeta: 0.7, omega_n: 2 }},
+#     { dt: 0.01, duration: 10, referenceType: 'step', referenceParams: { amplitude: 1 }}
+#   );
+
+# Function: calculateMetrics
+#
+# Signature:
+#   calculateMetrics(time: number[], setpoint: number[], output: number[]): PerformanceMetrics
+#
+# Example:
+#   const metrics = calculateMetrics(result.time, result.setpoint, result.output);
+
+# React Hook: usePIDSimulation
+#
+# Signature:
+#   usePIDSimulation(): {
+#     pidParams: PIDParameters;
+#     setPIDParams: (params: PIDParameters) => void;
+#     systemModel: SystemModel;
+#     setSystemModel: (model: SystemModel) => void;
+#     config: SimulationConfig;
+#     setConfig: (config: SimulationConfig) => void;
+#     result: SimulationResult | null;
+#     isRunning: boolean;
+#     run: () => void;
+#   }
+#
+# Example:
+#   const { pidParams, setPIDParams, result, run } = usePIDSimulation();
+#   setPIDParams({ Kp: 2.0, Ki: 0.5, Kd: 0.1 });
+#   run();
+
+# Preset Configurations (Exported Constants)
+#
+# PRESETS: PresetConfiguration[] = [
+#   {
+#     name: "Underdamped",
+#     description: "Fast response with some overshoot",
+#     pidParams: { Kp: 2.0, Ki: 0.5, Kd: 0.3 },
+#     systemModel: { type: "second-order", parameters: { K: 1, zeta: 0.4, omega_n: 3 }}
+#   },
+#   {
+#     name: "Critically Damped",
+#     description: "Fastest response without overshoot",
+#     pidParams: { Kp: 1.5, Ki: 0.2, Kd: 0.6 },
+#     systemModel: { type: "second-order", parameters: { K: 1, zeta: 1.0, omega_n: 2 }}
+#   },
+#   {
+#     name: "Overdamped",
+#     description: "Slow, smooth approach to setpoint",
+#     pidParams: { Kp: 0.8, Ki: 0.1, Kd: 0.4 },
+#     systemModel: { type: "second-order", parameters: { K: 1, zeta: 1.5, omega_n: 1.5 }}
+#   }
+# ]

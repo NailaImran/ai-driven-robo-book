@@ -1,0 +1,112 @@
+[
+  {
+    "setupType": "on-premise",
+    "capex": 4850,
+    "opexMonthly": 35,
+    "components": [
+      { "name": "NVIDIA Jetson Orin Nano (8GB)", "cost": 499, "quantity": 1 },
+      { "name": "Intel RealSense D435 Depth Camera", "cost": 179, "quantity": 1 },
+      { "name": "Bosch BNO055 IMU", "cost": 35, "quantity": 1 },
+      { "name": "Dynamixel XL430-W250 Servos (×12)", "cost": 50, "quantity": 12 },
+      { "name": "Robotis OpenManipulator-X Kit", "cost": 899, "quantity": 1 },
+      { "name": "Power Supply (24V 10A)", "cost": 80, "quantity": 1 },
+      { "name": "Development Workstation (used)", "cost": 1200, "quantity": 1 },
+      { "name": "RTX 4070 Ti GPU", "cost": 799, "quantity": 1 },
+      { "name": "Monitor, Keyboard, Mouse", "cost": 200, "quantity": 1 },
+      { "name": "Safety Mat & Emergency Stop", "cost": 150, "quantity": 1 },
+      { "name": "Workbench & Cable Management", "cost": 250, "quantity": 1 },
+      { "name": "Miscellaneous (cables, mounts, tools)", "cost": 200, "quantity": 1 }
+    ],
+    "assumptions": [
+      "One-time hardware purchase (CapEx)",
+      "Monthly costs: electricity ($20/mo @ $0.12/kWh, 5 hours/day), cloud storage/backups ($10/mo), misc consumables ($5/mo)",
+      "No recurring cloud costs",
+      "Assumes used workstation to reduce initial cost",
+      "Servos can be purchased incrementally (start with 6, add more later)",
+      "Safety equipment essential for human-robot interaction",
+      "Workbench/tools assumed available (subtract $250 if you have a desk)"
+    ]
+  },
+  {
+    "setupType": "cloud",
+    "capex": 750,
+    "opexMonthly": 195,
+    "components": [
+      { "name": "Jetson Orin Nano (for deployment testing)", "cost": 499, "quantity": 1 },
+      { "name": "Laptop (development, assumed existing)", "cost": 0, "quantity": 1 },
+      { "name": "Intel RealSense D435 (minimal hardware for data collection)", "cost": 179, "quantity": 1 },
+      { "name": "Miscellaneous (cables, mounts)", "cost": 72, "quantity": 1 }
+    ],
+    "assumptions": [
+      "Minimal upfront cost - use cloud for heavy compute",
+      "Monthly cloud costs breakdown:",
+      "  - AWS EC2 g5.2xlarge (NVIDIA A10G): $1.21/hour × 40 hours/mo = $48",
+      "  - NVIDIA Omniverse Cloud (Isaac Sim): $100/mo subscription",
+      "  - Storage (S3, datasets): $20/mo",
+      "  - Data transfer egress: $15/mo",
+      "  - Misc cloud services (Lambda, CloudWatch): $12/mo",
+      "Development happens in cloud simulation (Isaac Sim)",
+      "Deploy final models to Jetson for real-world testing",
+      "Assumes existing laptop with decent CPU (i5/i7 or equivalent)",
+      "No physical robot during development phase",
+      "Best for algorithm research before hardware commitment"
+    ]
+  },
+  {
+    "setupType": "hybrid",
+    "capex": 2100,
+    "opexMonthly": 90,
+    "components": [
+      { "name": "NVIDIA Jetson Orin Nano", "cost": 499, "quantity": 1 },
+      { "name": "Intel RealSense D435", "cost": 179, "quantity": 1 },
+      { "name": "Bosch BNO055 IMU", "cost": 35, "quantity": 1 },
+      { "name": "Dynamixel XL430-W250 Servos (×6, expandable)", "cost": 50, "quantity": 6 },
+      { "name": "Desktop PC (mid-range, DIY build)", "cost": 800, "quantity": 1 },
+      { "name": "Monitor & Peripherals", "cost": 150, "quantity": 1 },
+      { "name": "Power Supply & Safety", "cost": 150, "quantity": 1 },
+      { "name": "Miscellaneous", "cost": 137, "quantity": 1 }
+    ],
+    "assumptions": [
+      "Moderate upfront investment - local development + occasional cloud bursts",
+      "Monthly costs breakdown:",
+      "  - Electricity ($25/mo, local workstation + Jetson usage)",
+      "  - Cloud (spot instances for heavy training): $40/mo average",
+      "  - NVIDIA Omniverse Cloud (periodic use): $25/mo (shared team account or pay-as-you-go)",
+      "Strategy: Develop locally on CPU/small models, burst to cloud for large training runs",
+      "Use cloud Isaac Sim for photorealistic simulation, Gazebo locally for iteration",
+      "Start with 6 servos (robotic arm), expand to 12-20 for humanoid later",
+      "Best balance of cost and capability for serious hobbyists/small teams",
+      "Workstation powerful enough for ROS 2 + Gazebo + TensorFlow training (small models)"
+    ]
+  },
+  {
+    "setupType": "economy-student",
+    "capex": 680,
+    "opexMonthly": 15,
+    "components": [
+      { "name": "Raspberry Pi 5 (8GB)", "cost": 80, "quantity": 1 },
+      { "name": "Google Coral Edge TPU (USB)", "cost": 59, "quantity": 1 },
+      { "name": "Raspberry Pi Camera Module v3", "cost": 25, "quantity": 1 },
+      { "name": "MPU6050 IMU Breakout Board", "cost": 8, "quantity": 1 },
+      { "name": "Hobby Servos SG90 (×8)", "cost": 3, "quantity": 8 },
+      { "name": "Arduino Uno (servo control)", "cost": 25, "quantity": 1 },
+      { "name": "Power Supply (5V 4A + servo battery)", "cost": 30, "quantity": 1 },
+      { "name": "Chassis/Frame (3D printed or acrylic)", "cost": 50, "quantity": 1 },
+      { "name": "SD Card (128GB), cables, breadboard", "cost": 40, "quantity": 1 },
+      { "name": "Laptop (assumed existing)", "cost": 0, "quantity": 1 },
+      { "name": "Safety & Workspace (basic)", "cost": 50, "quantity": 1 },
+      { "name": "Educational Kit Bundle (alternative)", "cost": 310, "quantity": 1, "note": "Alternative: MyCobot 280 Edu Bundle includes Pi + servos + frame" }
+    ],
+    "assumptions": [
+      "Ultra-budget setup for students/beginners",
+      "Monthly costs: electricity only ($10/mo), free cloud tier (Google Colab GPU)",
+      "Use free simulation: Gazebo on laptop, Google Colab for training",
+      "Hobby servos (SG90) are weak but sufficient for learning (0.18 Nm)",
+      "Limitations: Low torque (can't lift heavy objects), no force sensing, basic vision",
+      "Upgrade path: Replace hobby servos with Dynamixel XL430 one at a time ($50 each)",
+      "Best for: Learning ROS 2, basic computer vision, control algorithms",
+      "NOT suitable for: Production applications, heavy manipulation, outdoor use",
+      "Alternative bundle: MyCobot 280 Edu ($699) is turn-key but less customizable"
+    ]
+  }
+]

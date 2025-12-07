@@ -1,0 +1,89 @@
+.container {
+  width: 100%;
+  height: 500px;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  background: #fafafa;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: block;
+}
+
+.stats {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: white;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 4px;
+  padding: 0.75rem;
+  display: flex;
+  gap: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--ifm-text-color-secondary);
+  font-size: 0.85rem;
+}
+
+.value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  min-width: 20px;
+  text-align: right;
+}
+
+.flowInfo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.flowLabel {
+  font-weight: 600;
+  color: var(--ifm-text-color-secondary);
+  font-size: 0.85rem;
+}
+
+.flowValue {
+  font-family: 'Courier New', monospace;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background: var(--ifm-color-primary-light);
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    height: 400px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

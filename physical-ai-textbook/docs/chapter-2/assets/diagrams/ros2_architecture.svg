@@ -1,0 +1,118 @@
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="500" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">
+    ROS 2 Architecture Layers
+  </text>
+
+  <!-- Application Layer (Top) -->
+  <g>
+    <text x="50" y="80" font-size="13" font-weight="bold" fill="#333">Application Layer</text>
+    <rect x="50" y="95" width="900" height="80" fill="#E3F2FD" stroke="#1976d2" stroke-width="2" rx="5"/>
+
+    <!-- Nodes -->
+    <rect x="70" y="110" width="120" height="60" fill="#1976d2" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="130" y="135" font-size="11" font-weight="bold" text-anchor="middle" fill="white">Camera</text>
+    <text x="130" y="150" font-size="10" text-anchor="middle" fill="white">Driver Node</text>
+
+    <rect x="220" y="110" width="120" height="60" fill="#1976d2" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="280" y="135" font-size="11" font-weight="bold" text-anchor="middle" fill="white">Object</text>
+    <text x="280" y="150" font-size="10" text-anchor="middle" fill="white">Detector Node</text>
+
+    <rect x="370" y="110" width="120" height="60" fill="#1976d2" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="430" y="135" font-size="11" font-weight="bold" text-anchor="middle" fill="white">Motion</text>
+    <text x="430" y="150" font-size="10" text-anchor="middle" fill="white">Planner Node</text>
+
+    <rect x="520" y="110" width="120" height="60" fill="#1976d2" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="580" y="135" font-size="11" font-weight="bold" text-anchor="middle" fill="white">Arm</text>
+    <text x="580" y="150" font-size="10" text-anchor="middle" fill="white">Controller Node</text>
+
+    <rect x="670" y="110" width="120" height="60" fill="#1976d2" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="730" y="130" font-size="11" font-weight="bold" text-anchor="middle" fill="white">Logger</text>
+    <text x="730" y="145" font-size="10" text-anchor="middle" fill="white">Node</text>
+    <text x="730" y="160" font-size="9" text-anchor="middle" fill="white">(Monitoring)</text>
+
+    <text x="820" y="125" font-size="10" fill="#666">... more nodes</text>
+  </g>
+
+  <!-- ROS 2 Client Layer -->
+  <g>
+    <text x="50" y="200" font-size="13" font-weight="bold" fill="#333">ROS 2 Client Libraries (rclcpp, rclpy)</text>
+    <rect x="50" y="215" width="900" height="70" fill="#FFF3E0" stroke="#f57c00" stroke-width="2" rx="5"/>
+
+    <text x="70" y="240" font-size="11" fill="#333">
+      Provides: Node creation • Publishers/Subscribers • Services • Actions • Timers • Logging
+    </text>
+    <text x="70" y="260" font-size="11" fill="#333">
+      Language bindings for Python (rclpy) and C++ (rclcpp)
+    </text>
+  </g>
+
+  <!-- RMW (ROS Middleware Interface) Layer -->
+  <g>
+    <text x="50" y="310" font-size="13" font-weight="bold" fill="#333">ROS Middleware Interface (RMW)</text>
+    <rect x="50" y="325" width="900" height="70" fill="#E8F5E9" stroke="#388e3c" stroke-width="2" rx="5"/>
+
+    <text x="70" y="350" font-size="11" fill="#333">
+      Abstraction layer allowing multiple DDS implementations
+    </text>
+    <text x="70" y="370" font-size="11" fill="#333">
+      Implementations: rmw_connext (default), rmw_opensplice, rmw_cyclonedds
+    </text>
+  </g>
+
+  <!-- DDS Layer (Core) -->
+  <g>
+    <text x="50" y="420" font-size="13" font-weight="bold" fill="#333">DDS Layer (Data Distribution Service - Industry Standard)</text>
+    <rect x="50" y="435" width="900" height="100" fill="#F3E5F5" stroke="#7b1fa2" stroke-width="2" rx="5"/>
+
+    <!-- DDS Components -->
+    <rect x="70" y="450" width="150" height="70" fill="#7b1fa2" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="145" y="470" font-size="10" font-weight="bold" text-anchor="middle" fill="white">Discovery</text>
+    <text x="145" y="485" font-size="9" text-anchor="middle" fill="white">(SPDP, SEDP)</text>
+    <text x="145" y="500" font-size="8" text-anchor="middle" fill="white">Auto-detect nodes</text>
+
+    <rect x="240" y="450" width="150" height="70" fill="#7b1fa2" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="315" y="470" font-size="10" font-weight="bold" text-anchor="middle" fill="white">QoS Policies</text>
+    <text x="315" y="485" font-size="9" text-anchor="middle" fill="white">Reliability, Latency</text>
+    <text x="315" y="500" font-size="8" text-anchor="middle" fill="white">Durability</text>
+
+    <rect x="410" y="450" width="150" height="70" fill="#7b1fa2" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="485" y="470" font-size="10" font-weight="bold" text-anchor="middle" fill="white">Serialization</text>
+    <text x="485" y="485" font-size="9" text-anchor="middle" fill="white">CDR, Fast-CDR</text>
+    <text x="485" y="500" font-size="8" text-anchor="middle" fill="white">Message encoding</text>
+
+    <rect x="580" y="450" width="150" height="70" fill="#7b1fa2" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="655" y="470" font-size="10" font-weight="bold" text-anchor="middle" fill="white">Security</text>
+    <text x="655" y="485" font-size="9" text-anchor="middle" fill="white">Encryption, Auth</text>
+    <text x="655" y="500" font-size="8" text-anchor="middle" fill="white">DDS-Sec</text>
+
+    <rect x="750" y="450" width="150" height="70" fill="#7b1fa2" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="825" y="470" font-size="10" font-weight="bold" text-anchor="middle" fill="white">Network</text>
+    <text x="825" y="485" font-size="9" text-anchor="middle" fill="white">UDP, TCP, RTPS</text>
+    <text x="825" y="500" font-size="8" text-anchor="middle" fill="white">Protocol</text>
+  </g>
+
+  <!-- OS Layer (Bottom) -->
+  <g>
+    <text x="50" y="560" font-size="13" font-weight="bold" fill="#333">Operating System</text>
+    <rect x="50" y="575" width="900" height="20" fill="#BDBDBD" stroke="#333" stroke-width="2" rx="3"/>
+    <text x="500" y="590" font-size="11" text-anchor="middle" fill="white">Linux (Ubuntu) • Windows • macOS • RTOS</text>
+  </g>
+
+  <!-- Arrows showing data flow -->
+  <defs>
+    <marker id="arrowdown" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M2,2 L8,5 L2,8 Z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <line x1="130" y1="170" x2="130" y2="215" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="280" y1="170" x2="280" y2="215" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="430" y1="170" x2="430" y2="215" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="580" y1="170" x2="580" y2="215" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="730" y1="170" x2="730" y2="215" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+
+  <line x1="500" y1="285" x2="500" y2="325" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="500" y1="395" x2="500" y2="435" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+  <line x1="500" y1="535" x2="500" y2="575" stroke="#666" stroke-width="2" marker-end="url(#arrowdown)"/>
+</svg>

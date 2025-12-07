@@ -1,0 +1,155 @@
+/* Chapter 1 Specific Styles */
+
+/* Hardware Corner Callout Box */
+.hardware-corner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hardware-corner h3 {
+  color: white;
+  margin-top: 0;
+}
+
+/* AI Agent Note Callout */
+.ai-agent-note {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+  border-left: 4px solid #ff6b9d;
+}
+
+.ai-agent-note h4 {
+  color: white;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai-agent-note h4::before {
+  content: "🤖";
+  font-size: 1.5rem;
+}
+
+/* Diagram Container */
+.diagram-container {
+  margin: 2rem 0;
+  text-align: center;
+  padding: 1rem;
+  background: var(--ifm-background-surface-color);
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.diagram-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.diagram-caption {
+  font-style: italic;
+  color: var(--ifm-color-emphasis-700);
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Code Example Section */
+.code-example {
+  margin: 2rem 0;
+}
+
+.code-example-header {
+  background: var(--ifm-color-emphasis-200);
+  padding: 0.75rem 1rem;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.code-example-header::before {
+  content: "💻";
+}
+
+/* Learning Objectives List */
+.learning-objectives {
+  background: var(--ifm-color-primary-lightest);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--ifm-color-primary);
+}
+
+.learning-objectives h3 {
+  margin-top: 0;
+  color: var(--ifm-color-primary-darkest);
+}
+
+.learning-objectives ul {
+  margin-bottom: 0;
+}
+
+/* Section Summary Box */
+.section-summary {
+  background: var(--ifm-color-emphasis-100);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+  border: 2px solid var(--ifm-color-emphasis-300);
+}
+
+.section-summary h3 {
+  margin-top: 0;
+}
+
+/* Interactive Component Wrapper */
+.interactive-component {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 2px dashed var(--ifm-color-primary-light);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+}
+
+/* Responsive Tables */
+.comparison-table {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th {
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.comparison-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Dark Mode Adjustments */
+[data-theme='dark'] .hardware-corner,
+[data-theme='dark'] .ai-agent-note {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .diagram-container {
+  background: var(--ifm-background-surface-color);
+  border-color: var(--ifm-color-emphasis-400);
+}

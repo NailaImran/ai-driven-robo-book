@@ -1,0 +1,297 @@
+[
+  {
+    "componentId": "jetson-orin-nano",
+    "category": "compute",
+    "name": "NVIDIA Jetson Orin Nano",
+    "manufacturer": "NVIDIA",
+    "specs": {
+      "tops": 40,
+      "vram": "8GB",
+      "power": "15W",
+      "cuda_cores": 1024,
+      "tensor_cores": 32,
+      "cpu": "6-core ARM Cortex-A78AE"
+    },
+    "useCase": ["education", "research", "prototyping"],
+    "price": 499,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/"]
+  },
+  {
+    "componentId": "jetson-agx-orin",
+    "category": "compute",
+    "name": "NVIDIA Jetson AGX Orin",
+    "manufacturer": "NVIDIA",
+    "specs": {
+      "tops": 275,
+      "vram": "64GB",
+      "power": "60W",
+      "cuda_cores": 2048,
+      "tensor_cores": 64,
+      "cpu": "12-core ARM Cortex-A78AE"
+    },
+    "useCase": ["research", "production"],
+    "price": 1999,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/"]
+  },
+  {
+    "componentId": "rtx-4070-ti",
+    "category": "compute",
+    "name": "NVIDIA RTX 4070 Ti",
+    "manufacturer": "NVIDIA",
+    "specs": {
+      "tops": 320,
+      "vram": "12GB GDDR6X",
+      "power": "285W",
+      "cuda_cores": 7680,
+      "tensor_cores": 240,
+      "boost_clock": "2.61 GHz"
+    },
+    "useCase": ["research", "production"],
+    "price": 799,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.nvidia.com/en-us/geforce/graphics-cards/40-series/rtx-4070-4070ti/"]
+  },
+  {
+    "componentId": "coral-tpu",
+    "category": "compute",
+    "name": "Google Coral Edge TPU",
+    "manufacturer": "Google",
+    "specs": {
+      "tops": 4,
+      "power": "2W",
+      "interface": "USB 3.0",
+      "framework": "TensorFlow Lite"
+    },
+    "useCase": ["education", "edge-inference"],
+    "price": 59,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://coral.ai/products/accelerator"]
+  },
+  {
+    "componentId": "realsense-d435",
+    "category": "sensor",
+    "name": "Intel RealSense D435",
+    "manufacturer": "Intel",
+    "specs": {
+      "type": "RGB-D Camera",
+      "depth_range": "0.3m - 3m",
+      "resolution": "1920x1080 @ 30fps",
+      "fov": "87° x 58°",
+      "interface": "USB 3.1"
+    },
+    "useCase": ["education", "research", "prototyping"],
+    "price": 179,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.intelrealsense.com/depth-camera-d435/"]
+  },
+  {
+    "componentId": "realsense-l515",
+    "category": "sensor",
+    "name": "Intel RealSense L515",
+    "manufacturer": "Intel",
+    "specs": {
+      "type": "LiDAR Camera",
+      "depth_range": "0.25m - 9m",
+      "resolution": "1024x768",
+      "fov": "70° x 55°",
+      "interface": "USB 3.1"
+    },
+    "useCase": ["research", "indoor-navigation"],
+    "price": 349,
+    "availability": "discontinued",
+    "purchaseLinks": []
+  },
+  {
+    "componentId": "velodyne-puck",
+    "category": "sensor",
+    "name": "Velodyne Puck (VLP-16)",
+    "manufacturer": "Velodyne",
+    "specs": {
+      "type": "3D LiDAR",
+      "range": "100m",
+      "channels": 16,
+      "rotation_rate": "5-20 Hz",
+      "points_per_second": 300000
+    },
+    "useCase": ["research", "autonomous-vehicles"],
+    "price": 3999,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://velodynelidar.com/products/puck/"]
+  },
+  {
+    "componentId": "ouster-os0",
+    "category": "sensor",
+    "name": "Ouster OS0-128",
+    "manufacturer": "Ouster",
+    "specs": {
+      "type": "3D LiDAR",
+      "range": "50m",
+      "channels": 128,
+      "rotation_rate": "10-20 Hz",
+      "points_per_second": 2560000
+    },
+    "useCase": ["research", "production"],
+    "price": 18000,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://ouster.com/products/os0-lidar-sensor"]
+  },
+  {
+    "componentId": "zed-2",
+    "category": "sensor",
+    "name": "Stereolabs ZED 2",
+    "manufacturer": "Stereolabs",
+    "specs": {
+      "type": "Stereo Camera",
+      "depth_range": "0.2m - 20m",
+      "resolution": "2208x1242 @ 15fps",
+      "fov": "110°",
+      "imu": "6-axis"
+    },
+    "useCase": ["education", "research", "prototyping"],
+    "price": 449,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.stereolabs.com/zed-2/"]
+  },
+  {
+    "componentId": "imu-bno055",
+    "category": "sensor",
+    "name": "Bosch BNO055",
+    "manufacturer": "Bosch",
+    "specs": {
+      "type": "9-axis IMU",
+      "accelerometer": "±16g",
+      "gyroscope": "±2000°/s",
+      "magnetometer": "±1300µT",
+      "interface": "I2C/UART"
+    },
+    "useCase": ["education", "research", "prototyping"],
+    "price": 35,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.adafruit.com/product/2472"]
+  },
+  {
+    "componentId": "dynamixel-xl430",
+    "category": "actuator",
+    "name": "Dynamixel XL430-W250",
+    "manufacturer": "Robotis",
+    "specs": {
+      "type": "Servo Motor",
+      "stall_torque": "1.5 Nm",
+      "speed": "57 RPM",
+      "resolution": "4096 steps/rev",
+      "interface": "TTL/RS485",
+      "voltage": "11.1V"
+    },
+    "useCase": ["education", "research", "prototyping"],
+    "price": 50,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.robotis.us/dynamixel-xl430-w250-t/"]
+  },
+  {
+    "componentId": "dynamixel-xm540",
+    "category": "actuator",
+    "name": "Dynamixel XM540-W270",
+    "manufacturer": "Robotis",
+    "specs": {
+      "type": "Servo Motor",
+      "stall_torque": "10.6 Nm",
+      "speed": "50 RPM",
+      "resolution": "4096 steps/rev",
+      "interface": "RS485",
+      "voltage": "24V"
+    },
+    "useCase": ["research", "production"],
+    "price": 299,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.robotis.us/dynamixel-xm540-w270-r/"]
+  },
+  {
+    "componentId": "mycobot-280",
+    "category": "actuator",
+    "name": "MyCobot 280 (6-DOF Arm)",
+    "manufacturer": "Elephant Robotics",
+    "specs": {
+      "type": "Robot Arm",
+      "dof": 6,
+      "payload": "250g",
+      "reach": "280mm",
+      "repeatability": "±0.5mm",
+      "servos": "Dynamixel-compatible"
+    },
+    "useCase": ["education", "research"],
+    "price": 699,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.elephantrobotics.com/en/mycobot-280-en/"]
+  },
+  {
+    "componentId": "unitree-a1",
+    "category": "actuator",
+    "name": "Unitree A1 Quadruped",
+    "manufacturer": "Unitree",
+    "specs": {
+      "type": "Quadruped Robot",
+      "dof": 12,
+      "payload": "5kg",
+      "speed": "3.3 m/s",
+      "runtime": "2.5 hours",
+      "weight": "12kg"
+    },
+    "useCase": ["research"],
+    "price": 10000,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.unitree.com/products/a1/"]
+  },
+  {
+    "componentId": "force-sensor-ati-mini40",
+    "category": "sensor",
+    "name": "ATI Mini40 Force/Torque Sensor",
+    "manufacturer": "ATI Industrial Automation",
+    "specs": {
+      "type": "6-axis F/T Sensor",
+      "force_range": "40N (Fx/Fy), 120N (Fz)",
+      "torque_range": "2 Nm",
+      "resolution": "1/50 N",
+      "interface": "Ethernet/CANopen"
+    },
+    "useCase": ["research", "production"],
+    "price": 2500,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.ati-ia.com/products/ft/ft_models.aspx?id=Mini40"]
+  },
+  {
+    "componentId": "raspberry-pi-5",
+    "category": "compute",
+    "name": "Raspberry Pi 5",
+    "manufacturer": "Raspberry Pi Foundation",
+    "specs": {
+      "cpu": "Quad-core ARM Cortex-A76",
+      "ram": "8GB LPDDR4X",
+      "gpu": "VideoCore VII",
+      "io": "2x USB 3.0, 2x USB 2.0, GPIO",
+      "power": "5W typical"
+    },
+    "useCase": ["education", "prototyping"],
+    "price": 80,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://www.raspberrypi.com/products/raspberry-pi-5/"]
+  },
+  {
+    "componentId": "oak-d-lite",
+    "category": "sensor",
+    "name": "OAK-D Lite",
+    "manufacturer": "Luxonis",
+    "specs": {
+      "type": "Spatial AI Camera",
+      "depth_range": "0.2m - 20m",
+      "resolution": "4K @ 30fps",
+      "fov": "127°",
+      "ai_accelerator": "Intel Myriad X VPU"
+    },
+    "useCase": ["education", "research"],
+    "price": 149,
+    "availability": "in-stock",
+    "purchaseLinks": ["https://shop.luxonis.com/collections/oak-cameras-1/products/oak-d-lite-1"]
+  }
+]

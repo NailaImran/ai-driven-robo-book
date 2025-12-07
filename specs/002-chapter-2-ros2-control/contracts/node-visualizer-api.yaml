@@ -1,0 +1,259 @@
+openapi: 3.0.3
+info:
+  title: ROS 2 Node Visualizer API
+  description: API for real-time ROS 2 node graph visualization with WebSocket support
+  version: 1.0.0
+  contact:
+    name: Physical AI Textbook
+    url: https://github.com/panaversity/physical-ai-textbook
+
+servers:
+  - url: http://localhost:9090
+    description: rosbridge_suite WebSocket server
+
+paths:
+  /api/ros2/nodes:
+    get:
+      summary: List all active ROS 2 nodes
+      description: Returns a list of all currently running ROS 2 nodes with their publishers and subscribers
+      operationId: listNodes
+      tags:
+        - Nodes
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Node'
+              example:
+                - name: "/talker"
+                  namespace: "/"
+                  publishers:
+                    - topic: "/chatter"
+                      type: "std_msgs/String"
+                  subscribers: []
+                - name: "/listener"
+                  namespace: "/"
+                  publishers: []
+                  subscribers:
+                    - topic: "/chatter"
+                      type: "std_msgs/String"
+        '500':
+          description: ROS 2 connection error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ros2/topics:
+    get:
+      summary: List all topics with metadata
+      description: Returns all active topics with message type, frequency, and QoS settings
+      operationId: listTopics
+      tags:
+        - Topics
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+              example:
+                - name: "/chatter"
+                  type: "std_msgs/String"
+                  publishers: ["/talker"]
+                  subscribers: ["/listener"]
+                  frequency: 10.5
+                  qos:
+                    reliability: "reliable"
+                    durability: "volatile"
+        '500':
+          description: ROS 2 connection error
+
+  /api/ros2/publish:
+    post:
+      summary: Inject test message into topic
+      description: Publish a message to a ROS 2 topic for testing purposes
+      operationId: publishMessage
+      tags:
+        - Topics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishRequest'
+            example:
+              topic: "/chatter"
+              message:
+                data: "Hello from web interface!"
+      responses:
+        '200':
+          description: Message published successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "Published to /chatter"
+        '400':
+          description: Invalid message format
+        '500':
+          description: ROS 2 publishing error
+
+components:
+  schemas:
+    Node:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Fully qualified node name
+          example: "/talker"
+        namespace:
+          type: string
+          description: Node namespace
+          example: "/"
+        publishers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicConnection'
+        subscribers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicConnection'
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceConnection'
+      required:
+        - name
+        - namespace
+
+    TopicConnection:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: "/chatter"
+        type:
+          type: string
+          example: "std_msgs/String"
+      required:
+        - topic
+        - type
+
+    ServiceConnection:
+      type: object
+      properties:
+        service:
+          type: string
+          example: "/add_two_ints"
+        type:
+          type: string
+          example: "example_interfaces/AddTwoInts"
+      required:
+        - service
+        - type
+
+    Topic:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "/chatter"
+        type:
+          type: string
+          example: "std_msgs/String"
+        publishers:
+          type: array
+          items:
+            type: string
+          example: ["/talker"]
+        subscribers:
+          type: array
+          items:
+            type: string
+          example: ["/listener"]
+        frequency:
+          type: number
+          format: float
+          description: Publishing frequency in Hz
+          example: 10.5
+        qos:
+          $ref: '#/components/schemas/QoS'
+      required:
+        - name
+        - type
+
+    QoS:
+      type: object
+      properties:
+        reliability:
+          type: string
+          enum: ["reliable", "best_effort"]
+          example: "reliable"
+        durability:
+          type: string
+          enum: ["volatile", "transient_local"]
+          example: "volatile"
+        history:
+          type: string
+          enum: ["keep_last", "keep_all"]
+          example: "keep_last"
+        depth:
+          type: integer
+          example: 10
+
+    PublishRequest:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: "/chatter"
+        message:
+          type: object
+          description: Message payload (structure depends on message type)
+          additionalProperties: true
+          example:
+            data: "Hello ROS 2!"
+      required:
+        - topic
+        - message
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+      required:
+        - error
+
+# WebSocket Events (not part of OpenAPI, documented separately)
+#
+# Connection: ws://localhost:9090
+#
+# Events sent by server:
+#   - node_added: { name: string, namespace: string }
+#   - node_removed: { name: string }
+#   - topic_message: { topic: string, message: any, timestamp: number }
+#   - topic_added: { name: string, type: string }
+#   - topic_removed: { name: string }
+#
+# Events sent by client:
+#   - subscribe_topic: { topic: string }
+#   - unsubscribe_topic: { topic: string }

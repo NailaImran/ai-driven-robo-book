@@ -1,0 +1,147 @@
+<svg viewBox="0 0 1000 550" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="500" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">
+    DDS Discovery Process: How Nodes Find Each Other
+  </text>
+
+  <!-- Timeline steps -->
+  <g>
+    <!-- Step 1 -->
+    <g>
+      <text x="100" y="80" font-size="12" font-weight="bold" fill="#333">Step 1: Node Initialization</text>
+      <rect x="30" y="100" width="140" height="100" fill="#E3F2FD" stroke="#1976d2" stroke-width="2" rx="5"/>
+
+      <circle cx="100" cy="130" r="20" fill="#1976d2" stroke="#333" stroke-width="2"/>
+      <text x="100" y="135" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Camera</text>
+
+      <text x="100" y="160" font-size="9" text-anchor="middle" fill="#333">Node starts</text>
+      <text x="100" y="175" font-size="9" text-anchor="middle" fill="#333">Joins DDS domain</text>
+      <text x="100" y="190" font-size="9" text-anchor="middle" fill="#333">Creates Publisher</text>
+    </g>
+
+    <!-- Arrow 1 -->
+    <path d="M 170,150 L 210,150" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowright)"/>
+
+    <!-- Step 2 -->
+    <g>
+      <text x="280" y="80" font-size="12" font-weight="bold" fill="#333">Step 2: SPDP Discovery</text>
+      <rect x="210" y="100" width="140" height="100" fill="#FFF3E0" stroke="#f57c00" stroke-width="2" rx="5"/>
+
+      <text x="280" y="130" font-size="9" font-weight="bold" text-anchor="middle" fill="#333">SPDP (Participant)</text>
+      <text x="280" y="145" font-size="8" text-anchor="middle" fill="#666">Simple Participant</text>
+      <text x="280" y="158" font-size="8" text-anchor="middle" fill="#666">Discovery Protocol</text>
+
+      <text x="280" y="175" font-size="9" text-anchor="middle" fill="#333">Multicast message</text>
+      <text x="280" y="190" font-size="9" text-anchor="middle" fill="#333">"I'm here as participant!"</text>
+    </g>
+
+    <!-- Arrow 2 -->
+    <path d="M 350,150 L 390,150" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowright)"/>
+
+    <!-- Step 3 -->
+    <g>
+      <text x="480" y="80" font-size="12" font-weight="bold" fill="#333">Step 3: SEDP Discovery</text>
+      <rect x="390" y="100" width="140" height="100" fill="#E8F5E9" stroke="#388e3c" stroke-width="2" rx="5"/>
+
+      <text x="460" y="130" font-size="9" font-weight="bold" text-anchor="middle" fill="#333">SEDP (Endpoint)</text>
+      <text x="460" y="145" font-size="8" text-anchor="middle" fill="#666">Simple Endpoint</text>
+      <text x="460" y="158" font-size="8" text-anchor="middle" fill="#666">Discovery Protocol</text>
+
+      <text x="460" y="175" font-size="9" text-anchor="middle" fill="#333">Announce topics</text>
+      <text x="460" y="190" font-size="9" text-anchor="middle" fill="#333">/camera/image_raw</text>
+    </g>
+
+    <!-- Arrow 3 -->
+    <path d="M 530,150 L 570,150" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowright)"/>
+
+    <!-- Step 4 -->
+    <g>
+      <text x="680" y="80" font-size="12" font-weight="bold" fill="#333">Step 4: Node Connection</text>
+      <rect x="570" y="100" width="140" height="100" fill="#F3E5F5" stroke="#7b1fa2" stroke-width="2" rx="5"/>
+
+      <circle cx="640" cy="130" r="20" fill="#7b1fa2" stroke="#333" stroke-width="2"/>
+      <text x="640" y="135" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Detector</text>
+
+      <text x="640" y="160" font-size="9" text-anchor="middle" fill="#333">Detector finds</text>
+      <text x="640" y="175" font-size="9" text-anchor="middle" fill="#333">Camera's topic</text>
+      <text x="640" y="190" font-size="9" text-anchor="middle" fill="#333">Creates subscription</text>
+    </g>
+
+    <!-- Arrow 4 -->
+    <path d="M 710,150 L 750,150" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowright)"/>
+
+    <!-- Step 5 -->
+    <g>
+      <text x="880" y="80" font-size="12" font-weight="bold" fill="#333">Step 5: Active</text>
+      <rect x="750" y="100" width="140" height="100" fill="#FFEBEE" stroke="#c62828" stroke-width="2" rx="5"/>
+
+      <path d="M 820,130 L 800,150 L 840,160 L 820,140 Z" fill="#c62828" stroke="#333" stroke-width="1"/>
+      <text x="820" y="155" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Data</text>
+
+      <text x="820" y="180" font-size="9" text-anchor="middle" fill="#333">Publishing images</text>
+      <text x="820" y="195" font-size="9" text-anchor="middle" fill="#333">in real-time</text>
+    </g>
+  </g>
+
+  <!-- Connection details section -->
+  <g>
+    <rect x="30" y="270" width="940" height="40" fill="#F5F5F5" stroke="#ccc" stroke-width="1" rx="5"/>
+    <text x="50" y="290" font-size="11" fill="#333">
+      <tspan font-weight="bold">Network Communication:</tspan> All discovery and communication happens over UDP/TCP multicast/unicast on the local network (or across ROS_DOMAIN_ID domains).
+    </text>
+    <text x="50" y="310" font-size="11" fill="#333">
+      <tspan font-weight="bold">No Master Node:</tspan> Unlike ROS 1, ROS 2 has decentralized discovery—nodes can start/stop in any order.
+    </text>
+  </g>
+
+  <!-- Real-world example -->
+  <g>
+    <text x="50" y="350" font-size="12" font-weight="bold" fill="#333">Real-World Example Timeline:</text>
+
+    <!-- Timeline bar -->
+    <line x1="50" y1="375" x2="950" y2="375" stroke="#333" stroke-width="2"/>
+
+    <!-- T=0s -->
+    <line x1="70" y1="370" x2="70" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="70" y="395" font-size="10" text-anchor="middle" fill="#333">T=0s</text>
+    <text x="70" y="410" font-size="9" text-anchor="middle" fill="#666">Camera node</text>
+    <text x="70" y="423" font-size="9" text-anchor="middle" fill="#666">starts up</text>
+
+    <!-- T=0.1s -->
+    <line x1="200" y1="370" x2="200" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="200" y="395" font-size="10" text-anchor="middle" fill="#333">T=0.1s</text>
+    <text x="200" y="410" font-size="9" text-anchor="middle" fill="#666">SPDP multicast</text>
+    <text x="200" y="423" font-size="9" text-anchor="middle" fill="#666">(detection)</text>
+
+    <!-- T=0.2s -->
+    <line x1="330" y1="370" x2="330" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="330" y="395" font-size="10" text-anchor="middle" fill="#333">T=0.2s</text>
+    <text x="330" y="410" font-size="9" text-anchor="middle" fill="#666">SEDP endpoint</text>
+    <text x="330" y="423" font-size="9" text-anchor="middle" fill="#666">announcement</text>
+
+    <!-- T=0.5s -->
+    <line x1="460" y1="370" x2="460" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="460" y="395" font-size="10" text-anchor="middle" fill="#333">T=0.5s</text>
+    <text x="460" y="410" font-size="9" text-anchor="middle" fill="#666">Detector node</text>
+    <text x="460" y="423" font-size="9" text-anchor="middle" fill="#666">joins network</text>
+
+    <!-- T=0.7s -->
+    <line x1="590" y1="370" x2="590" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="590" y="395" font-size="10" text-anchor="middle" fill="#333">T=0.7s</text>
+    <text x="590" y="410" font-size="9" text-anchor="middle" fill="#666">Discovery completes</text>
+    <text x="590" y="423" font-size="9" text-anchor="middle" fill="#666">UDP connection</text>
+
+    <!-- T=1.0s -->
+    <line x1="720" y1="370" x2="720" y2="380" stroke="#333" stroke-width="2"/>
+    <text x="720" y="395" font-size="10" text-anchor="middle" fill="#333">T=1.0s</text>
+    <text x="720" y="410" font-size="9" text-anchor="middle" fill="#666">Data flowing!</text>
+    <text x="720" y="423" font-size="9" text-anchor="middle" fill="#666">@30Hz</text>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowright" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+    </marker>
+  </defs>
+</svg>

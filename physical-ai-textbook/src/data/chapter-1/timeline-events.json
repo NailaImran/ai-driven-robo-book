@@ -1,0 +1,170 @@
+[
+  {
+    "year": 1961,
+    "title": "Unimate - First Industrial Robot",
+    "description": "General Motors installed Unimate, the first industrial robot, to perform spot welding on an assembly line. This marked the beginning of robotic automation in manufacturing.",
+    "category": "industrial",
+    "imageUrl": "/img/chapter-1/timeline/unimate.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Unimate"
+  },
+  {
+    "year": 1970,
+    "title": "Shakey - First Mobile Robot with AI",
+    "description": "SRI International developed Shakey, the first mobile robot to reason about its actions. It combined computer vision, natural language processing, and planning.",
+    "category": "research",
+    "imageUrl": "/img/chapter-1/timeline/shakey.jpg",
+    "sourceUrl": "https://www.sri.com/hoi/shakey-the-robot/"
+  },
+  {
+    "year": 1986,
+    "title": "Honda E0 - Humanoid Research Begins",
+    "description": "Honda secretly began developing humanoid robots with the E0 prototype, launching a multi-decade program that would eventually produce ASIMO.",
+    "category": "research",
+    "imageUrl": "/img/chapter-1/timeline/honda-e0.jpg",
+    "sourceUrl": "https://global.honda/innovation/robotics/ASIMO.html"
+  },
+  {
+    "year": 1996,
+    "title": "Deep Blue Defeats Kasparov",
+    "description": "While not a physical robot, Deep Blue's victory showed AI's growing capabilities, foreshadowing integration of advanced AI into robotic systems.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/deep-blue.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)"
+  },
+  {
+    "year": 2000,
+    "title": "ASIMO Unveiled",
+    "description": "Honda revealed ASIMO, a humanoid robot capable of walking, climbing stairs, and interacting with humans. It became an icon of humanoid robotics.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/asimo.jpg",
+    "sourceUrl": "https://global.honda/innovation/robotics/ASIMO.html"
+  },
+  {
+    "year": 2004,
+    "title": "DARPA Grand Challenge",
+    "description": "The first autonomous vehicle competition sparked innovation in mobile robotics, computer vision, and path planning algorithms.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/darpa-challenge.jpg",
+    "sourceUrl": "https://www.darpa.mil/about-us/timeline/darpa-grand-challenge-for-autonomous-vehicles"
+  },
+  {
+    "year": 2007,
+    "title": "ROS (Robot Operating System) Released",
+    "description": "Willow Garage released ROS, providing a standardized framework for robot software development that would become industry standard.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/ros.jpg",
+    "sourceUrl": "https://www.ros.org/"
+  },
+  {
+    "year": 2013,
+    "title": "Boston Dynamics Atlas",
+    "description": "Boston Dynamics introduced Atlas, a hydraulically-powered humanoid robot designed for search and rescue. Later versions would perform backflips.",
+    "category": "research",
+    "imageUrl": "/img/chapter-1/timeline/atlas.jpg",
+    "sourceUrl": "https://www.bostondynamics.com/atlas"
+  },
+  {
+    "year": 2014,
+    "title": "SoftBank Pepper Robot",
+    "description": "The first emotion-reading humanoid robot designed for customer service and companionship, sold to consumers and businesses.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/pepper.jpg",
+    "sourceUrl": "https://www.softbankrobotics.com/emea/en/pepper"
+  },
+  {
+    "year": 2016,
+    "title": "AlphaGo Defeats Lee Sedol",
+    "description": "DeepMind's AlphaGo demonstrated superhuman performance in Go using deep reinforcement learning, a technique now used in robot control.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/alphago.jpg",
+    "sourceUrl": "https://deepmind.google/technologies/alphago/"
+  },
+  {
+    "year": 2017,
+    "title": "Boston Dynamics SpotMini",
+    "description": "A four-legged robot demonstrating advanced mobility and manipulation, later commercialized as Spot for industrial inspection.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/spot.jpg",
+    "sourceUrl": "https://www.bostondynamics.com/products/spot"
+  },
+  {
+    "year": 2019,
+    "title": "OpenAI Dactyl Robot Hand",
+    "description": "OpenAI trained a robot hand to manipulate a Rubik's cube using reinforcement learning and sim-to-real transfer, showing the power of AI for dexterous manipulation.",
+    "category": "research",
+    "imageUrl": "/img/chapter-1/timeline/dactyl.jpg",
+    "sourceUrl": "https://openai.com/research/solving-rubiks-cube"
+  },
+  {
+    "year": 2020,
+    "title": "Tesla AI Day - Dojo Supercomputer",
+    "description": "Tesla announced Dojo, a supercomputer designed for training vision-based autonomous driving systems, advancing end-to-end learning for robots.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/dojo.jpg",
+    "sourceUrl": "https://www.tesla.com/AI"
+  },
+  {
+    "year": 2021,
+    "title": "Tesla Optimus Announced",
+    "description": "Elon Musk unveiled plans for Tesla Bot (Optimus), a general-purpose humanoid robot leveraging Tesla's AI and manufacturing capabilities.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/optimus.jpg",
+    "sourceUrl": "https://www.tesla.com/optimus"
+  },
+  {
+    "year": 2022,
+    "title": "NVIDIA Isaac Sim Released",
+    "description": "NVIDIA launched Isaac Sim on Omniverse, providing photorealistic robot simulation for training AI models before deployment.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/isaac-sim.jpg",
+    "sourceUrl": "https://developer.nvidia.com/isaac-sim"
+  },
+  {
+    "year": 2023,
+    "title": "RT-2 - Vision-Language-Action Model",
+    "description": "Google DeepMind introduced RT-2, combining vision-language models with robot control for generalizable manipulation tasks.",
+    "category": "research",
+    "imageUrl": "/img/chapter-1/timeline/rt2.jpg",
+    "sourceUrl": "https://robotics-transformer2.github.io/"
+  },
+  {
+    "year": 2023,
+    "title": "Figure AI Founded",
+    "description": "Figure AI launched with $70M funding to develop commercially viable humanoid robots for labor automation, targeting manufacturing and logistics.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/figure-ai.jpg",
+    "sourceUrl": "https://www.figure.ai/"
+  },
+  {
+    "year": 2024,
+    "title": "Figure 01 First Demo",
+    "description": "Figure AI demonstrated Figure 01 performing autonomous tasks in a warehouse environment, showcasing end-to-end neural network control.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/figure-01.jpg",
+    "sourceUrl": "https://www.figure.ai/"
+  },
+  {
+    "year": 2024,
+    "title": "Unitree G1 Humanoid ($16K)",
+    "description": "Chinese robotics company Unitree released the G1 humanoid robot at an unprecedented $16,000 price point, making humanoid robotics more accessible.",
+    "category": "commercial",
+    "imageUrl": "/img/chapter-1/timeline/unitree-g1.jpg",
+    "sourceUrl": "https://www.unitree.com/"
+  },
+  {
+    "year": 2024,
+    "title": "OpenAI Invests in Physical AI",
+    "description": "OpenAI announced strategic investments in Figure AI and other robotics companies, signaling convergence of large language models and physical AI.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/openai-robotics.jpg",
+    "sourceUrl": "https://openai.com/"
+  },
+  {
+    "year": 2025,
+    "title": "VLA Models Go Mainstream",
+    "description": "Vision-Language-Action models become standard for robot control, enabling natural language commands and zero-shot generalization to new tasks.",
+    "category": "milestone",
+    "imageUrl": "/img/chapter-1/timeline/vla-2025.jpg",
+    "sourceUrl": ""
+  }
+]

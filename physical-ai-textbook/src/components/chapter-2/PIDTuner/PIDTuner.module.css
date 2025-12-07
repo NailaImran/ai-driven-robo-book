@@ -1,0 +1,181 @@
+.container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: var(--ifm-heading-color);
+}
+
+.header p {
+  margin: 0;
+  color: var(--ifm-text-color-secondary);
+  font-size: 1rem;
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.controlPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: var(--ifm-card-background-color);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ifm-heading-color);
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 0.5rem;
+}
+
+.systemTypeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.systemTypeSelector label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.systemTypeSelector label:hover {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+.systemTypeSelector input[type="radio"] {
+  cursor: pointer;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .presetGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.presetButton {
+  padding: 0.75rem;
+  border: 2px solid var(--ifm-color-primary-light);
+  background: transparent;
+  color: var(--ifm-heading-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.presetButton:hover {
+  background-color: var(--ifm-color-primary-light);
+  transform: translateY(-2px);
+}
+
+.presetButton.active {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border-color: var(--ifm-color-primary);
+}
+
+.visualizationPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chartContainer {
+  background: var(--ifm-card-background-color);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+}
+
+.infoSection {
+  background: var(--ifm-card-background-color);
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-left: 4px solid var(--ifm-color-info);
+}
+
+.infoSection summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+  padding: 0.5rem 0;
+  user-select: none;
+}
+
+.infoSection summary:hover {
+  color: var(--ifm-color-primary);
+}
+
+.infoContent {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+.infoContent h4 {
+  margin: 1rem 0 0.5rem 0;
+  color: var(--ifm-heading-color);
+}
+
+.infoContent ul,
+.infoContent ol {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+}
+
+.infoContent li {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+
+.infoContent strong {
+  color: var(--ifm-color-primary);
+}
