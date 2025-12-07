@@ -47,6 +47,7 @@ const sidebars: SidebarsConfig = {
         'chapter-3/lesson-3-2-unity',
         'chapter-3/lesson-3-3-isaac-sim',
         'chapter-3/lesson-3-4-sensors',
+        'chapter-3/chapter-3-quiz',
       ],
     },
   ],
