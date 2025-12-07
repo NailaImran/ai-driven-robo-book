@@ -111,13 +111,15 @@ export const Lesson31Architecture: React.FC = () => {
 };
 
 export const Lesson31Navigation: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const localePrefix = language === 'ur' ? '/ur' : '';
+
   return (
     <nav className="lesson-navigation">
-      <a href="/docs/chapter-3/chapter-3-index" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/chapter-3-index`} className="btn btn-primary">
         ← {t('back-to-overview')}
       </a>
-      <a href="/docs/chapter-3/lesson-3-2-unity" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/lesson-3-2-unity`} className="btn btn-primary">
         {t('next-lesson')} →
       </a>
     </nav>

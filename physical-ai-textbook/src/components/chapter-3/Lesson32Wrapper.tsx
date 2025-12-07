@@ -100,13 +100,15 @@ export const Lesson32RosIntegration: React.FC = () => {
 };
 
 export const Lesson32Navigation: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const localePrefix = language === 'ur' ? '/ur' : '';
+
   return (
     <nav className="lesson-navigation">
-      <a href="/docs/chapter-3/lesson-3-1-gazebo" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/lesson-3-1-gazebo`} className="btn btn-primary">
         ← {t('previous-lesson')}
       </a>
-      <a href="/docs/chapter-3/lesson-3-3-isaac-sim" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/lesson-3-3-isaac-sim`} className="btn btn-primary">
         {t('next-lesson')} →
       </a>
     </nav>

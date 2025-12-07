@@ -126,13 +126,15 @@ export const Lesson33Integration: React.FC = () => {
 };
 
 export const Lesson33Navigation: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const localePrefix = language === 'ur' ? '/ur' : '';
+
   return (
     <nav className="lesson-navigation">
-      <a href="/docs/chapter-3/lesson-3-2-unity" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/lesson-3-2-unity`} className="btn btn-primary">
         ← {t('previous-lesson')}
       </a>
-      <a href="/docs/chapter-3/lesson-3-4-sensors" className="btn btn-primary">
+      <a href={`${localePrefix}/docs/chapter-3/lesson-3-4-sensors`} className="btn btn-primary">
         {t('next-lesson')} →
       </a>
     </nav>
