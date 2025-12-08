@@ -1,0 +1,58 @@
+import { Chapter } from '@/types/chapter'
+
+export const chapters: Chapter[] = [
+  {
+    id: 'chapter-1',
+    title: 'Introduction to Physical AI',
+    description: 'Explore the foundations of Physical AI, combining artificial intelligence with robotics and control systems.',
+    icon: '🤖',
+    lessons: 5,
+    duration: '3 hours',
+    level: 'Beginner',
+  },
+  {
+    id: 'chapter-2',
+    title: 'Robotics and Control Systems',
+    description: 'Deep dive into robotics fundamentals, kinematics, dynamics, and advanced control techniques.',
+    icon: '🦾',
+    lessons: 6,
+    duration: '4 hours',
+    level: 'Intermediate',
+  },
+  {
+    id: 'chapter-3',
+    title: 'Advanced Physics Simulation',
+    description: 'Master physics simulation, numerical methods, and computational approaches for complex systems.',
+    icon: '⚛️',
+    lessons: 7,
+    duration: '5 hours',
+    level: 'Advanced',
+  },
+  {
+    id: 'chapter-4',
+    title: 'Machine Learning Integration',
+    description: 'Integrate machine learning with robotic systems for intelligent behavior and learning.',
+    icon: '🧠',
+    lessons: 6,
+    duration: '4 hours',
+    level: 'Advanced',
+  },
+  {
+    id: 'chapter-5',
+    title: 'Sensor Systems and Perception',
+    description: 'Understand sensor technologies, computer vision, and perception algorithms.',
+    icon: '👁️',
+    lessons: 5,
+    duration: '3.5 hours',
+    level: 'Intermediate',
+  },
+  {
+    id: 'chapter-6',
+    title: 'Real-World Applications',
+    description: 'Explore practical applications and case studies in industry and research.',
+    icon: '🚀',
+    lessons: 4,
+    duration: '3 hours',
+    level: 'Beginner',
+  },
+]

@@ -1,0 +1,40 @@
+{
+  "name": "quantum-pages",
+  "version": "1.0.0",
+  "description": "Interactive learning platform for Physical AI and Robotics",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.22",
+    "framer-motion": "^12.23.25",
+    "i18next": "^25.7.2",
+    "next": "^16.0.7",
+    "next-i18next": "^15.4.3",
+    "postcss": "^8.5.6",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-i18next": "^16.4.0",
+    "tailwindcss": "^4.1.17",
+    "three": "^0.181.2",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "eslint-config-next": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
