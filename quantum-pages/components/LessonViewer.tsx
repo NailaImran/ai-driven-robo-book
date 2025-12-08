@@ -204,7 +204,7 @@ This lesson content is sourced from the comprehensive Physical AI Textbook.
 
               <div className="mt-6 pt-6 border-t border-slate-700/50">
                 <a
-                  href="https://github.com/quantum-pages/quantum-pages"
+                  href="https://github.com/Naila-Imran/quantum-pages"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition"
