@@ -1,7 +1,8 @@
 """Application configuration."""
 
+import json
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Union
 
 
 class Settings(BaseSettings):
@@ -23,8 +24,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_HOURS: int = 168  # 7 days
 
-    # CORS Configuration
-    CORS_ORIGINS: List[str] = [
+    # CORS Configuration (can be JSON string or list)
+    CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "https://quantum-pages.vercel.app",
     ]
@@ -40,6 +41,16 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Parse CORS_ORIGINS if it's a JSON string
+        if isinstance(self.CORS_ORIGINS, str):
+            try:
+                self.CORS_ORIGINS = json.loads(self.CORS_ORIGINS)
+            except json.JSONDecodeError:
+                # If not JSON, try comma-separated
+                self.CORS_ORIGINS = [o.strip() for o in self.CORS_ORIGINS.split(",")]
 
 
 settings = Settings()
