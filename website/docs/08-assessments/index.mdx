@@ -1,0 +1,200 @@
+---
+title: Assessments
+description: Module assessments and project requirements
+sidebar_position: 1
+---
+
+# Assessments
+
+This chapter contains all module assessments and evaluation rubrics. Each assessment tests the skills learned in its corresponding module.
+
+---
+
+## Module 1: ROS 2 Fundamentals
+
+### **Project**: Mobile Robot Navigation System
+
+**Objective**: Build a complete ROS 2 application for a simulated mobile robot
+
+**Requirements**:
+1. Teleoperation node (keyboard → `/cmd_vel`)
+2. Sensor fusion node (camera + odometry)
+3. Obstacle avoidance node (laser scan → reactive control)
+4. State publisher (robot pose → `/tf`)
+5. Launch file (start all nodes)
+6. ROS bag (record 1 minute of data)
+
+**Rubric** (100 points):
+- Functionality (40 pts): Robot navigates 10m without collisions
+- Code quality (20 pts): Proper naming, structure, comments
+- ROS 2 best practices (20 pts): QoS, logging, parameters
+- Launch file (10 pts): Single-command startup
+- Documentation (10 pts): README with setup instructions
+
+**Deliverables**:
+- Source code (GitHub repo)
+- Demo video (2-3 min)
+- README
+
+**Due**: End of Week 5
+
+---
+
+## Module 2: Robot Simulation
+
+### **Project**: Mobile Manipulator in Gazebo
+
+**Objective**: Create a complete Gazebo simulation of a mobile manipulator
+
+**Requirements**:
+1. Differential drive mobile base with odometry
+2. 5-DOF manipulator arm
+3. RGB-D camera + 2D LiDAR
+4. Grasping plugin for object interaction
+5. Warehouse environment with obstacles
+6. ROS 2 control interface
+
+**Rubric** (100 points):
+- URDF model (25 pts): Accurate kinematics and inertias
+- Sensors (20 pts): Realistic noise models
+- Gazebo world (15 pts): Interesting environment
+- ROS 2 integration (20 pts): Topics for all sensors
+- Grasping (10 pts): Pick up objects reliably
+- Documentation (10 pts): URDF explained
+
+**Deliverables**:
+- URDF file + meshes
+- Gazebo world file
+- Launch files
+- Demo video
+
+**Due**: End of Week 7
+
+---
+
+## Module 3: NVIDIA Isaac Platform
+
+### **Project**: RL-Based Manipulation Policy
+
+**Objective**: Train a reinforcement learning policy for robot manipulation
+
+**Requirements**:
+1. Task: Pick and place objects from randomized positions
+2. Environment: Isaac Sim with Franka Panda arm
+3. Algorithm: PPO or SAC
+4. Success metric: >80% on unseen configurations
+5. (Bonus) Transfer to real Franka arm
+
+**Rubric** (100 points):
+- Training setup (20 pts): Reward function, hyperparameters
+- Policy performance (40 pts): Success rate on test set
+- Domain randomization (15 pts): Lighting, mass, friction
+- Code quality (15 pts): Clean, reproducible
+- Report (10 pts): Training curves, analysis
+
+**Deliverables**:
+- Training code
+- Trained policy checkpoint
+- Evaluation results (CSV, plots)
+- Technical report (3-5 pages)
+
+**Due**: End of Week 10
+
+---
+
+## Module 4: Humanoid Development
+
+### **Project**: Humanoid Locomotion Controller
+
+**Objective**: Implement a ZMP-based walking controller for a humanoid
+
+**Requirements**:
+1. Walk 10 meters on flat ground
+2. Climb 3 stairs (20cm height)
+3. Recover from lateral push (50N force)
+4. Maintain balance while reaching with arms
+
+**Rubric** (100 points):
+- Flat ground walking (25 pts): Smooth gait, no falls
+- Stair climbing (25 pts): Adaptive footstep planning
+- Push recovery (20 pts): Regain balance within 2 seconds
+- Arm reaching (15 pts): Coordinate with locomotion
+- Report (15 pts): Controller design, ZMP plots
+
+**Deliverables**:
+- Controller code
+- Simulation world
+- Demo video (walking, stairs, push recovery)
+- Technical report
+
+**Due**: End of Week 12
+
+---
+
+## Final Capstone Project
+
+See [Capstone Project](/docs/09-capstone/) for full details.
+
+---
+
+## Grading Policy
+
+### **Assessment Weights**:
+- Module 1 (ROS 2): 15%
+- Module 2 (Simulation): 15%
+- Module 3 (Isaac): 20%
+- Module 4 (Humanoid): 20%
+- Capstone Project: 30%
+
+### **Late Policy**:
+- 1-3 days late: -10%
+- 4-7 days late: -25%
+- >7 days late: -50%
+
+### **Academic Integrity**:
+- You may discuss concepts with peers
+- All code must be your own
+- Cite external resources (papers, tutorials)
+- Plagiarism = automatic zero
+
+---
+
+## Submission Instructions
+
+1. **Code**: Push to GitHub (public or private repo)
+2. **Video**: Upload to YouTube (unlisted) or cloud storage
+3. **Report**: PDF via course management system
+4. **Deadline**: 11:59 PM on due date (your timezone)
+
+Include this in your `README.md`:
+```markdown
+# Module X Assessment
+
+**Student**: Your Name
+**Email**: your.email@example.com
+**Date**: YYYY-MM-DD
+
+## Demo Video
+[Link to video]
+
+## How to Run
+\`\`\`bash
+ros2 launch my_package assessment.launch.py
+\`\`\`
+
+## Results
+- Metric 1: XX%
+- Metric 2: YY seconds
+
+## Reflections
+What worked well, what was challenging, what you learned.
+```
+
+---
+
+## Need Help?
+
+- **Debugging**: Use the AI chatbot (bottom-right corner)
+- **Office Hours**: Check course schedule
+- **Discussion Forum**: Post questions publicly
+- **Email**: For private issues only

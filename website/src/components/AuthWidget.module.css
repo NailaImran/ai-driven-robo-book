@@ -1,0 +1,80 @@
+.signInButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signInButton:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+.userMenuContainer {
+  position: relative;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--ifm-color-emphasis-200);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.userButton:hover {
+  background-color: var(--ifm-color-emphasis-300);
+}
+
+.userMenu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  padding: 0.5rem 0;
+  z-index: 100;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.menuDivider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.signOutItem {
+  color: #c33;
+}
+
+.signOutItem:hover {
+  background-color: #fee;
+}

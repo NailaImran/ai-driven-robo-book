@@ -1,0 +1,152 @@
+---
+title: "Week 13: Conversational Robotics"
+description: Integrating large language models for natural human-robot interaction
+sidebar_position: 1
+---
+
+# Week 13: Conversational Robotics
+
+## 📚 Learning Outcomes
+
+1. **Integrate** large language models (GPT-4, LLaMA) with ROS 2 systems
+2. **Implement** real-time speech recognition using OpenAI Whisper
+3. **Deploy** text-to-speech for natural robot voices
+4. **Design** multimodal interaction combining vision and language
+5. **Manage** context-aware conversations for task-oriented dialogue
+
+## 🎯 Overview
+
+**Duration**: 1 week (7 days)
+**Prerequisites**: ROS 2, Python, OpenAI API access (or local LLM)
+
+Conversational AI enables robots to:
+- Understand natural language commands ("Pick up the red block")
+- Answer questions about their state ("What do you see?")
+- Ask for clarification ("Which cup did you mean?")
+- Explain their actions ("I'm moving to the kitchen to fetch water")
+
+This module teaches you to build robots that communicate like humans.
+
+---
+
+## Topics Covered
+
+### **1. LLM Integration with ROS 2**
+- Connecting GPT-4 API to ROS 2 nodes
+- Local LLMs (LLaMA, Mistral) for offline operation
+- Prompt engineering for robotic tasks
+- Function calling for robot actions
+
+### **2. Speech Recognition & Synthesis**
+- OpenAI Whisper for real-time speech-to-text
+- Text-to-speech with gTTS or Coqui TTS
+- Audio processing in ROS 2
+- Wake word detection
+
+### **3. Multimodal Understanding**
+- Combining vision and language (CLIP, PaLM-E)
+- Grounding language in perception ("that red object")
+- Visual question answering
+- Pointing and gesture recognition
+
+### **4. Conversational State Management**
+- Dialogue state tracking
+- Context windows and memory
+- Clarification strategies
+- Error recovery
+
+---
+
+## Code Example: Voice-Controlled Robot
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from geometry_msgs.msg import Twist
+import openai
+import whisper
+
+class VoiceControlNode(Node):
+    def __init__(self):
+        super().__init__('voice_control')
+        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.whisper_model = whisper.load_model('base')
+        self.openai_client = openai.Client(api_key='your-key')
+
+    def process_audio(self, audio_file):
+        # Transcribe speech
+        result = self.whisper_model.transcribe(audio_file)
+        command = result['text']
+        self.get_logger().info(f'Heard: {command}')
+
+        # Understand intent with LLM
+        response = self.openai_client.chat.completions.create(
+            model='gpt-4',
+            messages=[
+                {'role': 'system', 'content': 'You are a robot. Parse commands into actions.'},
+                {'role': 'user', 'content': command}
+            ],
+            functions=[
+                {
+                    'name': 'move_robot',
+                    'description': 'Move the robot forward/backward/left/right',
+                    'parameters': {
+                        'type': 'object',
+                        'properties': {
+                            'direction': {'type': 'string', 'enum': ['forward', 'backward', 'left', 'right']},
+                            'speed': {'type': 'number'}
+                        }
+                    }
+                }
+            ]
+        )
+
+        # Execute action
+        if response.choices[0].message.function_call:
+            action = response.choices[0].message.function_call.arguments
+            self.execute_action(action)
+
+    def execute_action(self, action):
+        twist = Twist()
+        if action['direction'] == 'forward':
+            twist.linear.x = action['speed']
+        elif action['direction'] == 'backward':
+            twist.linear.x = -action['speed']
+        # ... handle other directions
+        self.cmd_pub.publish(twist)
+```
+
+---
+
+## Assessment: Voice-Controlled Manipulation
+
+**Task**: Build a robot that responds to voice commands for pick-and-place tasks
+
+**Requirements**:
+1. **Speech input**: "Pick up the red block and place it on the table"
+2. **Visual grounding**: Identify "red block" from camera feed
+3. **Action execution**: Plan and execute grasp + place
+4. **Feedback**: Speak status ("I'm picking up the block now")
+5. **Clarification**: Ask if ambiguous ("Which table?")
+
+**Success criteria**:
+- Understands 10 voice commands correctly
+- Completes tasks with >80% success rate
+- Provides natural language feedback
+
+---
+
+## Key Takeaways
+
+✅ **LLMs are powerful task planners**—decompose "make coffee" into steps
+✅ **Multimodal = vision + language**—ground words in percepts
+✅ **Real-time matters**—streaming speech recognition, not batch
+✅ **Context is critical**—remember previous conversation turns
+✅ **Fallback strategies**—handle misunderstood commands gracefully
+
+---
+
+## What's Next?
+
+👉 **[Capstone Project](/docs/09-capstone/)** — Build an autonomous humanoid system integrating all modules

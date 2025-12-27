@@ -1,0 +1,122 @@
+---
+title: "Module 4: Humanoid Development (Weeks 11-12)"
+description: Kinematics, dynamics, and control for humanoid robots
+sidebar_position: 1
+---
+
+# Module 4: Humanoid Development (Weeks 11-12)
+
+## 📚 Learning Outcomes
+
+1. **Solve** forward and inverse kinematics for multi-DOF humanoid arms
+2. **Compute** Jacobians for velocity control and singularity avoidance
+3. **Implement** ZMP-based bipedal locomotion controllers
+4. **Design** whole-body controllers coordinating manipulation and locomotion
+5. **Execute** stable grasping and object manipulation
+6. **Test** humanoid behaviors in high-fidelity simulation
+
+## 🎯 Module Overview
+
+**Duration**: 2 weeks (14 days)
+**Prerequisites**: ROS 2, simulation, linear algebra, basic control theory
+
+Humanoid robots present unique challenges:
+- **High DOF**: 20-50+ joints (vs. 6 for industrial arms)
+- **Underactuation**: Can't control all directions simultaneously
+- **Balance**: Must maintain stability during movement
+- **Coordination**: Arms, legs, torso must work together
+
+This module teaches you to control humanoid robots for real-world tasks.
+
+---
+
+## Weekly Breakdown
+
+### **Week 11: Kinematics, Dynamics & Manipulation**
+
+**Topics**:
+- Forward kinematics (DH parameters)
+- Inverse kinematics (analytical, numerical)
+- Jacobians and velocity control
+- Rigid body dynamics
+- Grasp planning and execution
+
+**Hands-On**:
+- Compute FK/IK for 7-DOF arm
+- Implement Jacobian-based control
+- Plan collision-free motion
+- Execute pick-and-place tasks
+
+**Assessment**: Arm controller that grasps objects from random positions
+
+### **Week 12: Bipedal Locomotion**
+
+**Topics**:
+- Zero Moment Point (ZMP) stability
+- Gait generation (walk, run, step)
+- Footstep planning
+- Push recovery and balance
+- Whole-body control
+
+**Hands-On**:
+- Implement ZMP walking controller
+- Generate footstep plans for stairs
+- Test push recovery in simulation
+- Coordinate arm reaching while walking
+
+**Assessment**: Humanoid walks 10 meters, climbs 3 steps, recovers from push
+
+---
+
+## Code Example: Inverse Kinematics
+
+```python
+import numpy as np
+from scipy.optimize import minimize
+
+def forward_kinematics(joint_angles, dh_params):
+    """Compute end-effector pose from joint angles"""
+    T = np.eye(4)
+    for i, (theta, d, a, alpha) in enumerate(dh_params):
+        theta += joint_angles[i]  # Add joint angle
+        T = T @ dh_transform(theta, d, a, alpha)
+    return T
+
+def inverse_kinematics(target_pose, dh_params, initial_guess):
+    """Solve IK numerically using optimization"""
+    def cost(q):
+        current_pose = forward_kinematics(q, dh_params)
+        position_error = np.linalg.norm(current_pose[:3, 3] - target_pose[:3, 3])
+        return position_error
+
+    result = minimize(cost, initial_guess, method='SLSQP')
+    return result.x if result.success else None
+
+# Example: 3-DOF planar arm
+dh_params = [
+    (0, 0, 0.5, 0),   # Link 1
+    (0, 0, 0.3, 0),   # Link 2
+    (0, 0, 0.2, 0),   # Link 3
+]
+
+target_pos = np.array([0.8, 0, 0.2, 1])
+initial_q = np.array([0, 0, 0])
+solution = inverse_kinematics(target_pos, dh_params, initial_q)
+print(f"Joint angles: {np.degrees(solution)}")
+```
+
+---
+
+## Key Takeaways
+
+✅ **Kinematics is fundamental**—FK for simulation, IK for task planning
+✅ **Jacobians enable velocity control**—smooth, real-time motion
+✅ **ZMP keeps robots upright**—critical for bipedal locomotion
+✅ **Whole-body control is hard**—many DOF, many constraints
+✅ **Simulation first**—test gaits before deploying to hardware
+
+---
+
+## What's Next?
+
+👉 **[Week 13: Conversational Robotics](/docs/06-conversational-robotics/)** — Natural language interaction with LLMs

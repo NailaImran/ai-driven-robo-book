@@ -1,0 +1,1380 @@
+---
+title: Autonomous Humanoid Implementation Guide
+description: Step-by-step guide to building the autonomous capabilities for your capstone robot
+sidebar_position: 3
+---
+
+# Autonomous Humanoid Implementation Guide
+
+Complete technical guide for implementing autonomous navigation, manipulation, locomotion, and conversational AI for your capstone project.
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CAPSTONE ROBOT SYSTEM                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ Conversation │  │  Perception  │  │  Navigation  │      │
+│  │    Layer     │  │    Layer     │  │    Layer     │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+│         │                 │                 │               │
+│  ┌──────▼─────────────────▼─────────────────▼───────┐      │
+│  │          Decision Making & Task Planning         │      │
+│  └──────┬─────────────────┬─────────────────┬───────┘      │
+│         │                 │                 │               │
+│  ┌──────▼───────┐  ┌──────▼───────┐  ┌──────▼───────┐      │
+│  │ Manipulation │  │  Locomotion  │  │   Actuators  │      │
+│  │  Controller  │  │  Controller  │  │   & Motors   │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Part 1: Robot Model Setup
+
+### 1.1 Create Humanoid URDF
+
+```xml
+<!-- humanoid_robot.urdf.xacro -->
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="humanoid_robot">
+
+  <!-- Properties -->
+  <xacro:property name="torso_height" value="0.50"/>
+  <xacro:property name="leg_length" value="0.40"/>
+  <xacro:property name="arm_length" value="0.30"/>
+
+  <!-- Base Link (Torso) -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.30 0.20 ${torso_height}"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.2 0.2 0.8 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.30 0.20 ${torso_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10.0"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3"/>
+    </inertial>
+  </link>
+
+  <!-- Head -->
+  <link name="head">
+    <visual>
+      <geometry>
+        <sphere radius="0.10"/>
+      </geometry>
+      <material name="skin">
+        <color rgba="0.9 0.8 0.7 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.10"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <joint name="head_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="head"/>
+    <origin xyz="0.0 0.0 ${torso_height/2 + 0.10}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- Camera (on head) -->
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.08 0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="head"/>
+    <child link="camera_link"/>
+    <origin xyz="0.10 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- RGB-D Camera Gazebo Plugin -->
+  <gazebo reference="camera_link">
+    <sensor type="depth" name="camera">
+      <update_rate>30.0</update_rate>
+      <camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.2</near>
+          <far>10.0</far>
+        </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/camera</namespace>
+          <remapping>image_raw:=color/image_raw</remapping>
+          <remapping>depth/image_raw:=depth/image_rect_raw</remapping>
+          <remapping>camera_info:=color/camera_info</remapping>
+        </ros>
+        <camera_name>camera</camera_name>
+        <frame_name>camera_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Left Arm (simplified) -->
+  <xacro:macro name="arm" params="prefix reflect">
+    <!-- Shoulder -->
+    <link name="${prefix}_shoulder_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.04" length="0.10"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.04" length="0.10"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.005"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_shoulder_joint" type="revolute">
+      <parent link="base_link"/>
+      <child link="${prefix}_shoulder_link"/>
+      <origin xyz="0.0 ${reflect * 0.15} ${torso_height/2 - 0.05}" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="-1.57" upper="1.57" effort="30" velocity="2.0"/>
+    </joint>
+
+    <!-- Upper Arm -->
+    <link name="${prefix}_upper_arm_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.03" length="${arm_length/2}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.03" length="${arm_length/2}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.8"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.005"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_elbow_joint" type="revolute">
+      <parent link="${prefix}_shoulder_link"/>
+      <child link="${prefix}_upper_arm_link"/>
+      <origin xyz="0.0 ${reflect * 0.05} -0.10" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="0" upper="2.356" effort="20" velocity="2.0"/>
+    </joint>
+
+    <!-- Gripper -->
+    <link name="${prefix}_gripper_link">
+      <visual>
+        <geometry>
+          <box size="0.08 0.04 0.04"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.08 0.04 0.04"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.2"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_wrist_joint" type="revolute">
+      <parent link="${prefix}_upper_arm_link"/>
+      <child link="${prefix}_gripper_link"/>
+      <origin xyz="0.0 ${reflect * 0.03} -${arm_length/2}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Instantiate arms -->
+  <xacro:arm prefix="left" reflect="1"/>
+  <xacro:arm prefix="right" reflect="-1"/>
+
+  <!-- Legs (simplified bipedal structure) -->
+  <xacro:macro name="leg" params="prefix reflect">
+    <!-- Hip -->
+    <link name="${prefix}_hip_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.05" length="0.10"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.05" length="0.10"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="1.0"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.005"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_hip_joint" type="revolute">
+      <parent link="base_link"/>
+      <child link="${prefix}_hip_link"/>
+      <origin xyz="0.0 ${reflect * 0.10} ${-torso_height/2}" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="-1.57" upper="1.57" effort="50" velocity="2.0"/>
+    </joint>
+
+    <!-- Upper Leg -->
+    <link name="${prefix}_upper_leg_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.04" length="${leg_length/2}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.04" length="${leg_length/2}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="2.0"/>
+        <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_knee_joint" type="revolute">
+      <parent link="${prefix}_hip_link"/>
+      <child link="${prefix}_upper_leg_link"/>
+      <origin xyz="0.0 0.0 -0.10" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="0" upper="2.356" effort="40" velocity="2.0"/>
+    </joint>
+
+    <!-- Lower Leg -->
+    <link name="${prefix}_lower_leg_link">
+      <visual>
+        <geometry>
+          <cylinder radius="0.03" length="${leg_length/2}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.03" length="${leg_length/2}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="1.5"/>
+        <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.008"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_ankle_joint" type="revolute">
+      <parent link="${prefix}_upper_leg_link"/>
+      <child link="${prefix}_lower_leg_link"/>
+      <origin xyz="0.0 0.0 -${leg_length/2}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-0.785" upper="0.785" effort="30" velocity="2.0"/>
+    </joint>
+
+    <!-- Foot -->
+    <link name="${prefix}_foot_link">
+      <visual>
+        <geometry>
+          <box size="0.15 0.08 0.02"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.15 0.08 0.02"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.5"/>
+        <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.003"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_foot_joint" type="fixed">
+      <parent link="${prefix}_lower_leg_link"/>
+      <child link="${prefix}_foot_link"/>
+      <origin xyz="0.03 0.0 -${leg_length/2}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Foot Contact Sensor -->
+    <gazebo reference="${prefix}_foot_link">
+      <sensor name="${prefix}_foot_contact" type="contact">
+        <contact>
+          <collision>${prefix}_foot_link_collision</collision>
+        </contact>
+        <plugin name="${prefix}_foot_contact_plugin" filename="libgazebo_ros_bumper.so">
+          <ros>
+            <namespace>/${prefix}_foot</namespace>
+            <remapping>bumper_states:=contact</remapping>
+          </ros>
+          <frame_name>${prefix}_foot_link</frame_name>
+        </plugin>
+      </sensor>
+      <mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Instantiate legs -->
+  <xacro:leg prefix="left" reflect="1"/>
+  <xacro:leg prefix="right" reflect="-1"/>
+
+  <!-- ros2_control integration -->
+  <ros2_control name="HumanoidRobotSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <!-- Joint interfaces -->
+    <xacro:macro name="joint_interface" params="name">
+      <joint name="${name}">
+        <command_interface name="position"/>
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </xacro:macro>
+
+    <xacro:joint_interface name="head_joint"/>
+    <xacro:joint_interface name="left_shoulder_joint"/>
+    <xacro:joint_interface name="left_elbow_joint"/>
+    <xacro:joint_interface name="left_wrist_joint"/>
+    <xacro:joint_interface name="right_shoulder_joint"/>
+    <xacro:joint_interface name="right_elbow_joint"/>
+    <xacro:joint_interface name="right_wrist_joint"/>
+    <xacro:joint_interface name="left_hip_joint"/>
+    <xacro:joint_interface name="left_knee_joint"/>
+    <xacro:joint_interface name="left_ankle_joint"/>
+    <xacro:joint_interface name="right_hip_joint"/>
+    <xacro:joint_interface name="right_knee_joint"/>
+    <xacro:joint_interface name="right_ankle_joint"/>
+  </ros2_control>
+
+  <!-- Gazebo ros2_control plugin -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find humanoid_robot_description)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
+```
+
+### 1.2 Create Gazebo World
+
+```xml
+<!-- capstone_world.world -->
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="capstone_world">
+
+    <!-- Physics -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Lighting -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- Office environment -->
+    <include>
+      <uri>model://cafe_table</uri>
+      <name>table_1</name>
+      <pose>2.0 0.0 0.0 0 0 0</pose>
+    </include>
+
+    <!-- Stairs -->
+    <model name="stairs">
+      <static>true</static>
+      <link name="step_1">
+        <pose>4.0 0.0 0.075 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+
+      <link name="step_2">
+        <pose>4.30 0.0 0.225 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+
+      <link name="step_3">
+        <pose>4.60 0.0 0.375 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.30 1.0 0.15</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Objects for manipulation -->
+    <include>
+      <uri>model://coke_can</uri>
+      <name>red_can</name>
+      <pose>2.0 0.2 0.76 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://beer</uri>
+      <name>green_bottle</name>
+      <pose>2.0 -0.2 0.76 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>
+```
+
+---
+
+## Part 2: Autonomous Navigation
+
+### 2.1 SLAM with Cartographer
+
+**Install Cartographer**:
+```bash
+sudo apt install ros-humble-cartographer ros-humble-cartographer-ros
+```
+
+**Configuration** (`cartographer_2d.lua`):
+```lua
+include "map_builder.lua"
+include "trajectory_builder.lua"
+
+options = {
+  map_builder = MAP_BUILDER,
+  trajectory_builder = TRAJECTORY_BUILDER,
+  map_frame = "map",
+  tracking_frame = "base_link",
+  published_frame = "odom",
+  odom_frame = "odom",
+  provide_odom_frame = false,
+  publish_frame_projected_to_2d = true,
+  use_odometry = true,
+  use_nav_sat = false,
+  use_landmarks = false,
+  num_laser_scans = 1,
+  num_multi_echo_laser_scans = 0,
+  num_subdivisions_per_laser_scan = 1,
+  num_point_clouds = 0,
+  lookup_transform_timeout_sec = 0.2,
+  submap_publish_period_sec = 0.3,
+  pose_publish_period_sec = 5e-3,
+  trajectory_publish_period_sec = 30e-3,
+  rangefinder_sampling_ratio = 1.,
+  odometry_sampling_ratio = 1.,
+  fixed_frame_pose_sampling_ratio = 1.,
+  imu_sampling_ratio = 1.,
+  landmarks_sampling_ratio = 1.,
+}
+
+TRAJECTORY_BUILDER_2D.min_range = 0.1
+TRAJECTORY_BUILDER_2D.max_range = 10.
+TRAJECTORY_BUILDER_2D.missing_data_ray_length = 3.
+TRAJECTORY_BUILDER_2D.use_imu_data = false
+TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true
+
+POSE_GRAPH.optimization_problem.huber_scale = 1e2
+POSE_GRAPH.optimize_every_n_nodes = 35
+POSE_GRAPH.constraint_builder.min_score = 0.65
+
+return options
+```
+
+**Launch File** (`slam.launch.py`):
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+
+def generate_launch_description():
+    return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='true'),
+
+        Node(
+            package='cartographer_ros',
+            executable='cartographer_node',
+            name='cartographer_node',
+            output='screen',
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+            arguments=[
+                '-configuration_directory', '/path/to/config',
+                '-configuration_basename', 'cartographer_2d.lua'
+            ],
+        ),
+
+        Node(
+            package='cartographer_ros',
+            executable='occupancy_grid_node',
+            name='occupancy_grid_node',
+            output='screen',
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+            arguments=['-resolution', '0.05'],
+        ),
+    ])
+```
+
+### 2.2 Path Planning with Nav2
+
+**Install Nav2**:
+```bash
+sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
+```
+
+**Nav2 Configuration** (`nav2_params.yaml`):
+```yaml
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    enable_groot_monitoring: True
+    groot_zmq_publisher_port: 1666
+    groot_zmq_server_port: 1667
+    plugin_lib_names:
+    - nav2_compute_path_to_pose_action_bt_node
+    - nav2_follow_path_action_bt_node
+    - nav2_back_up_action_bt_node
+    - nav2_spin_action_bt_node
+    - nav2_wait_action_bt_node
+    - nav2_clear_costmap_service_bt_node
+    - nav2_is_stuck_condition_bt_node
+    - nav2_goal_reached_condition_bt_node
+    - nav2_goal_updated_condition_bt_node
+    - nav2_initial_pose_received_condition_bt_node
+    - nav2_reinitialize_global_localization_service_bt_node
+    - nav2_rate_controller_bt_node
+    - nav2_distance_controller_bt_node
+    - nav2_speed_controller_bt_node
+    - nav2_truncate_path_action_bt_node
+    - nav2_goal_updater_node_bt_node
+    - nav2_recovery_node_bt_node
+    - nav2_pipeline_sequence_bt_node
+    - nav2_round_robin_node_bt_node
+    - nav2_transform_available_condition_bt_node
+    - nav2_time_expired_condition_bt_node
+    - nav2_distance_traveled_condition_bt_node
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.05
+      yaw_goal_tolerance: 0.05
+      stateful: True
+
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.26
+      max_vel_y: 0.0
+      max_vel_theta: 1.0
+      min_speed_xy: 0.0
+      max_speed_xy: 0.26
+      min_speed_theta: 0.0
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -3.2
+      vx_samples: 20
+      vy_samples: 5
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 32.0
+      GoalAlign.scale: 24.0
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+
+planner_server:
+  ros__parameters:
+    use_sim_time: True
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+```
+
+**Launch Navigation** (`navigation.launch.py`):
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    pkg_share = get_package_share_directory('humanoid_robot_nav')
+    params_file = os.path.join(pkg_share, 'config', 'nav2_params.yaml')
+
+    return LaunchDescription([
+        Node(
+            package='nav2_controller',
+            executable='controller_server',
+            name='controller_server',
+            output='screen',
+            parameters=[params_file]
+        ),
+
+        Node(
+            package='nav2_planner',
+            executable='planner_server',
+            name='planner_server',
+            output='screen',
+            parameters=[params_file]
+        ),
+
+        Node(
+            package='nav2_behaviors',
+            executable='behavior_server',
+            name='behavior_server',
+            output='screen',
+            parameters=[params_file]
+        ),
+
+        Node(
+            package='nav2_bt_navigator',
+            executable='bt_navigator',
+            name='bt_navigator',
+            output='screen',
+            parameters=[params_file]
+        ),
+
+        Node(
+            package='nav2_lifecycle_manager',
+            executable='lifecycle_manager',
+            name='lifecycle_manager_navigation',
+            output='screen',
+            parameters=[{'use_sim_time': True},
+                       {'autostart': True},
+                       {'node_names': ['controller_server',
+                                      'planner_server',
+                                      'behavior_server',
+                                      'bt_navigator']}]
+        ),
+    ])
+```
+
+**Send Navigation Goal** (Python):
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
+from nav2_simple_commander.robot_navigator import BasicNavigator
+
+class NavigationCommander(Node):
+    def __init__(self):
+        super().__init__('navigation_commander')
+        self.navigator = BasicNavigator()
+
+    def navigate_to_pose(self, x, y, yaw=0.0):
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = 'map'
+        goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        goal_pose.pose.position.x = x
+        goal_pose.pose.position.y = y
+        goal_pose.pose.position.z = 0.0
+
+        # Convert yaw to quaternion
+        from tf_transformations import quaternion_from_euler
+        q = quaternion_from_euler(0, 0, yaw)
+        goal_pose.pose.orientation.x = q[0]
+        goal_pose.pose.orientation.y = q[1]
+        goal_pose.pose.orientation.z = q[2]
+        goal_pose.pose.orientation.w = q[3]
+
+        self.navigator.goToPose(goal_pose)
+
+        while not self.navigator.isTaskComplete():
+            feedback = self.navigator.getFeedback()
+            self.get_logger().info(f'Distance remaining: {feedback.distance_remaining:.2f}m')
+            rclpy.spin_once(self, timeout_sec=0.1)
+
+        result = self.navigator.getResult()
+        if result == TaskResult.SUCCEEDED:
+            self.get_logger().info('Goal succeeded!')
+        else:
+            self.get_logger().error('Goal failed!')
+
+def main():
+    rclpy.init()
+    commander = NavigationCommander()
+
+    # Navigate to (2.0, 0.0)
+    commander.navigate_to_pose(2.0, 0.0, 0.0)
+
+    rclpy.shutdown()
+```
+
+---
+
+## Part 3: Vision-Based Manipulation
+
+### 3.1 Object Detection with YOLOv8
+
+**Install YOLOv8**:
+```bash
+pip install ultralytics
+```
+
+**Detection Node** (`object_detector.py`):
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from vision_msgs.msg import Detection2DArray, Detection2D, ObjectHypothesisWithPose
+from cv_bridge import CvBridge
+from ultralytics import YOLO
+import cv2
+
+class ObjectDetectorNode(Node):
+    def __init__(self):
+        super().__init__('object_detector')
+
+        # Load YOLOv8 model
+        self.model = YOLO('yolov8n.pt')  # nano model for speed
+        self.bridge = CvBridge()
+
+        # Publishers and subscribers
+        self.image_sub = self.create_subscription(
+            Image, '/camera/color/image_raw', self.image_callback, 10)
+        self.detection_pub = self.create_publisher(
+            Detection2DArray, '/detections', 10)
+        self.viz_pub = self.create_publisher(
+            Image, '/detections/image', 10)
+
+        self.get_logger().info('Object detector initialized')
+
+    def image_callback(self, msg):
+        # Convert ROS image to OpenCV
+        cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+
+        # Run detection
+        results = self.model(cv_image, conf=0.5)
+
+        # Create detection message
+        detections_msg = Detection2DArray()
+        detections_msg.header = msg.header
+
+        for result in results:
+            for box in result.boxes:
+                detection = Detection2D()
+
+                # Bounding box
+                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                detection.bbox.center.position.x = float((x1 + x2) / 2)
+                detection.bbox.center.position.y = float((y1 + y2) / 2)
+                detection.bbox.size_x = float(x2 - x1)
+                detection.bbox.size_y = float(y2 - y1)
+
+                # Class and confidence
+                hypothesis = ObjectHypothesisWithPose()
+                hypothesis.hypothesis.class_id = str(int(box.cls[0]))
+                hypothesis.hypothesis.score = float(box.conf[0])
+                detection.results.append(hypothesis)
+
+                detections_msg.detections.append(detection)
+
+                # Draw on image
+                cv2.rectangle(cv_image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+                label = f"{result.names[int(box.cls[0])]} {box.conf[0]:.2f}"
+                cv2.putText(cv_image, label, (int(x1), int(y1)-10),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+        # Publish detections
+        self.detection_pub.publish(detections_msg)
+
+        # Publish visualization
+        viz_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
+        self.viz_pub.publish(viz_msg)
+
+def main():
+    rclpy.init()
+    node = ObjectDetectorNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+```
+
+### 3.2 Grasp Planning with MoveIt 2
+
+**MoveIt Configuration**:
+```bash
+# Generate MoveIt config
+ros2 run moveit_setup_assistant moveit_setup_assistant
+```
+
+**Grasp Execution** (`grasp_executor.py`):
+```python
+import rclpy
+from rclpy.node import Node
+from moveit_commander import MoveGroupCommander, PlanningSceneInterface
+from geometry_msgs.msg import Pose, PoseStamped
+import numpy as np
+
+class GraspExecutor(Node):
+    def __init__(self):
+        super().__init__('grasp_executor')
+
+        # Initialize MoveIt
+        self.arm_group = MoveGroupCommander('arm')
+        self.gripper_group = MoveGroupCommander('gripper')
+        self.scene = PlanningSceneInterface()
+
+        self.arm_group.set_planning_time(5.0)
+        self.arm_group.set_num_planning_attempts(10)
+
+    def pick_object(self, object_pose: Pose):
+        """Execute pick operation"""
+        # 1. Move to pre-grasp pose (above object)
+        pre_grasp_pose = Pose()
+        pre_grasp_pose.position.x = object_pose.position.x
+        pre_grasp_pose.position.y = object_pose.position.y
+        pre_grasp_pose.position.z = object_pose.position.z + 0.15  # 15cm above
+        pre_grasp_pose.orientation = object_pose.orientation
+
+        self.get_logger().info('Moving to pre-grasp...')
+        self.arm_group.set_pose_target(pre_grasp_pose)
+        success = self.arm_group.go(wait=True)
+        self.arm_group.stop()
+        self.arm_group.clear_pose_targets()
+
+        if not success:
+            return False
+
+        # 2. Open gripper
+        self.gripper_group.set_named_target('open')
+        self.gripper_group.go(wait=True)
+
+        # 3. Move to grasp pose
+        self.get_logger().info('Moving to grasp...')
+        self.arm_group.set_pose_target(object_pose)
+        success = self.arm_group.go(wait=True)
+        self.arm_group.stop()
+
+        if not success:
+            return False
+
+        # 4. Close gripper
+        self.gripper_group.set_named_target('closed')
+        self.gripper_group.go(wait=True)
+
+        # 5. Lift object
+        waypoints = []
+        wpose = self.arm_group.get_current_pose().pose
+        wpose.position.z += 0.10  # Lift 10cm
+        waypoints.append(wpose)
+
+        (plan, fraction) = self.arm_group.compute_cartesian_path(
+            waypoints, 0.01, 0.0)
+
+        if fraction > 0.95:
+            self.arm_group.execute(plan, wait=True)
+            return True
+
+        return False
+
+    def place_object(self, target_pose: Pose):
+        """Execute place operation"""
+        # Similar to pick but in reverse
+        pass
+
+def main():
+    rclpy.init()
+    executor = GraspExecutor()
+    rclpy.spin(executor)
+    rclpy.shutdown()
+```
+
+---
+
+## Part 4: Bipedal Locomotion
+
+### 4.1 ZMP Walking Controller
+
+**ZMP Controller** (`zmp_controller.py`):
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64MultiArray
+import numpy as np
+
+class ZMPWalkingController(Node):
+    def __init__(self):
+        super().__init__('zmp_walking_controller')
+
+        # Parameters
+        self.step_length = 0.10  # 10cm steps
+        self.step_height = 0.05  # 5cm foot lift
+        self.step_duration = 1.0  # 1 second per step
+        self.com_height = 0.70  # Center of mass height
+
+        # Publishers
+        self.joint_cmd_pub = self.create_publisher(
+            Float64MultiArray, '/joint_commands', 10)
+
+        # Timer for gait generation
+        self.gait_timer = self.create_timer(0.01, self.generate_gait)
+
+        self.time = 0.0
+        self.phase = 0  # 0: left swing, 1: right swing
+
+    def generate_gait(self):
+        """Generate walking gait using ZMP criterion"""
+        # Simplified gait pattern
+        t = self.time % self.step_duration
+        phase_ratio = t / self.step_duration
+
+        # Joint angles (12 DOF: 6 per leg)
+        joint_positions = Float64MultiArray()
+        joint_positions.data = [0.0] * 12
+
+        if self.phase == 0:  # Left leg swing
+            # Right leg support
+            joint_positions.data[3] = 0.0  # right hip
+            joint_positions.data[4] = 0.2  # right knee
+            joint_positions.data[5] = -0.2 # right ankle
+
+            # Left leg swing
+            swing_height = self.step_height * np.sin(np.pi * phase_ratio)
+            swing_forward = self.step_length * phase_ratio
+
+            joint_positions.data[0] = 0.3 * phase_ratio  # left hip
+            joint_positions.data[1] = 0.4  # left knee (bent during swing)
+            joint_positions.data[2] = -0.3  # left ankle
+
+        else:  # Right leg swing
+            # Left leg support
+            joint_positions.data[0] = 0.0
+            joint_positions.data[1] = 0.2
+            joint_positions.data[2] = -0.2
+
+            # Right leg swing
+            swing_height = self.step_height * np.sin(np.pi * phase_ratio)
+            swing_forward = self.step_length * phase_ratio
+
+            joint_positions.data[3] = 0.3 * phase_ratio
+            joint_positions.data[4] = 0.4
+            joint_positions.data[5] = -0.3
+
+        # Publish commands
+        self.joint_cmd_pub.publish(joint_positions)
+
+        # Update time and phase
+        self.time += 0.01
+        if t >= self.step_duration:
+            self.phase = 1 - self.phase  # Toggle phase
+
+def main():
+    rclpy.init()
+    controller = ZMPWalkingController()
+    rclpy.spin(controller)
+    rclpy.shutdown()
+```
+
+---
+
+## Part 5: Conversational AI
+
+### 5.1 Speech Recognition with Whisper
+
+**Install Whisper**:
+```bash
+pip install openai-whisper
+```
+
+**Speech Node** (`speech_recognizer.py`):
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+import whisper
+import pyaudio
+import wave
+import numpy as np
+
+class SpeechRecognizer(Node):
+    def __init__(self):
+        super().__init__('speech_recognizer')
+
+        # Load Whisper model
+        self.model = whisper.load_model('base')
+
+        # Publisher
+        self.command_pub = self.create_publisher(String, '/voice_command', 10)
+
+        # Audio setup
+        self.CHUNK = 1024
+        self.FORMAT = pyaudio.paInt16
+        self.CHANNELS = 1
+        self.RATE = 16000
+
+        self.audio = pyaudio.PyAudio()
+        self.stream = self.audio.open(
+            format=self.FORMAT,
+            channels=self.CHANNELS,
+            rate=self.RATE,
+            input=True,
+            frames_per_buffer=self.CHUNK
+        )
+
+        # Start listening
+        self.listen_timer = self.create_timer(2.0, self.listen_and_transcribe)
+
+    def listen_and_transcribe(self):
+        """Record audio and transcribe"""
+        frames = []
+
+        # Record 3 seconds
+        for _ in range(0, int(self.RATE / self.CHUNK * 3)):
+            data = self.stream.read(self.CHUNK)
+            frames.append(data)
+
+        # Convert to numpy array
+        audio_data = np.frombuffer(b''.join(frames), dtype=np.int16).astype(np.float32) / 32768.0
+
+        # Transcribe
+        result = self.model.transcribe(audio_data, language='en')
+        text = result['text'].strip()
+
+        if text and len(text) > 3:  # Filter out noise
+            self.get_logger().info(f'Recognized: {text}')
+
+            msg = String()
+            msg.data = text
+            self.command_pub.publish(msg)
+
+def main():
+    rclpy.init()
+    node = SpeechRecognizer()
+    rclpy.spin(node)
+    rclpy.shutdown()
+```
+
+### 5.2 LLM Integration with GPT-4
+
+**Command Handler** (`llm_commander.py`):
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from geometry_msgs.msg import Pose
+import openai
+import json
+
+class LLMCommander(Node):
+    def __init__(self):
+        super().__init__('llm_commander')
+
+        # OpenAI API
+        openai.api_key = 'your-api-key'
+
+        # Subscribers
+        self.voice_sub = self.create_subscription(
+            String, '/voice_command', self.voice_callback, 10)
+
+        # Publishers
+        self.nav_goal_pub = self.create_publisher(Pose, '/navigation_goal', 10)
+        self.grasp_cmd_pub = self.create_publisher(String, '/grasp_command', 10)
+        self.tts_pub = self.create_publisher(String, '/tts_text', 10)
+
+    def voice_callback(self, msg):
+        """Process voice command with LLM"""
+        command = msg.data
+
+        # Create prompt
+        prompt = f"""
+        You are a humanoid robot assistant. Parse the following voice command and extract:
+        1. Action type (navigate, pick, place, describe, stop)
+        2. Parameters (object name, location, color, etc.)
+
+        Command: "{command}"
+
+        Respond in JSON format:
+        {{
+            "action": "navigate|pick|place|describe|stop",
+            "parameters": {{...}}
+        }}
+        """
+
+        # Call GPT-4
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3
+        )
+
+        # Parse response
+        try:
+            result = json.loads(response.choices[0].message.content)
+            action = result['action']
+            params = result.get('parameters', {})
+
+            # Execute action
+            if action == 'navigate':
+                self.execute_navigation(params)
+            elif action == 'pick':
+                self.execute_pick(params)
+            elif action == 'place':
+                self.execute_place(params)
+            elif action == 'describe':
+                self.describe_scene()
+            elif action == 'stop':
+                self.emergency_stop()
+
+        except Exception as e:
+            self.get_logger().error(f'Failed to parse LLM response: {e}')
+
+    def execute_navigation(self, params):
+        """Execute navigation command"""
+        # Convert location name to coordinates
+        locations = {
+            'kitchen': (3.0, 0.0),
+            'table': (2.0, 0.0),
+            'stairs': (4.0, 0.0)
+        }
+
+        location = params.get('location', 'table')
+        if location in locations:
+            pose = Pose()
+            pose.position.x, pose.position.y = locations[location]
+            self.nav_goal_pub.publish(pose)
+
+            # TTS feedback
+            tts_msg = String()
+            tts_msg.data = f"Navigating to {location}"
+            self.tts_pub.publish(tts_msg)
+
+def main():
+    rclpy.init()
+    node = LLMCommander()
+    rclpy.spin(node)
+    rclpy.shutdown()
+```
+
+---
+
+## Part 6: System Integration
+
+### 6.1 Master Launch File
+
+**Complete System** (`robot_system.launch.py`):
+```python
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+import os
+
+def generate_launch_description():
+    return LaunchDescription([
+        # 1. Gazebo simulation
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                os.path.join(get_package_share_directory('gazebo_ros'),
+                            'launch', 'gazebo.launch.py')
+            ]),
+            launch_arguments={'world': 'capstone_world.world'}.items()
+        ),
+
+        # 2. Spawn robot
+        Node(
+            package='gazebo_ros',
+            executable='spawn_entity.py',
+            arguments=['-entity', 'humanoid_robot', '-topic', 'robot_description']
+        ),
+
+        # 3. SLAM
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                os.path.join(get_package_share_directory('humanoid_robot_nav'),
+                            'launch', 'slam.launch.py')
+            ])
+        ),
+
+        # 4. Navigation
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                os.path.join(get_package_share_directory('humanoid_robot_nav'),
+                            'launch', 'navigation.launch.py')
+            ])
+        ),
+
+        # 5. Perception
+        Node(
+            package='humanoid_robot_perception',
+            executable='object_detector',
+            name='object_detector'
+        ),
+
+        # 6. Manipulation
+        Node(
+            package='humanoid_robot_manipulation',
+            executable='grasp_executor',
+            name='grasp_executor'
+        ),
+
+        # 7. Locomotion
+        Node(
+            package='humanoid_robot_control',
+            executable='zmp_controller',
+            name='zmp_controller'
+        ),
+
+        # 8. Speech & LLM
+        Node(
+            package='humanoid_robot_speech',
+            executable='speech_recognizer',
+            name='speech_recognizer'
+        ),
+
+        Node(
+            package='humanoid_robot_speech',
+            executable='llm_commander',
+            name='llm_commander'
+        ),
+
+        # 9. RViz
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            arguments=['-d', os.path.join(get_package_share_directory('humanoid_robot'),
+                                         'rviz', 'capstone.rviz')]
+        ),
+    ])
+```
+
+---
+
+## Next Steps
+
+**✅ You now have a complete implementation framework!**
+
+1. **Test each module independently** before integration
+2. **Tune parameters** for your specific robot and environment
+3. **Add error handling** for robustness
+4. **Record performance metrics** for your report
+
+**Continue to**:
+- [Requirements Checklist](/docs/09-capstone/requirements.mdx)
+- [Evaluation Rubric](/docs/09-capstone/evaluation.mdx)
+
+**Good luck with your capstone project!** 🚀

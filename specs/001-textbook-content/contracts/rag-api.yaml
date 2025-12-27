@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: Physical AI Textbook RAG API
+  version: 1.0.0
+  description: RAG chatbot backend for Physical AI & Humanoid Robotics textbook
+
+servers:
+  - url: https://api.physical-ai-textbook.railway.app
+    description: Production (Railway)
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /api/rag/query:
+    post:
+      summary: Submit chatbot query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  example: "What is forward kinematics?"
+                language:
+                  type: string
+                  enum: [en, ur]
+                  default: en
+                chapter_filter:
+                  type: string
+                  example: "02-ros2-fundamentals"
+                top_k:
+                  type: integer
+                  default: 5
+                  minimum: 1
+                  maximum: 20
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query: {type: string}
+                  answer: {type: string}
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chapter_id: {type: string}
+                        section_title: {type: string}
+                        page_url: {type: string}
+                        snippet: {type: string}
+                        relevance_score: {type: number}
+                  response_time_ms: {type: integer}
+
+  /api/rag/query-selection:
+    post:
+      summary: Answer based on selected text only
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query, selected_text]
+              properties:
+                query: {type: string}
+                selected_text: {type: string}
+                language: {type: string, enum: [en, ur], default: en}
+      responses:
+        '200':
+          description: Answer based on selected text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query: {type: string}
+                  answer: {type: string}
+                  context_used: {type: string}
+
+  /api/auth/signup:
+    post:
+      summary: User signup with background questions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, full_name]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string, minLength: 8}
+                full_name: {type: string}
+                software_background: {type: string, enum: [none, basic_python, experienced_ros, professional]}
+                hardware_background: {type: string, enum: [simulation_only, jetson_kit, robot_lab, no_hardware]}
+                learning_goal: {type: string, enum: [academic_course, self_study, professional_upskilling]}
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id: {type: string, format: uuid}
+                  token: {type: string}
+
+  /api/personalization/profile:
+    get:
+      summary: Get user personalization preferences
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+    put:
+      summary: Update user preferences
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreferences'
+      responses:
+        '200':
+          description: Preferences updated
+
+components:
+  schemas:
+    UserPreferences:
+      type: object
+      properties:
+        persona: {type: string, enum: [student, educator, self_learner, industry_professional]}
+        skill_level: {type: string, enum: [beginner, intermediate, advanced]}
+        learning_pace: {type: string, enum: [accelerated, standard, extended]}
+        language_preference: {type: string, enum: [en, ur]}
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,160 @@
+---
+title: "Module 3: NVIDIA Isaac Platform (Weeks 8-10)"
+description: GPU-accelerated perception, simulation, and reinforcement learning for robotics
+sidebar_position: 1
+---
+
+# Module 3: NVIDIA Isaac Platform
+
+## 📚 Learning Outcomes
+
+By the end of this module, you will be able to:
+
+1. **Set up** NVIDIA Isaac Sim for photorealistic robot simulation
+2. **Implement** GPU-accelerated computer vision pipelines (object detection, pose estimation)
+3. **Train** reinforcement learning policies using Isaac Gym
+4. **Deploy** perception models on NVIDIA Jetson edge devices
+5. **Transfer** learned behaviors from simulation to real robots
+6. **Integrate** Isaac ROS packages with ROS 2 applications
+
+## 🎯 Module Overview
+
+**Duration**: 3 weeks (21 days)
+**Prerequisites**: ROS 2 Fundamentals, Gazebo Simulation, basic PyTorch
+**Hardware**: NVIDIA GPU (RTX 2060 or better) for local training, or cloud GPU (AWS g4dn, GCP)
+
+The NVIDIA Isaac platform provides:
+- **Isaac Sim**: Photorealistic simulation with ray-traced rendering
+- **Isaac Gym**: Massively parallel RL training (1000+ environments on 1 GPU)
+- **Isaac ROS**: GPU-accelerated perception and navigation packages
+- **Jetson**: Edge AI hardware for real-world deployment
+
+This module teaches you to leverage GPUs for 10-100x speedups in robotics development.
+
+---
+
+## Weekly Breakdown
+
+### **Week 8: Isaac Sim & Perception**
+
+**Topics**:
+- Installing Isaac Sim and Omniverse
+- Creating photorealistic environments
+- Importing robots (URDF → USD format)
+- GPU-accelerated object detection (DOPE, PoseCNN)
+- ROS 2 bridge for Isaac Sim
+
+**Hands-On**:
+- Build warehouse scene in Isaac Sim
+- Import Franka Panda robot arm
+- Run YOLO object detection on Isaac Sim camera
+- Connect Isaac Sim to ROS 2 nodes
+
+**Assessment**: Object detection pipeline processing Isaac Sim camera feed at 30 FPS
+
+### **Week 9: Manipulation & Navigation**
+
+**Topics**:
+- Grasp planning with GraspNet
+- Motion planning with Lula kinematics solver
+- SLAM with Isaac ROS (vSLAM, nvblox)
+- Nav2 integration for autonomous navigation
+
+**Hands-On**:
+- Implement grasp pose estimation
+- Plan collision-free arm trajectories
+- Run vSLAM for real-time localization
+- Navigate mobile robot using Nav2
+
+**Assessment**: Pick-and-place pipeline from perception to execution
+
+### **Week 10: Reinforcement Learning**
+
+**Topics**:
+- RL fundamentals (PPO, SAC, TD3)
+- Isaac Gym for parallel training
+- Designing reward functions
+- Domain randomization for robust policies
+- Sim-to-real transfer techniques
+
+**Hands-On**:
+- Train quadruped locomotion policy
+- Implement PPO for robot manipulation
+- Add domain randomization (lighting, friction, mass)
+- Evaluate policy on unseen scenarios
+
+**Assessment**: Train RL policy for robot task (reach, grasp, or locomotion) achieving >80% success rate
+
+---
+
+## Code Example: Object Detection with Isaac ROS
+
+```python
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from vision_msgs.msg import Detection2DArray
+from cv_bridge import CvBridge
+import cv2
+
+class ObjectDetectorNode(Node):
+    def __init__(self):
+        super().__init__('object_detector')
+
+        # Subscribe to Isaac Sim camera
+        self.image_sub = self.create_subscription(
+            Image,
+            '/camera/image_raw',
+            self.image_callback,
+            10)
+
+        # Publish detections
+        self.detection_pub = self.create_publisher(
+            Detection2DArray,
+            '/detections',
+            10)
+
+        self.bridge = CvBridge()
+        self.get_logger().info('Object detector node started')
+
+    def image_callback(self, msg):
+        # Convert ROS Image to OpenCV
+        cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+
+        # Run YOLO detection (placeholder)
+        detections = self.run_yolo(cv_image)
+
+        # Publish detections
+        detection_msg = Detection2DArray()
+        detection_msg.header = msg.header
+        detection_msg.detections = detections
+        self.detection_pub.publish(detection_msg)
+
+    def run_yolo(self, image):
+        # Implement YOLO inference here
+        # Using TensorRT for GPU acceleration
+        return []
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = ObjectDetectorNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+```
+
+---
+
+## Key Takeaways
+
+✅ **GPUs accelerate robotics**—perception, planning, and learning all benefit
+✅ **Isaac Sim → photorealism**—train vision models on synthetic data
+✅ **Isaac Gym → parallel RL**—train in hours, not days
+✅ **Jetson → edge deployment**—run models where the robot is
+✅ **Sim-to-real works**—with domain randomization and careful tuning
+
+---
+
+## What's Next?
+
+👉 **[Module 4: Humanoid Development](/docs/05-humanoid-development/)** — Kinematics, dynamics, and bipedal locomotion

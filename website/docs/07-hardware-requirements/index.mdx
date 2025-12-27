@@ -1,0 +1,167 @@
+---
+title: Hardware Requirements
+description: Equipment options for learning and deploying humanoid robotics
+sidebar_position: 1
+---
+
+# Hardware Requirements
+
+## Overview
+
+You can complete this entire textbook with **zero physical hardware**—all exercises run in simulation. However, for hands-on experience with real robots, this chapter describes three deployment options.
+
+---
+
+## Option 1: Cloud-Native Lab (Recommended for Beginners)
+
+**Cost**: ~$50-200/month
+**Best for**: Students, remote learners, anyone without local GPU
+
+### **What You Need**:
+- **Laptop/Desktop**: Any modern computer with internet
+- **Cloud GPU**: AWS g4dn, GCP T4, Azure NC-series
+- **Cloud storage**: For simulation files and datasets
+
+### **Software Stack**:
+- NVIDIA Omniverse Nucleus (cloud-hosted Isaac Sim)
+- AWS RoboMaker or Google Cloud Robotics
+- Remote desktop (NoMachine, VNC) for GUI access
+
+### **Pros**:
+✅ No upfront hardware cost
+✅ Scale GPU resources on demand
+✅ Access from anywhere
+✅ Pre-configured environments
+
+### **Cons**:
+❌ Monthly recurring cost
+❌ Requires fast internet (10+ Mbps)
+❌ Latency for real-time control
+
+**Setup Guide**: See [Cloud Setup Tutorial](./cloud-native-lab.mdx)
+
+---
+
+## Option 2: Digital Twin Workstation
+
+**Cost**: $1,500-3,000 (one-time)
+**Best for**: Serious hobbyists, professionals, researchers
+
+### **Minimum Specs**:
+- **CPU**: Intel i7-12700 / AMD Ryzen 7 5800X (8+ cores)
+- **GPU**: NVIDIA RTX 3060 (12GB VRAM) or better
+- **RAM**: 32GB DDR4
+- **Storage**: 1TB NVMe SSD
+- **OS**: Ubuntu 22.04 LTS
+
+### **Recommended Specs**:
+- **CPU**: Intel i9-13900K / AMD Ryzen 9 7950X
+- **GPU**: NVIDIA RTX 4080 / 4090 (16-24GB VRAM)
+- **RAM**: 64GB DDR5
+- **Storage**: 2TB NVMe SSD + 4TB HDD
+
+### **Pros**:
+✅ One-time cost, no monthly fees
+✅ Full control over environment
+✅ No internet required (after setup)
+✅ Best performance for local development
+
+### **Cons**:
+❌ High upfront cost
+❌ Takes up physical space
+❌ Noise and power consumption
+
+**Build Guide**: See [Workstation Setup](./digital-twin-workstation.mdx)
+
+---
+
+## Option 3: Physical Robot Lab
+
+**Cost**: $3,000-15,000+
+**Best for**: Universities, companies, advanced makers
+
+### **Jetson-Based Robot** ($3,000-5,000)
+
+**Hardware**:
+- **Compute**: NVIDIA Jetson AGX Orin Developer Kit ($2,000)
+- **Robot chassis**: TurtleBot 4, custom build ($500-1,500)
+- **Sensors**:
+  - RGB-D camera: Intel RealSense D435i ($300)
+  - 2D LiDAR: RPLIDAR A1/A2 ($100-400)
+  - IMU: Adafruit BNO055 ($35)
+- **Actuators**: Dynamixel servos, DC motors ($300-800)
+- **Power**: LiPo batteries, voltage regulators ($200)
+- **Tools**: Soldering iron, 3D printer access
+
+**Pros**:
+✅ Real-world testing and validation
+✅ Hands-on hardware experience
+✅ Impressive for portfolio/resume
+✅ Can deploy actual applications
+
+**Cons**:
+❌ Expensive and time-consuming
+❌ Hardware can break (repair costs)
+❌ Requires workspace and tools
+❌ Sim-to-real transfer challenges
+
+**Assembly Guide**: See [Jetson Kit Build](./jetson-kit.mdx)
+
+### **Humanoid Robot** ($8,000-50,000+)
+
+For advanced users building custom humanoids:
+- **Servos**: 20-30x Dynamixel MX/XM series ($200 each = $4,000-6,000)
+- **Frames**: Aluminum extrusion, 3D printed parts ($500-1,500)
+- **Compute**: Jetson AGX Orin + secondary controllers ($2,500)
+- **Sensors**: Cameras, IMU, force/torque sensors ($1,000-2,000)
+- **Power**: High-capacity LiPo ($300-500)
+
+**Commercial Alternatives**:
+- **Aldebaran NAO** ($8,000) — Research-grade humanoid
+- **SoftBank Pepper** ($15,000) — Social robot platform
+- **PAL Robotics TALOS** ($100,000+) — Full-size humanoid
+
+---
+
+## Comparison Matrix
+
+| Option | Cost | Setup Time | Best For | Limitations |
+|--------|------|------------|----------|-------------|
+| **Cloud-Native** | $50-200/mo | 1-2 hours | Beginners, remote learners | Needs internet, recurring cost |
+| **Workstation** | $1,500-3,000 | 1-2 days | Professionals, researchers | High upfront cost |
+| **Jetson Robot** | $3,000-5,000 | 1-2 weeks | Makers, portfolio builders | Hardware complexity |
+| **Humanoid** | $8,000+ | 1-3 months | Advanced research, companies | Very expensive, complex |
+
+---
+
+## Software Requirements (All Options)
+
+- **Operating System**: Ubuntu 22.04 LTS (recommended) or WSL2 on Windows
+- **ROS 2**: Humble Hawksbill
+- **Simulation**: Gazebo Garden + NVIDIA Isaac Sim
+- **Python**: 3.10+
+- **Deep Learning**: PyTorch 2.0+, TensorFlow (optional)
+- **IDEs**: VS Code, PyCharm, or Vim/Emacs
+
+---
+
+## Our Recommendation
+
+### **For Students**:
+Start with **Cloud-Native Lab** (Option 1) for Weeks 1-10, then decide if you want to invest in hardware.
+
+### **For Professionals**:
+Invest in a **Digital Twin Workstation** (Option 2) for long-term development productivity.
+
+### **For Researchers**:
+Build a **Jetson Robot** (Option 3) to validate algorithms on real hardware.
+
+---
+
+## What's Next?
+
+👉 **Choose your path** and follow the detailed setup guide:
+- [Cloud-Native Lab Setup](./cloud-native-lab.mdx)
+- [Digital Twin Workstation Build](./digital-twin-workstation.mdx)
+- [Jetson Robot Assembly](./jetson-kit.mdx)
+- [Robot Lab Infrastructure](./robot-lab-options.mdx)

@@ -1,0 +1,318 @@
+---
+title: Capstone Project
+description: Build an autonomous humanoid robot integrating all course concepts
+sidebar_position: 1
+---
+
+# Capstone Project: Autonomous Humanoid Robot
+
+## 🎯 Project Overview
+
+**Objective**: Design and implement a complete autonomous humanoid system that demonstrates mastery of all course modules: ROS 2, simulation, Isaac platform, kinematics, locomotion, and conversational AI.
+
+**Duration**: 2-3 weeks (after Week 13)
+**Team Size**: Individual or teams of 2
+**Weight**: 30% of final grade
+
+---
+
+## Project Requirements
+
+### **Core Functionality** (Must Have)
+
+Your humanoid robot must demonstrate all of the following capabilities:
+
+#### **1. Autonomous Navigation** (20 points)
+- Navigate to a target location using SLAM
+- Avoid static and dynamic obstacles
+- Use Nav2 or custom path planning
+- Minimum distance: 10 meters in complex environment
+
+#### **2. Vision-Based Manipulation** (25 points)
+- Detect objects using computer vision (YOLO, Mask R-CNN)
+- Estimate 6D pose for grasping
+- Plan collision-free arm trajectories
+- Successfully pick and place **at least 3 objects**
+
+#### **3. Bipedal Locomotion** (20 points)
+- Walk stably on flat ground
+- Climb stairs (at least 3 steps, 15-20cm height)
+- Maintain balance during manipulation
+- No falls during 5-minute demo
+
+#### **4. Conversational Interaction** (20 points)
+- Respond to voice commands using LLM (GPT-4, LLaMA)
+- Speech recognition (Whisper or similar)
+- Text-to-speech feedback
+- Handle at least **10 predefined commands**:
+  - "Pick up the [color] [object]"
+  - "Move to the [location]"
+  - "What do you see?"
+  - "Describe your status"
+  - "Stop"
+  - etc.
+
+#### **5. System Integration** (15 points)
+- All modules work together seamlessly
+- ROS 2 launch file starts entire system
+- Graceful failure handling
+- Real-time performance (no lag >500ms)
+
+---
+
+### **Advanced Features** (Bonus Points)
+
+Implement **at least 2** of the following for extra credit:
+
+#### **Multi-Modal Perception** (+10 points)
+- Combine vision, LiDAR, and IMU for robust perception
+- Sensor fusion for state estimation
+- Handle sensor failures gracefully
+
+#### **Reinforcement Learning** (+15 points)
+- Train an RL policy for a subtask (grasping, locomotion)
+- Use Isaac Gym or similar
+- Demonstrate sim-to-real transfer
+
+#### **Human-Robot Collaboration** (+10 points)
+- Hand object to human safely
+- Recognize human gestures (pointing, waving)
+- Respond to non-verbal cues
+
+#### **Dynamic Environments** (+10 points)
+- Navigate around moving obstacles (people, other robots)
+- Replan paths in real-time
+- Handle unexpected events (door closing, object moved)
+
+#### **Real Hardware Deployment** (+20 points)
+- Deploy on physical robot (Jetson-based or commercial)
+- Demonstrate all core features on real hardware
+- Document sim-to-real transfer process
+
+---
+
+## Deliverables
+
+### **1. Source Code** (GitHub Repository)
+
+Your repository must include:
+- All ROS 2 packages (workspace structure)
+- URDF/USD robot model
+- Gazebo/Isaac Sim world files
+- Launch files for entire system
+- Configuration files (parameters, QoS)
+- `README.md` with setup instructions
+- `ARCHITECTURE.md` explaining system design
+
+**Grading criteria**:
+- ✅ Code is modular and well-organized
+- ✅ Follows ROS 2 best practices
+- ✅ Includes meaningful comments
+- ✅ No hardcoded paths or credentials
+- ✅ Requirements file (`requirements.txt`, `package.xml`)
+
+### **2. Demo Video** (3-5 minutes)
+
+**Required content**:
+1. Introduction (15 sec): Your name, project title
+2. System overview (30 sec): High-level architecture
+3. Live demonstration (2-3 min):
+   - Navigation to target
+   - Object detection and grasping
+   - Locomotion (walking, stairs)
+   - Voice command interaction
+4. Advanced features (30 sec): If implemented
+5. Reflections (30 sec): Challenges and learnings
+
+**Technical requirements**:
+- 1080p resolution minimum
+- Screen recording + robot view (picture-in-picture)
+- Clear audio narration
+- Upload to YouTube (unlisted) or Vimeo
+
+### **3. Technical Report** (5-10 pages)
+
+**Required sections**:
+
+#### **Abstract** (0.5 pages)
+- Summary of project goals and achievements
+
+#### **1. Introduction** (1 page)
+- Motivation and problem statement
+- Overview of approach
+
+#### **2. System Architecture** (2-3 pages)
+- Block diagram of all components
+- ROS 2 node graph
+- Data flow between modules
+- Hardware/software stack
+
+#### **3. Implementation Details** (2-3 pages)
+For each core requirement:
+- **Navigation**: SLAM algorithm, path planning
+- **Manipulation**: Object detection model, grasp planning
+- **Locomotion**: ZMP controller, gait generation
+- **Conversation**: LLM integration, speech pipeline
+
+#### **4. Experimental Results** (1-2 pages)
+- Quantitative metrics:
+  - Navigation success rate
+  - Grasp success rate
+  - Walking stability (time without falls)
+  - Voice command accuracy
+- Comparison to baselines (if applicable)
+- Failure analysis
+
+#### **5. Conclusion & Future Work** (0.5 pages)
+- What worked well
+- What was challenging
+- Next steps if you had more time
+
+#### **6. References**
+- Papers, tutorials, libraries used
+
+**Format**:
+- PDF format
+- IEEE or ACM conference style (LaTeX template provided)
+- Include figures, tables, and code snippets where appropriate
+
+### **4. Live Presentation** (Optional but Recommended)
+
+If presenting to a class or panel:
+- **Duration**: 10 minutes + 5 minutes Q&A
+- **Slides**: 8-12 slides
+- **Live demo**: Show robot in action (simulation or hardware)
+
+---
+
+## Evaluation Rubric
+
+| Category | Points | Criteria |
+|----------|--------|----------|
+| **Navigation** | 20 | SLAM accuracy, obstacle avoidance, path optimality |
+| **Manipulation** | 25 | Detection accuracy, grasp success rate, trajectory smoothness |
+| **Locomotion** | 20 | Gait stability, stair climbing, balance during reaching |
+| **Conversation** | 20 | Speech recognition accuracy, LLM response quality, TTS naturalness |
+| **Integration** | 15 | System reliability, launch file, error handling |
+| **Code Quality** | 10 | Modularity, documentation, best practices |
+| **Report** | 10 | Clarity, technical depth, completeness |
+| **Demo Video** | 10 | Production quality, narration, demonstration |
+| **Bonus Features** | +20 | Advanced capabilities beyond requirements |
+| **Total** | **130** | (100 base + 30 bonus) |
+
+### **Grading Scale**:
+- **A (90-100)**: Exceeds all requirements, professional quality
+- **B (80-89)**: Meets all requirements, good quality
+- **C (70-79)**: Meets most requirements, acceptable quality
+- **D (60-69)**: Meets some requirements, needs improvement
+- **F (&lt;60)**: Does not meet minimum requirements
+
+---
+
+## Timeline & Milestones
+
+### **Week 1**: Planning & Setup
+- **Deliverable**: Project proposal (1 page)
+  - What will you build?
+  - Which advanced features?
+  - Timeline breakdown
+- **Checkpoint**: Instructor feedback on scope
+
+### **Week 2**: Implementation
+- **Milestone 1** (Day 3): Navigation working
+- **Milestone 2** (Day 5): Manipulation working
+- **Milestone 3** (Day 7): Locomotion + conversation integrated
+
+### **Week 3**: Testing & Documentation
+- **Day 1-2**: End-to-end testing and debugging
+- **Day 3-4**: Record demo video
+- **Day 5-6**: Write technical report
+- **Day 7**: Final submission
+
+---
+
+## Example Projects (Inspiration)
+
+### **Project 1: Warehouse Assistant**
+- Navigate warehouse aisles
+- Detect and pick packages (QR code recognition)
+- Transport to shipping area
+- Voice interface for inventory queries
+
+### **Project 2: Home Care Robot**
+- Navigate home environment (kitchen, living room)
+- Fetch and deliver objects ("Bring me a water bottle")
+- Climb stairs to reach bedroom
+- Conversational companion ("Tell me a joke")
+
+### **Project 3: Inspection Robot**
+- Walk through facility checking gauges
+- Detect anomalies using vision (leaks, damage)
+- Generate inspection report
+- Voice commands for manual override
+
+---
+
+## Resources
+
+### **Simulation Worlds**:
+- [AWS RoboMaker Hospital](https://github.com/aws-robotics/aws-robomaker-hospital-world)
+- [Gazebo Fuel Worlds](https://app.gazebosim.org/fuel/worlds)
+- [Isaac Sim Example Scenes](https://docs.omniverse.nvidia.com/isaacsim/latest/features/environment_setup/assets/assets_overview.html)
+
+### **Pre-Trained Models**:
+- **Object Detection**: YOLOv8, Mask R-CNN
+- **Pose Estimation**: DOPE, PoseCNN
+- **SLAM**: ORB-SLAM3, Cartographer
+- **LLM**: GPT-4 API, LLaMA 2 (local)
+
+### **Reference Implementations**:
+- [Nav2 Tutorials](https://navigation.ros.org/)
+- [MoveIt 2 Examples](https://moveit.picknik.ai/)
+- [Isaac ROS Samples](https://github.com/NVIDIA-ISAAC-ROS)
+
+---
+
+## Submission Instructions
+
+1. **Code**: Push to GitHub, ensure repo is public or share access
+2. **Video**: Upload to YouTube (unlisted), include link in README
+3. **Report**: Submit PDF via course management system
+4. **Deadline**: [Date TBD], 11:59 PM your timezone
+
+**Submission checklist**:
+- [ ] GitHub repo link
+- [ ] README with setup instructions
+- [ ] Demo video link
+- [ ] Technical report (PDF)
+- [ ] All code runs without errors
+- [ ] Demo shows all core requirements
+
+---
+
+## FAQ
+
+**Q: Can I use pre-trained models?**
+A: Yes! Use YOLO, GPT-4, etc. But you must integrate them yourself.
+
+**Q: Can I work in a team?**
+A: Teams of 2 are allowed. Both members must contribute equally.
+
+**Q: What if my simulation crashes during the demo?**
+A: Record multiple takes and edit. Include blooper reel at the end for fun!
+
+**Q: Can I use a different robot than humanoid?**
+A: Discuss with instructor. Must still demonstrate bipedal locomotion.
+
+**Q: Do I need real hardware?**
+A: No, simulation is sufficient. Hardware deployment is bonus points.
+
+---
+
+## Get Started
+
+👉 **[Project Requirements Checklist](/docs/09-capstone/requirements.mdx)**
+👉 **[Autonomous Navigation Guide](/docs/09-capstone/autonomous-humanoid.mdx)**
+👉 **[Evaluation Rubric](/docs/09-capstone/evaluation.mdx)**
+
+**Good luck, and build something amazing!** 🚀🤖

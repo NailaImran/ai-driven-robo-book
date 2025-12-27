@@ -1,0 +1,526 @@
+---
+sidebar_position: 2
+title: "ROS 2 Project: Multi-Node Mobile Robot Navigation"
+description: "Build a comprehensive multi-node mobile robot navigation system with sensor fusion, teleoperation, and autonomous obstacle avoidance"
+---
+
+# ROS 2 Project: Multi-Node Mobile Robot Navigation System
+
+## Overview
+
+This assessment project evaluates your mastery of ROS 2 fundamentals through the development of a complete mobile robot navigation system. You will build a multi-node architecture that integrates teleoperation, sensor fusion, obstacle avoidance, and state publishing capabilities.
+
+**Estimated Time:** 20-30 hours
+**Difficulty:** Intermediate
+**Prerequisites:** ROS 2 Basics, URDF Modeling, Launch Files, ROS 2 Communication Patterns
+
+## Project Objectives
+
+By completing this project, you will demonstrate proficiency in:
+
+- Designing and implementing multi-node ROS 2 architectures
+- Integrating multiple sensor streams with proper synchronization
+- Implementing real-time control and decision-making algorithms
+- Creating robust launch files and package configurations
+- Writing comprehensive tests and documentation
+- Recording and analyzing ROS bag data for debugging
+
+## System Architecture
+
+```mermaid
+graph TB
+    subgraph "Input Layer"
+        A[Teleop Node] --> |cmd_vel| G[Velocity Arbiter]
+        B[LiDAR Driver] --> |scan| D[Sensor Fusion Node]
+        C[Odometry Node] --> |odom| D
+    end
+
+    subgraph "Processing Layer"
+        D --> |fused_data| E[Obstacle Avoidance Node]
+        E --> |safe_cmd_vel| G
+        G --> |final_cmd_vel| H[Motor Controller]
+    end
+
+    subgraph "Output Layer"
+        H --> |motor_cmds| I[Hardware Interface]
+        D --> |robot_state| J[State Publisher]
+        J --> K[TF Broadcaster]
+    end
+
+    subgraph "Monitoring"
+        L[Diagnostics Node] --> M[/diagnostics Topic]
+        D --> L
+        E --> L
+        H --> L
+    end
+```
+
+## Detailed Requirements
+
+### 1. Teleoperation Node (15 points)
+
+Create a teleoperation node that accepts keyboard or joystick input and publishes velocity commands.
+
+**Specifications:**
+- **Node Name:** `teleop_controller`
+- **Published Topics:**
+  - `/cmd_vel` (geometry_msgs/Twist) - Target velocities
+  - `/teleop/status` (std_msgs/String) - Current control mode
+- **Parameters:**
+  - `max_linear_velocity`: Maximum forward/backward speed (default: 0.5 m/s)
+  - `max_angular_velocity`: Maximum rotation speed (default: 1.0 rad/s)
+  - `velocity_scaling`: Safety scaling factor (default: 0.7)
+  - `input_device`: Device type ('keyboard' or 'joystick')
+
+**Implementation Requirements:**
+- Smooth velocity ramping with configurable acceleration limits
+- Deadman switch functionality (continuous hold required)
+- Emergency stop capability (E-stop key)
+- Visual feedback showing current velocity setpoints
+- Rate limiting to 10 Hz publication frequency
+
+**Example Code Structure:**
+```python
+class TeleopController(Node):
+    def __init__(self):
+        super().__init__('teleop_controller')
+        self.declare_parameters()
+        self.cmd_vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.setup_input_handlers()
+
+    def apply_velocity_ramping(self, target_vel, current_vel, dt):
+        # Implement smooth acceleration/deceleration
+        pass
+```
+
+### 2. Sensor Fusion Node (25 points)
+
+Implement a sensor fusion node that combines LiDAR scan data with odometry to produce a unified state estimate.
+
+**Specifications:**
+- **Node Name:** `sensor_fusion`
+- **Subscribed Topics:**
+  - `/scan` (sensor_msgs/LaserScan) - LiDAR measurements
+  - `/odom` (nav_msgs/Odometry) - Wheel odometry
+- **Published Topics:**
+  - `/fused_state` (custom_msgs/RobotState) - Fused state estimate
+  - `/obstacle_cloud` (sensor_msgs/PointCloud2) - Detected obstacles
+- **Parameters:**
+  - `fusion_rate`: Processing frequency (default: 20 Hz)
+  - `scan_timeout`: Max age for scan data (default: 0.5 s)
+  - `odom_timeout`: Max age for odom data (default: 0.2 s)
+  - `obstacle_threshold`: Minimum distance for obstacle detection (default: 0.3 m)
+
+**Fusion Algorithm Requirements:**
+- Timestamp synchronization using `message_filters::TimeSynchronizer`
+- Transform LiDAR scans to robot base frame
+- Filter scan data to remove ground plane and noise
+- Compute instantaneous velocity from odometry
+- Identify nearest obstacles in 8 directional sectors
+- Publish fused state at consistent rate
+
+**Custom Message Definition (RobotState.msg):**
+```
+Header header
+geometry_msgs/Pose2D pose
+geometry_msgs/Twist velocity
+float32[8] obstacle_distances  # N, NE, E, SE, S, SW, W, NW
+float32 min_obstacle_distance
+bool is_data_valid
+```
+
+### 3. Obstacle Avoidance Node (25 points)
+
+Develop a reactive obstacle avoidance algorithm that modifies velocity commands to prevent collisions.
+
+**Specifications:**
+- **Node Name:** `obstacle_avoidance`
+- **Subscribed Topics:**
+  - `/fused_state` (custom_msgs/RobotState) - Sensor fusion output
+- **Published Topics:**
+  - `/safe_cmd_vel` (geometry_msgs/Twist) - Modified safe velocities
+  - `/avoidance/debug` (visualization_msgs/MarkerArray) - Debug visualization
+- **Parameters:**
+  - `safety_distance`: Minimum clearance (default: 0.5 m)
+  - `warning_distance`: Begin slowing distance (default: 1.0 m)
+  - `max_deceleration`: Emergency braking limit (default: 2.0 m/s²)
+  - `lateral_bias`: Preference for left/right avoidance (default: 0.0)
+
+**Algorithm Requirements:**
+- Implement Dynamic Window Approach (DWA) or Vector Field Histogram (VFH)
+- Consider robot kinematic constraints (differential drive)
+- Compute collision-free velocity candidates
+- Optimize for goal-directed motion while avoiding obstacles
+- Handle edge cases (dead-ends, narrow passages)
+- Publish debug markers showing considered trajectories
+
+**Performance Criteria:**
+- Zero collisions in standard test environments
+- Smooth velocity profiles (no oscillations)
+- Response time < 100ms from obstacle detection to avoidance
+- Success rate > 95% in randomized obstacle fields
+
+### 4. Velocity Arbiter (15 points)
+
+Create an arbiter that prioritizes velocity commands from different sources.
+
+**Specifications:**
+- **Node Name:** `velocity_arbiter`
+- **Subscribed Topics:**
+  - `/cmd_vel` (geometry_msgs/Twist) - Teleop commands
+  - `/safe_cmd_vel` (geometry_msgs/Twist) - Avoidance commands
+  - `/emergency_stop` (std_msgs/Bool) - E-stop signal
+- **Published Topics:**
+  - `/final_cmd_vel` (geometry_msgs/Twist) - Arbitrated output
+  - `/arbiter/active_source` (std_msgs/String) - Current controller
+
+**Arbitration Logic:**
+1. **Emergency Stop:** Highest priority - immediate zero velocities
+2. **Obstacle Avoidance:** Active when obstacles within warning distance
+3. **Teleoperation:** Default mode when safe
+4. **Timeout Protection:** Zero velocity if no recent commands (1 second)
+
+**Implementation:**
+- Smooth transitions between controllers
+- Hysteresis to prevent mode switching oscillations
+- Publish active controller for monitoring
+
+### 5. State Publisher and TF Tree (10 points)
+
+Implement state publishing and maintain the robot's TF tree.
+
+**Specifications:**
+- **Node Name:** `robot_state_publisher`
+- **Published Topics:**
+  - `/robot_description` (std_msgs/String) - URDF model
+  - `/joint_states` (sensor_msgs/JointState) - Joint positions
+- **TF Frames:**
+  - `odom` → `base_link` (from odometry)
+  - `base_link` → `laser_frame` (static, from URDF)
+  - `base_link` → `imu_link` (static, from URDF)
+
+**Requirements:**
+- Load URDF from package share directory
+- Publish TF transforms at 50 Hz
+- Ensure TF tree has no breaks or cycles
+- All timestamps use simulation or system time consistently
+
+### 6. Launch File Architecture (10 points)
+
+Create a comprehensive launch system with modular configuration.
+
+**Required Launch Files:**
+
+**main_launch.py:**
+```python
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument('robot_model', default_value='turtlebot3'),
+
+        IncludeLaunchDescription('sensors_launch.py'),
+        IncludeLaunchDescription('navigation_launch.py'),
+        IncludeLaunchDescription('visualization_launch.py'),
+    ])
+```
+
+**Launch File Requirements:**
+- Modular structure with separate files for sensors, navigation, visualization
+- Configurable parameters via command-line arguments
+- Conditional node launching based on robot model
+- Proper namespace and remapping configuration
+- Automatic RViz launch with custom config
+
+### 7. ROS Bag Recording and Analysis (5 points)
+
+Implement automated bag recording for system analysis.
+
+**Recording Requirements:**
+- Record all relevant topics during operation
+- Automatic file naming with timestamps
+- Maximum file size limits with splitting
+- Selective topic recording based on mode
+
+**Recorded Topics:**
+- `/cmd_vel`, `/safe_cmd_vel`, `/final_cmd_vel`
+- `/scan`, `/odom`, `/fused_state`
+- `/diagnostics`, `/tf`, `/tf_static`
+
+**Analysis Script:**
+Create a Python script (`analyze_bags.py`) that:
+- Computes average obstacle detection latency
+- Measures velocity command smoothness
+- Identifies emergency stop events
+- Generates performance plots (velocity profiles, obstacle distances)
+
+## Package Structure
+
+Your ROS 2 package must follow this organization:
+
+```
+mobile_robot_nav/
+├── CMakeLists.txt
+├── package.xml
+├── README.md
+├── config/
+│   ├── params.yaml
+│   ├── rviz_config.rviz
+│   └── sensors.yaml
+├── launch/
+│   ├── main_launch.py
+│   ├── sensors_launch.py
+│   ├── navigation_launch.py
+│   └── visualization_launch.py
+├── msg/
+│   └── RobotState.msg
+├── src/
+│   ├── teleop_controller.py
+│   ├── sensor_fusion.py
+│   ├── obstacle_avoidance.py
+│   ├── velocity_arbiter.py
+│   └── utils/
+│       ├── velocity_smoother.py
+│       └── transform_helpers.py
+├── test/
+│   ├── test_sensor_fusion.py
+│   ├── test_obstacle_avoidance.py
+│   └── test_integration.py
+├── urdf/
+│   └── robot.urdf.xacro
+└── scripts/
+    └── analyze_bags.py
+```
+
+## Grading Rubric
+
+### Functionality (40 points)
+
+| Component | Points | Criteria |
+|-----------|--------|----------|
+| Teleoperation Node | 15 | Smooth control, proper rate limiting, safety features |
+| Sensor Fusion | 25 | Accurate synchronization, robust obstacle detection, proper transforms |
+| Obstacle Avoidance | 25 | Collision-free navigation, smooth trajectories, edge case handling |
+| Velocity Arbiter | 15 | Correct prioritization, smooth transitions, timeout handling |
+| State Publisher | 10 | Valid TF tree, proper joint states, URDF loading |
+| Launch System | 10 | Modular structure, proper parameters, conditional launching |
+
+### Code Quality (30 points)
+
+| Aspect | Points | Criteria |
+|--------|--------|----------|
+| Architecture | 10 | Clean separation of concerns, modular design, proper use of ROS patterns |
+| Code Style | 8 | PEP 8 compliance, consistent naming, meaningful variable names |
+| Error Handling | 7 | Graceful failure modes, informative error messages, input validation |
+| Efficiency | 5 | Appropriate algorithms, no redundant computations, proper rate limiting |
+
+### Documentation (20 points)
+
+| Component | Points | Criteria |
+|-----------|--------|----------|
+| README | 8 | Installation instructions, usage examples, system requirements |
+| Code Comments | 5 | Docstrings for all functions, inline comments for complex logic |
+| API Documentation | 4 | Topics, services, parameters documented, message definitions explained |
+| Demo Video | 3 | Shows all functionality, clear audio narration, professional presentation |
+
+### Testing (10 points)
+
+| Component | Points | Criteria |
+|-----------|--------|----------|
+| Unit Tests | 5 | Coverage of core functions, edge cases, proper assertions |
+| Integration Tests | 3 | Multi-node testing, end-to-end scenarios, performance validation |
+| Test Documentation | 2 | Test descriptions, expected outcomes, running instructions |
+
+## Success Criteria
+
+Your project must meet these minimum requirements:
+
+### Core Functionality
+- [ ] Robot responds to teleoperation commands within 100ms
+- [ ] Sensor fusion publishes at consistent 20 Hz rate
+- [ ] Obstacle avoidance prevents collisions in 95% of test cases
+- [ ] Velocity arbiter correctly prioritizes safety over manual control
+- [ ] TF tree is valid with no breaks or timing errors
+
+### Performance Metrics
+- [ ] Maximum latency from sensor input to motor command: < 200ms
+- [ ] Velocity command smoothness: acceleration < 2 m/s²
+- [ ] CPU usage per node: < 15% on target hardware
+- [ ] Memory usage: < 100 MB total for all nodes
+- [ ] Successful navigation through obstacle course in < 2 minutes
+
+### Code Standards
+- [ ] All Python code passes `flake8` linting
+- [ ] Package builds without warnings using `colcon build`
+- [ ] All unit tests pass with `colcon test`
+- [ ] No hardcoded paths or machine-specific configurations
+- [ ] Proper use of ROS 2 lifecycle nodes for critical components
+
+## Submission Guidelines
+
+### Required Deliverables
+
+1. **Source Code Package**
+   - Complete ROS 2 package with all source files
+   - Properly configured `package.xml` and `CMakeLists.txt`
+   - All dependencies listed in `package.xml`
+
+2. **README.md** (minimum 2 pages)
+   - Project overview and objectives
+   - System architecture description
+   - Installation and build instructions
+   - Usage examples with command-line snippets
+   - Configuration parameters explanation
+   - Known limitations and future improvements
+
+3. **Demo Video** (5-7 minutes)
+   - Introduction to your system
+   - Live demonstration of teleoperation
+   - Obstacle avoidance in action
+   - RViz visualization showing sensor data
+   - Code walkthrough of key algorithms
+   - Upload to YouTube/Vimeo and provide link
+
+4. **Test Results**
+   - Output from `colcon test` showing all tests pass
+   - Performance metrics (latency, CPU, memory)
+   - ROS bag files from test runs (upload to cloud storage)
+
+5. **Analysis Report** (PDF, 3-5 pages)
+   - Methodology and algorithm choices
+   - Performance analysis with graphs
+   - Challenges encountered and solutions
+   - Comparison of expected vs actual results
+
+### Submission Format
+
+Create a submission package:
+```bash
+mobile_robot_nav_submission/
+├── mobile_robot_nav/          # Your ROS 2 package
+├── README.md                  # Main README
+├── ANALYSIS_REPORT.pdf
+├── TEST_RESULTS.txt
+├── DEMO_VIDEO_LINK.txt
+└── rosbags/                   # Sample bag files
+    ├── teleop_test.db3
+    └── obstacle_avoidance_test.db3
+```
+
+Compress as: `lastname_firstname_ros2_project.zip`
+
+## Common Pitfalls and Debugging Tips
+
+### 1. TF Lookup Failures
+**Problem:** `LookupException: Frame does not exist`
+- **Cause:** TF transforms not published or timing issues
+- **Solution:** Use `ros2 run tf2_tools view_frames` to visualize TF tree, check timestamp consistency
+
+### 2. Message Synchronization Issues
+**Problem:** Sensor fusion produces stale or mismatched data
+- **Cause:** Improper use of message filters or QoS settings
+- **Solution:** Use `ApproximateTimeSynchronizer` with appropriate slop, verify QoS profiles match
+
+### 3. Velocity Oscillations
+**Problem:** Robot wobbles or oscillates during obstacle avoidance
+- **Cause:** Insufficient velocity smoothing or PID tuning
+- **Solution:** Implement acceleration limits, add hysteresis to switching logic
+
+### 4. Node Communication Drops
+**Problem:** Intermittent topic communication failures
+- **Cause:** QoS mismatch between publisher and subscriber
+- **Solution:** Use `RELIABLE` QoS for critical topics, increase queue depths
+
+### 5. High CPU Usage
+**Problem:** Nodes consuming excessive CPU resources
+- **Cause:** Inefficient algorithms or excessive publication rates
+- **Solution:** Profile with `ros2 doctor`, reduce unnecessary computations, use timers instead of spin loops
+
+### Debugging Commands
+```bash
+# Check node status
+ros2 node list
+ros2 node info /sensor_fusion
+
+# Monitor topic rates
+ros2 topic hz /scan
+ros2 topic hz /cmd_vel
+
+# Echo topic data
+ros2 topic echo /fused_state
+
+# Check TF tree
+ros2 run tf2_tools view_frames
+ros2 run tf2_ros tf2_echo odom base_link
+
+# Performance monitoring
+ros2 doctor
+ros2 daemon stop && ros2 daemon start  # Reset daemon if stuck
+```
+
+## Bonus Challenges (Extra Credit)
+
+### Advanced Features (+10 points each)
+
+1. **Path Planning Integration**
+   - Implement A* or RRT path planning
+   - Integrate with obstacle avoidance for global navigation
+   - Visualize planned paths in RViz
+
+2. **Machine Learning Enhancement**
+   - Train a neural network for obstacle detection
+   - Use reinforcement learning for navigation policy
+   - Compare performance with classical approach
+
+3. **Multi-Robot Coordination**
+   - Extend to support 2+ robots in same environment
+   - Implement collision avoidance between robots
+   - Coordinate goals using central planner
+
+4. **Real Hardware Deployment**
+   - Deploy on actual robot platform (TurtleBot, custom build)
+   - Handle real sensor noise and calibration
+   - Document hardware-specific challenges
+
+5. **Performance Optimization**
+   - Achieve < 50ms latency end-to-end
+   - Implement multi-threaded executors
+   - Optimize obstacle detection algorithms
+
+## Additional Resources
+
+### ROS 2 Documentation
+- [ROS 2 Foxy/Humble Documentation](https://docs.ros.org/)
+- [Navigation2 Stack](https://navigation.ros.org/)
+- [ROS 2 Design Patterns](https://docs.ros.org/en/humble/Concepts/About-ROS-2-Design-Principles.html)
+
+### Algorithm References
+- Dynamic Window Approach (DWA): Fox et al., 1997
+- Vector Field Histogram (VFH): Borenstein & Koren, 1991
+- Extended Kalman Filter for Sensor Fusion: Thrun et al., Probabilistic Robotics
+
+### Development Tools
+- [RQT Tools](https://docs.ros.org/en/humble/Concepts/About-RQt.html) - ROS visualization and debugging
+- [PlotJuggler](https://github.com/facontidavide/PlotJuggler) - Real-time plotting of ROS topics
+- [Foxglove Studio](https://foxglove.dev/) - Modern robotics visualization
+
+### Example Projects
+- [TurtleBot3 Navigation](https://github.com/ROBOTIS-GIT/turtlebot3)
+- [Nav2 Demos](https://github.com/ros-planning/navigation2/tree/main/nav2_bringup)
+
+## Evaluation Timeline
+
+- **Week 1-2:** Architecture design, teleoperation, and sensor fusion implementation
+- **Week 3:** Obstacle avoidance algorithm development and tuning
+- **Week 4:** Integration, testing, documentation, and video creation
+
+**Submission Deadline:** 4 weeks from project start
+**Late Policy:** -10% per day, maximum 3 days
+
+---
+
+**Questions?** Contact the course instructor or post in the discussion forum. Good luck!

@@ -1,0 +1,267 @@
+---
+title: Learning Outcomes
+description: Detailed skills and competencies you'll master through this textbook
+sidebar_position: 3
+---
+
+# Learning Outcomes
+
+By completing this textbook, you will acquire practical skills and theoretical knowledge to design, implement, and deploy autonomous humanoid robotics systems. This page details the specific competencies you'll master.
+
+## Overall Program Outcomes
+
+Upon completion of the 13-week curriculum, you will be able to:
+
+### **1. Design Physical AI Systems**
+- Define the digital-to-physical continuum and position robotics within the AI landscape
+- Analyze trade-offs between centralized and distributed robot architectures
+- Select appropriate sensors and actuators for specific robotic tasks
+- Design systems that handle uncertainty, real-time constraints, and safety requirements
+
+### **2. Develop Production-Grade Robotics Software**
+- Write modular, testable ROS 2 nodes in Python and C++
+- Implement publish/subscribe, services, and actions for robot communication
+- Create launch configurations for complex multi-node systems
+- Debug distributed systems using ROS 2 command-line tools
+
+### **3. Simulate Robotic Systems**
+- Model robots using URDF and SDF formats with accurate physics
+- Create high-fidelity simulation environments in Gazebo and Isaac Sim
+- Integrate simulated sensors (cameras, LiDAR, IMU) with perception pipelines
+- Understand and mitigate the sim-to-real transfer gap
+
+### **4. Implement Perception Pipelines**
+- Build GPU-accelerated computer vision pipelines using NVIDIA Isaac
+- Implement object detection, pose estimation, and semantic segmentation
+- Deploy SLAM algorithms for localization and mapping
+- Fuse multi-sensor data for robust state estimation
+
+### **5. Control Humanoid Robots**
+- Solve forward and inverse kinematics for multi-DOF manipulators
+- Implement whole-body controllers for coordinated motion
+- Design bipedal locomotion gaits using ZMP stability criteria
+- Execute grasp planning and manipulation tasks
+
+### **6. Integrate Conversational AI**
+- Connect large language models (GPT-4, LLaMA) to robotic systems
+- Implement speech recognition (Whisper) and text-to-speech pipelines
+- Design multimodal interaction systems combining vision and language
+- Manage context-aware conversations for task-oriented dialogue
+
+### **7. Deploy Autonomous Systems**
+- Transfer learned behaviors from simulation to physical hardware
+- Tune hyperparameters for real-world deployment
+- Monitor system health and performance in production
+- Implement fail-safe mechanisms for safety-critical applications
+
+---
+
+## Module-Specific Learning Outcomes
+
+### **Weeks 1-2: Physical AI Foundations**
+
+**Knowledge**:
+- Explain the difference between digital AI and Physical AI
+- Identify key challenges in robot embodiment (uncertainty, real-time, safety)
+- Describe the humanoid robotics landscape and state-of-the-art systems
+
+**Skills**:
+- Classify sensors by modality (vision, proximity, proprioception)
+- Select actuators based on torque, speed, and precision requirements
+- Evaluate computational platforms for robotics (Jetson, embedded systems)
+
+**Application**:
+- Design a sensor suite for a mobile manipulation task
+- Justify hardware choices for a given robot application
+- Recognize trade-offs between cost, performance, and complexity
+
+---
+
+### **Module 1: ROS 2 Fundamentals (Weeks 3-5)**
+
+**Knowledge**:
+- Explain ROS 2 architecture and its advantages over ROS 1
+- Understand publish/subscribe, services, and actions communication patterns
+- Describe Quality of Service (QoS) policies and their impact on reliability
+
+**Skills**:
+- Write ROS 2 nodes using rclpy (Python) and rclcpp (C++)
+- Create custom message and service definitions
+- Use launch files to orchestrate multi-node systems
+- Debug nodes using `ros2 topic`, `ros2 service`, and `ros2 node` tools
+
+**Application**:
+- Build a sensor fusion node that combines camera and LiDAR data
+- Implement a service-based planner that responds to navigation requests
+- Configure QoS policies for real-time sensor streaming
+
+**Assessment Project**:
+- Multi-node ROS 2 application for a simulated mobile robot with:
+  - Teleoperation node (keyboard control)
+  - Sensor fusion node (camera + odometry)
+  - Obstacle avoidance node (reactive control)
+  - Visualization in RViz
+
+---
+
+### **Module 2: Robot Simulation (Weeks 6-7)**
+
+**Knowledge**:
+- Understand Gazebo architecture (client, server, plugins)
+- Explain URDF vs. SDF formats and when to use each
+- Describe physics engines (ODE, Bullet, DART) and their characteristics
+
+**Skills**:
+- Create simulation worlds with static and dynamic objects
+- Model robots using URDF with links, joints, and sensors
+- Write Gazebo plugins for custom sensor/actuator behavior
+- Integrate Gazebo simulations with ROS 2
+
+**Application**:
+- Build a warehouse environment with obstacles and targets
+- Model a mobile manipulator with differential drive and a 5-DOF arm
+- Simulate noisy sensor readings (Gaussian noise on cameras, ray noise on LiDAR)
+
+**Assessment Project**:
+- Complete Gazebo simulation of a mobile manipulator:
+  - Differential drive base with odometry
+  - RGB-D camera and 2D LiDAR
+  - 5-DOF manipulator arm
+  - Grasping plugin for object interaction
+  - ROS 2 control interface
+
+---
+
+### **Module 3: NVIDIA Isaac Platform (Weeks 8-10)**
+
+**Knowledge**:
+- Explain Isaac Sim's photorealistic rendering and GPU-accelerated physics
+- Understand reinforcement learning for robotics (rewards, policies, value functions)
+- Describe sim-to-real transfer techniques (domain randomization, reality gap)
+
+**Skills**:
+- Set up Isaac Sim and connect it to ROS 2
+- Implement GPU-accelerated perception pipelines (object detection, pose estimation)
+- Write RL training scripts using Isaac Gym
+- Transfer policies from simulation to physical robots (if hardware available)
+
+**Application**:
+- Train a PPO policy for a quadruped to walk on flat terrain
+- Fine-tune a YOLO model for custom object detection in Isaac Sim
+- Implement domain randomization for robust policy learning
+
+**Assessment Project**:
+- Train an RL-based manipulation policy:
+  - Task: Pick and place objects from randomized positions
+  - Environment: Isaac Sim with Franka Emika Panda arm
+  - Algorithm: PPO or SAC
+  - Success metric: >80% success rate on unseen object configurations
+  - Bonus: Transfer to real Franka arm (if available)
+
+---
+
+### **Module 4: Humanoid Development (Weeks 11-13)**
+
+#### **Week 11: Kinematics & Dynamics**
+
+**Knowledge**:
+- Define forward kinematics (FK) and inverse kinematics (IK)
+- Explain Jacobians and their role in velocity control
+- Understand rigid body dynamics (mass, inertia, forces)
+
+**Skills**:
+- Compute FK for a 6-DOF manipulator using Denavit-Hartenberg parameters
+- Solve IK using numerical methods (Jacobian pseudo-inverse, optimization)
+- Implement whole-body controllers that coordinate multiple limbs
+
+**Application**:
+- Calculate reachable workspace for a humanoid arm
+- Plan collision-free motion using IK + path planning
+- Control a simulated humanoid to reach and grasp objects
+
+#### **Week 12: Bipedal Locomotion**
+
+**Knowledge**:
+- Define Zero Moment Point (ZMP) and its role in balance
+- Explain gait patterns (walking, running, step climbing)
+- Understand center of mass (CoM) trajectory planning
+
+**Skills**:
+- Implement ZMP-based stability criteria
+- Generate footstep plans for walking on flat and uneven terrain
+- Design feedback controllers for disturbance rejection (push recovery)
+
+**Application**:
+- Simulate a humanoid walking 10 meters on flat ground
+- Implement stair climbing with adaptive footstep placement
+- Test push recovery by applying external forces
+
+#### **Week 13: Conversational Robotics**
+
+**Knowledge**:
+- Explain how LLMs can be integrated with robotic systems
+- Understand speech recognition pipelines (audio → text)
+- Describe text-to-speech synthesis for natural robot voices
+
+**Skills**:
+- Connect OpenAI GPT-4 API to ROS 2 for natural language understanding
+- Implement real-time speech recognition using OpenAI Whisper
+- Design state machines for context-aware conversation management
+
+**Application**:
+- Build a voice-controlled robot that responds to commands like:
+  - "Pick up the red block"
+  - "Move to the kitchen"
+  - "Tell me what you see"
+- Maintain conversation context across multiple interactions
+- Handle ambiguous queries with clarification questions
+
+---
+
+## Capstone Project Outcomes
+
+**Upon completing the capstone project, you will have demonstrated**:
+
+1. **System Integration**: Combining perception, planning, control, and HRI in one system
+2. **Problem Solving**: Debugging complex multi-component failures
+3. **Technical Communication**: Documenting design decisions and trade-offs
+4. **Real-World Deployment**: Handling edge cases and failure modes
+5. **Creativity**: Implementing novel solutions beyond template code
+
+---
+
+## Skills Matrix
+
+| Skill Category | Beginner (Weeks 1-5) | Intermediate (Weeks 6-10) | Advanced (Weeks 11-13) |
+|----------------|---------------------|---------------------------|------------------------|
+| **Software** | Python, ROS 2 basics | ROS 2 advanced, C++ | Whole-body control, LLM integration |
+| **Perception** | Sensor fusion | GPU vision, SLAM | Multimodal (vision + language) |
+| **Control** | PID control | MPC, trajectory optimization | ZMP balance, gait generation |
+| **Simulation** | Gazebo basics | Isaac Sim, domain randomization | Sim-to-real transfer |
+| **AI/ML** | Supervised learning | RL for robotics | Policy fine-tuning, imitation learning |
+| **Hardware** | Sensor/actuator selection | Embedded systems (Jetson) | Real robot deployment |
+
+---
+
+## Career Readiness
+
+**After completing this course, you'll be prepared for roles in**:
+
+- Robotics Software Engineer
+- Perception Engineer (Computer Vision + Robotics)
+- Controls Engineer (Manipulation, Locomotion)
+- AI/ML Engineer (Reinforcement Learning, LLMs for Robots)
+- Robotics Researcher (Academia, Industry R&D)
+
+**Certifications to pursue next**:
+- ROS 2 Developer Certification
+- NVIDIA Isaac Sim Certification
+- AWS RoboMaker Specialist
+
+---
+
+## Next Steps
+
+👉 **[Why Physical AI?](/docs/00-introduction/why-physical-ai)** — Understand the impact of embodied intelligence
+
+👉 **[Start Week 1](/docs/01-physical-ai-intro/)** — Begin your learning journey!

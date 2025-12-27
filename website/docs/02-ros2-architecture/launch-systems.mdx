@@ -1,0 +1,510 @@
+---
+title: "Launch Systems"
+description: Orchestrating multiple nodes with ROS 2 launch files
+sidebar_position: 5
+---
+
+# Launch Systems
+
+## 🚀 What Are Launch Files?
+
+**Launch files** allow you to start multiple nodes, set parameters, remap topics, and configure your entire robot system with a single command. Think of them as "startup scripts" for your robot.
+
+**Benefits:**
+- Start entire robot system with one command
+- Configure parameters for multiple nodes
+- Manage node dependencies and ordering
+- Include other launch files for modularity
+- Conditional launching based on arguments
+
+## 🏗️ Launch File Structure
+
+ROS 2 launch files are written in Python (`.launch.py`), providing full programming capabilities.
+
+### Basic Launch File Template
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='my_package',
+            executable='my_node',
+            name='my_node_instance',
+            output='screen',
+            parameters=[{
+                'param1': 10,
+                'param2': 'value'
+            }]
+        ),
+    ])
+```
+
+**Running the launch file:**
+```bash
+ros2 launch my_package my_launch.launch.py
+```
+
+## 📝 Common Launch Actions
+
+### 1. Launching Nodes
+
+```python
+from launch_ros.actions import Node
+
+Node(
+    package='robot_control',
+    executable='controller',
+    name='robot_controller',
+    output='screen',  # Show logs in terminal
+    parameters=[{
+        'max_speed': 2.0,
+        'enable_safety': True
+    }],
+    remappings=[
+        ('/input_topic', '/robot/sensors'),
+        ('/output_topic', '/robot/commands')
+    ],
+    arguments=['--ros-args', '--log-level', 'info']
+)
+```
+
+### 2. Setting Parameters from YAML
+
+**`config/robot_params.yaml`:**
+```yaml
+robot_controller:
+  ros__parameters:
+    max_speed: 2.5
+    max_acceleration: 1.0
+    wheel_radius: 0.1
+    wheel_base: 0.5
+```
+
+**Launch file:**
+```python
+import os
+from ament_index_python.packages import get_package_share_directory
+
+config_file = os.path.join(
+    get_package_share_directory('my_package'),
+    'config',
+    'robot_params.yaml'
+)
+
+Node(
+    package='robot_control',
+    executable='controller',
+    name='robot_controller',
+    parameters=[config_file]
+)
+```
+
+### 3. Including Other Launch Files
+
+```python
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+IncludeLaunchDescription(
+    PythonLaunchDescriptionSource([
+        get_package_share_directory('gazebo_ros'),
+        '/launch/gazebo.launch.py'
+    ]),
+    launch_arguments={
+        'world': 'my_world.world',
+        'paused': 'false'
+    }.items()
+)
+```
+
+### 4. Declaring Launch Arguments
+
+```python
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+
+def generate_launch_description():
+    # Declare arguments
+    robot_name_arg = DeclareLaunchArgument(
+        'robot_name',
+        default_value='my_robot',
+        description='Name of the robot'
+    )
+
+    use_sim_time_arg = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description='Use simulation time'
+    )
+
+    # Use argument values
+    robot_name = LaunchConfiguration('robot_name')
+    use_sim_time = LaunchConfiguration('use_sim_time')
+
+    return LaunchDescription([
+        robot_name_arg,
+        use_sim_time_arg,
+
+        Node(
+            package='my_package',
+            executable='my_node',
+            name=robot_name,
+            parameters=[{
+                'use_sim_time': use_sim_time
+            }]
+        )
+    ])
+```
+
+**Passing arguments:**
+```bash
+ros2 launch my_package my_launch.launch.py robot_name:=robot_001 use_sim_time:=true
+```
+
+### 5. Conditional Execution
+
+```python
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration
+
+use_rviz = LaunchConfiguration('use_rviz')
+
+# Launch RViz only if use_rviz is true
+Node(
+    package='rviz2',
+    executable='rviz2',
+    name='rviz2',
+    condition=IfCondition(use_rviz),
+    arguments=['-d', rviz_config_file]
+)
+
+# Launch without condition
+Node(
+    package='robot_state_publisher',
+    executable='robot_state_publisher',
+    name='robot_state_publisher',
+    condition=UnlessCondition(use_rviz)  # Launch UNLESS use_rviz is true
+)
+```
+
+## 🔄 Advanced Launch Patterns
+
+### Example 1: Robot Bringup Launch File
+
+Complete launch file for starting a robot system:
+
+```python
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Package directories
+    pkg_share = get_package_share_directory('my_robot_bringup')
+    gazebo_ros_share = get_package_share_directory('gazebo_ros')
+
+    # Paths to config files
+    robot_description = os.path.join(pkg_share, 'urdf', 'robot.urdf.xacro')
+    rviz_config = os.path.join(pkg_share, 'rviz', 'robot.rviz')
+    controller_config = os.path.join(pkg_share, 'config', 'controllers.yaml')
+
+    # Declare launch arguments
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_rviz = LaunchConfiguration('use_rviz')
+    world = LaunchConfiguration('world')
+
+    declare_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='true',
+        description='Use simulation time'
+    )
+
+    declare_use_rviz = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='true',
+        description='Launch RViz'
+    )
+
+    declare_world = DeclareLaunchArgument(
+        'world',
+        default_value=os.path.join(pkg_share, 'worlds', 'empty.world'),
+        description='World file for Gazebo'
+    )
+
+    # Launch Gazebo
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(gazebo_ros_share, 'launch', 'gazebo.launch.py')
+        ]),
+        launch_arguments={'world': world}.items()
+    )
+
+    # Robot State Publisher
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': robot_description,
+            'use_sim_time': use_sim_time
+        }]
+    )
+
+    # Joint State Publisher (for simulation)
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+
+    # Spawn robot in Gazebo
+    spawn_robot = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=[
+            '-entity', 'my_robot',
+            '-topic', 'robot_description',
+            '-x', '0', '-y', '0', '-z', '0.5'
+        ],
+        output='screen'
+    )
+
+    # Controller Manager
+    controller_manager = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[controller_config, {'use_sim_time': use_sim_time}],
+        output='screen'
+    )
+
+    # RViz
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config],
+        condition=IfCondition(use_rviz),
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+
+    return LaunchDescription([
+        declare_use_sim_time,
+        declare_use_rviz,
+        declare_world,
+        gazebo,
+        robot_state_publisher,
+        joint_state_publisher,
+        spawn_robot,
+        controller_manager,
+        rviz
+    ])
+```
+
+**Running:**
+```bash
+ros2 launch my_robot_bringup robot.launch.py
+
+# With custom arguments
+ros2 launch my_robot_bringup robot.launch.py \
+  use_rviz:=false \
+  world:=/path/to/custom.world
+```
+
+### Example 2: Event Handlers
+
+Execute actions based on events:
+
+```python
+from launch.actions import RegisterEventHandler, LogInfo
+from launch.event_handlers import OnProcessStart, OnProcessExit
+
+# Start node B after node A has started
+node_a = Node(
+    package='my_package',
+    executable='node_a',
+    name='node_a'
+)
+
+node_b = Node(
+    package='my_package',
+    executable='node_b',
+    name='node_b'
+)
+
+on_node_a_start = RegisterEventHandler(
+    OnProcessStart(
+        target_action=node_a,
+        on_start=[
+            LogInfo(msg='Node A started, now starting Node B'),
+            node_b
+        ]
+    )
+)
+
+# Restart node C if it exits
+node_c = Node(
+    package='my_package',
+    executable='node_c',
+    name='node_c'
+)
+
+on_node_c_exit = RegisterEventHandler(
+    OnProcessExit(
+        target_action=node_c,
+        on_exit=[
+            LogInfo(msg='Node C exited, restarting...'),
+            node_c
+        ]
+    )
+)
+```
+
+### Example 3: Dynamic Node Composition
+
+```python
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
+# Launch multiple nodes in a single process (reduces overhead)
+container = ComposableNodeContainer(
+    name='my_container',
+    namespace='',
+    package='rclcpp_components',
+    executable='component_container',
+    composable_node_descriptions=[
+        ComposableNode(
+            package='camera_driver',
+            plugin='CameraDriver::CameraDriverNode',
+            name='camera_driver',
+            parameters=[{'fps': 30}]
+        ),
+        ComposableNode(
+            package='image_processor',
+            plugin='ImageProcessor::ImageProcessorNode',
+            name='image_processor'
+        )
+    ],
+    output='screen'
+)
+```
+
+## 📦 Launch File Organization
+
+### Recommended Structure
+
+```
+my_robot_bringup/
+├── launch/
+│   ├── robot.launch.py           # Main launch file
+│   ├── gazebo.launch.py          # Simulation launch
+│   ├── hardware.launch.py        # Real hardware launch
+│   ├── navigation.launch.py      # Navigation stack
+│   └── manipulation.launch.py    # Manipulation stack
+├── config/
+│   ├── controllers.yaml          # Controller params
+│   ├── navigation.yaml           # Nav2 params
+│   └── sensors.yaml              # Sensor params
+├── rviz/
+│   └── robot.rviz                # RViz config
+└── worlds/
+    ├── empty.world               # Gazebo worlds
+    └── warehouse.world
+```
+
+### Modular Launch Pattern
+
+**`launch/robot.launch.py`:**
+```python
+def generate_launch_description():
+    return LaunchDescription([
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                get_package_share_directory('my_robot_bringup'),
+                '/launch/gazebo.launch.py'
+            ])
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                get_package_share_directory('my_robot_bringup'),
+                '/launch/navigation.launch.py'
+            ])
+        )
+    ])
+```
+
+## 🐛 Debugging Launch Files
+
+### Enable Launch Debugging
+
+```bash
+ros2 launch my_package my_launch.launch.py --debug
+```
+
+### Common Issues and Solutions
+
+**1. Node not found**
+```python
+# Solution: Verify package and executable names
+ros2 pkg executables my_package
+```
+
+**2. Parameter file not found**
+```python
+# Solution: Use ament_index to find package
+from ament_index_python.packages import get_package_share_directory
+
+config_file = os.path.join(
+    get_package_share_directory('my_package'),
+    'config',
+    'params.yaml'
+)
+```
+
+**3. Nodes start in wrong order**
+```python
+# Solution: Use event handlers
+RegisterEventHandler(
+    OnProcessStart(
+        target_action=first_node,
+        on_start=[second_node]
+    )
+)
+```
+
+## 🎯 Best Practices
+
+1. **Use Launch Arguments**: Make launch files configurable
+2. **Load from YAML**: Keep parameters in separate files
+3. **Modular Launch Files**: Break complex systems into modules
+4. **Document Arguments**: Add descriptions to all arguments
+5. **Use Conditions**: Enable/disable features at launch time
+6. **Version Control Configs**: Track parameter files in git
+7. **Test Launch Files**: Verify they work before deploying
+
+## 🎯 Self-Assessment Questions
+
+1. What is the purpose of a launch file in ROS 2?
+2. How do you pass command-line arguments to a launch file?
+3. What is the difference between `IncludeLaunchDescription` and directly launching nodes?
+4. How would you conditionally launch RViz only in simulation mode?
+5. What is node composition, and when should you use it?
+
+## 📚 Additional Resources
+
+- [ROS 2 Launch System](https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Launch-Main.html)
+- [Launch File Examples](https://github.com/ros2/launch_ros/tree/humble/launch_ros/examples)
+- [Launch File Architecture](https://design.ros2.org/articles/roslaunch.html)
+
+---
+
+**Previous**: [← QoS Policies](./qos-policies.mdx) | **Next**: [Practical Example →](./practical-example.mdx)

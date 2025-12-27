@@ -1,0 +1,583 @@
+---
+title: Evaluation Rubric
+description: Detailed grading criteria for capstone project
+sidebar_position: 4
+---
+
+# Capstone Project Evaluation Rubric
+
+Comprehensive grading criteria for all project components.
+
+---
+
+## Overall Score Distribution
+
+| Component | Base Points | Bonus Points | Total Possible |
+|-----------|-------------|--------------|----------------|
+| Core Functionality | 100 | — | 100 |
+| Code Quality | 10 | — | 10 |
+| Documentation | 20 | — | 20 |
+| Bonus Features | — | 30 | 30 |
+| **Total** | **130** | **30** | **160** |
+
+**Final Grade Calculation**: `min(Base Score + Bonus, 100%)`
+
+---
+
+## Part 1: Core Functionality (100 points)
+
+### 1.1 Autonomous Navigation (20 points)
+
+#### Excellent (18-20 points)
+- ✅ SLAM creates accurate, detailed maps
+- ✅ Localization error `<`5cm consistently
+- ✅ Navigates 10+ meters successfully in cluttered environment
+- ✅ Avoids both static and dynamic obstacles reliably
+- ✅ Reaches goals within 5cm accuracy `>`95% of the time
+- ✅ Replanning works smoothly when obstacles appear
+- ✅ No collisions during demonstrations
+
+#### Good (14-17 points)
+- ✅ SLAM works but map has minor artifacts
+- ✅ Localization error `<`10cm
+- ✅ Navigates successfully in moderately complex environments
+- ✅ Avoids static obstacles reliably, struggles with dynamic ones
+- ✅ Goal accuracy within 10cm `>`80% of the time
+- ✅ Occasional replanning delays (`<`2 seconds)
+- ✅ Rare minor collisions (low speed, no damage)
+
+#### Acceptable (10-13 points)
+- ✅ Basic SLAM functionality working
+- ✅ Localization error `<`20cm
+- ✅ Can navigate in simple environments (few obstacles)
+- ✅ Avoids large static obstacles
+- ✅ Reaches goal within 20cm `>`60% of the time
+- ✅ Replanning takes `>`2 seconds
+- ✅ Occasional collisions at low speed
+
+#### Needs Improvement (`<`10 points)
+- ❌ SLAM frequently fails or produces poor maps
+- ❌ Localization error `>`20cm
+- ❌ Cannot reliably navigate even simple paths
+- ❌ Frequent collisions
+- ❌ Success rate `<`60%
+
+**Evaluation Criteria**:
+- **Map Quality** (5 points): Accuracy, completeness, consistency
+- **Path Planning** (5 points): Optimality, smoothness, safety margins
+- **Obstacle Avoidance** (5 points): Static and dynamic obstacle handling
+- **Success Rate** (5 points): Percentage of successful navigation attempts
+
+---
+
+### 1.2 Vision-Based Manipulation (25 points)
+
+#### Excellent (23-25 points)
+- ✅ Detects 5+ object classes with `>`90% accuracy
+- ✅ Real-time performance (`>`15 FPS)
+- ✅ 6D pose estimation error `<`1cm translation, `<`3° rotation
+- ✅ Grasp success rate `>`85% over 20+ trials
+- ✅ Handles varied object sizes, shapes, orientations
+- ✅ Smooth, collision-free arm trajectories
+- ✅ Robust to partial occlusions and lighting changes
+
+#### Good (19-22 points)
+- ✅ Detects 3-5 classes with `>`80% accuracy
+- ✅ Runs at `>`10 FPS
+- ✅ Pose estimation error `<`2cm, `<`5°
+- ✅ Grasp success rate `>`70%
+- ✅ Works with standard objects (cubes, cylinders, simple shapes)
+- ✅ Occasional trajectory stuttering but no collisions
+- ✅ Works in controlled lighting
+
+#### Acceptable (15-18 points)
+- ✅ Detects 2-3 classes with `>`70% accuracy
+- ✅ Runs at 5-10 FPS
+- ✅ Pose estimation error `<`5cm, `<`10°
+- ✅ Grasp success rate `>`50%
+- ✅ Limited to specific object types
+- ✅ Some unsuccessful grasp attempts
+- ✅ Requires good lighting conditions
+
+#### Needs Improvement (`<`15 points)
+- ❌ Detection accuracy `<`70%
+- ❌ Runs too slowly for real-time use
+- ❌ Poor pose estimation
+- ❌ Grasp success rate `<`50%
+- ❌ Frequent collisions or failures
+
+**Evaluation Criteria**:
+- **Detection** (7 points): Accuracy, speed, robustness
+- **Pose Estimation** (6 points): Translation and rotation errors
+- **Grasp Planning** (6 points): Success rate, safety
+- **Trajectory Execution** (6 points): Smoothness, collision avoidance
+
+---
+
+### 1.3 Bipedal Locomotion (20 points)
+
+#### Excellent (18-20 points)
+- ✅ Stable walking on flat ground at variable speeds (0.1-1.0 m/s)
+- ✅ Climbs 3+ stairs (15-20cm height) without falls
+- ✅ Maintains balance during arm movements (reaching, carrying)
+- ✅ Recovers from small external perturbations
+- ✅ Smooth gait transitions (start, stop, turn)
+- ✅ No falls during 10+ minute continuous operation
+- ✅ Natural-looking gait pattern
+
+#### Good (14-17 points)
+- ✅ Stable walking at fixed speed (~0.3 m/s)
+- ✅ Climbs 3 stairs with careful tuning
+- ✅ Can balance while stationary during manipulation
+- ✅ Occasional balance corrections visible
+- ✅ Some stuttering during gait transitions
+- ✅ No falls during 5-minute operation
+- ✅ Functional but robotic-looking gait
+
+#### Acceptable (10-13 points)
+- ✅ Can walk short distances (2-5 meters) on flat ground
+- ✅ Climbs 1-2 stairs with difficulty
+- ✅ Must stop walking before manipulating
+- ✅ Visible instability, requires conservative speeds
+- ✅ Abrupt gait transitions
+- ✅ Occasional falls but recoverable
+
+#### Needs Improvement (`<`10 points)
+- ❌ Cannot walk reliably even on flat ground
+- ❌ Cannot climb stairs
+- ❌ Falls frequently
+- ❌ Unstable during manipulation
+
+**Evaluation Criteria**:
+- **Walking Stability** (7 points): Balance, speed range, smoothness
+- **Stair Climbing** (6 points): Number of steps, confidence, success rate
+- **Balance During Tasks** (4 points): Manipulation while balancing
+- **Robustness** (3 points): Recovery from perturbations
+
+---
+
+### 1.4 Conversational Interaction (20 points)
+
+#### Excellent (18-20 points)
+- ✅ Recognizes 10+ command types with `>`95% accuracy
+- ✅ Handles natural language variations ("get the cup" vs "pick up the mug")
+- ✅ Context-aware responses (remembers previous commands)
+- ✅ Natural, clear TTS voice
+- ✅ Low latency (`<`1 second from voice to action)
+- ✅ Provides helpful feedback on task progress
+- ✅ Gracefully handles unrecognized commands
+
+#### Good (14-17 points)
+- ✅ Recognizes 8-10 commands with `>`90% accuracy
+- ✅ Handles some variations in phrasing
+- ✅ Basic context awareness
+- ✅ Clear but robotic TTS
+- ✅ Response latency 1-2 seconds
+- ✅ Acknowledges commands but minimal feedback
+- ✅ Reports when command not understood
+
+#### Acceptable (10-13 points)
+- ✅ Recognizes 6-8 commands with `>`80% accuracy
+- ✅ Requires specific phrasing
+- ✅ No context retention
+- ✅ Functional TTS (understandable but mechanical)
+- ✅ Response latency 2-3 seconds
+- ✅ Basic acknowledgments only
+- ✅ Sometimes fails silently on unrecognized commands
+
+#### Needs Improvement (`<`10 points)
+- ❌ Recognizes `<`6 commands
+- ❌ Accuracy `<`80%
+- ❌ Latency `>`3 seconds
+- ❌ Poor TTS quality
+- ❌ Frequent misunderstandings
+
+**Evaluation Criteria**:
+- **Speech Recognition** (6 points): Accuracy, speed, noise robustness
+- **Language Understanding** (6 points): LLM integration, intent parsing
+- **Response Quality** (4 points): TTS naturalness, feedback usefulness
+- **Command Coverage** (4 points): Number and variety of supported commands
+
+---
+
+### 1.5 System Integration (15 points)
+
+#### Excellent (14-15 points)
+- ✅ Single launch file starts entire system reliably
+- ✅ All modules communicate seamlessly
+- ✅ Graceful error handling (no crashes on failures)
+- ✅ System runs in real-time (latency `<`500ms)
+- ✅ Comprehensive diagnostics and monitoring
+- ✅ Can switch between simulation and hardware modes
+- ✅ Automatic recovery from common failures
+
+#### Good (11-13 points)
+- ✅ Launch file works after minor manual steps
+- ✅ Modules communicate with occasional hiccups
+- ✅ Basic error handling (logs errors, may crash)
+- ✅ Mostly real-time with occasional lags
+- ✅ Basic status monitoring
+- ✅ Simulation mode fully functional
+- ✅ Manual recovery from failures
+
+#### Acceptable (8-10 points)
+- ✅ Multiple launch files needed
+- ✅ Communication works but with noticeable delays
+- ✅ Minimal error handling
+- ✅ Latency sometimes `>`500ms
+- ✅ Limited monitoring
+- ✅ Works in simulation only
+
+#### Needs Improvement (`<`8 points)
+- ❌ Cannot launch system reliably
+- ❌ Modules don't communicate properly
+- ❌ Frequent crashes
+- ❌ Unacceptable latency
+- ❌ No monitoring or error handling
+
+**Evaluation Criteria**:
+- **Launch System** (4 points): Ease of startup, reliability
+- **Communication** (4 points): ROS 2 topics/services/actions
+- **Error Handling** (4 points): Graceful failures, recovery
+- **Performance** (3 points): Real-time operation, resource usage
+
+---
+
+## Part 2: Code Quality (10 points)
+
+### Excellent (9-10 points)
+- ✅ Modular, well-organized code structure
+- ✅ Follows ROS 2 best practices and conventions
+- ✅ Comprehensive docstrings for all functions/classes
+- ✅ Meaningful variable and function names
+- ✅ Consistent code style (formatted with black/clang-format)
+- ✅ No code duplication
+- ✅ Proper error handling throughout
+- ✅ Type hints (Python) or strong typing (C++)
+
+### Good (7-8 points)
+- ✅ Mostly modular with some coupling
+- ✅ Generally follows conventions
+- ✅ Most functions have docstrings
+- ✅ Clear naming (with a few exceptions)
+- ✅ Mostly consistent style
+- ✅ Some code duplication
+- ✅ Error handling in critical sections
+
+### Acceptable (5-6 points)
+- ✅ Basic organization
+- ✅ Some convention violations
+- ✅ Minimal documentation
+- ✅ Adequate naming
+- ✅ Inconsistent style
+- ✅ Moderate duplication
+- ✅ Basic error handling
+
+### Needs Improvement (`<`5 points)
+- ❌ Poor organization
+- ❌ Doesn't follow conventions
+- ❌ No documentation
+- ❌ Unclear naming
+- ❌ No consistent style
+- ❌ Significant duplication
+
+**Evaluation Checklist**:
+- [ ] PEP 8 / Google C++ Style compliance
+- [ ] All packages have package.xml with dependencies
+- [ ] README explains code structure
+- [ ] No hardcoded paths or credentials
+- [ ] No commented-out code blocks
+- [ ] Git history shows good commit practices
+
+---
+
+## Part 3: Documentation (20 points)
+
+### 3.1 Technical Report (10 points)
+
+#### Excellent (9-10 points)
+- ✅ Clear, concise abstract (`<`200 words)
+- ✅ Well-structured with logical flow
+- ✅ Detailed system architecture with diagrams
+- ✅ Comprehensive implementation details
+- ✅ Quantitative experimental results with statistics
+- ✅ Thoughtful analysis of failures
+- ✅ References to 5+ relevant sources
+- ✅ Professional formatting (IEEE/ACM style)
+- ✅ Figures/tables properly labeled and referenced
+- ✅ No spelling or grammar errors
+
+#### Good (7-8 points)
+- ✅ Adequate abstract
+- ✅ Logical structure
+- ✅ System architecture explained
+- ✅ Implementation details provided
+- ✅ Some quantitative results
+- ✅ Basic failure analysis
+- ✅ 3-5 references
+- ✅ Consistent formatting
+- ✅ Minor caption/labeling issues
+
+#### Acceptable (5-6 points)
+- ✅ Basic abstract
+- ✅ Sections present but uneven
+- ✅ High-level architecture
+- ✅ Minimal implementation details
+- ✅ Mostly qualitative results
+- ✅ Limited failure analysis
+- ✅ 1-2 references
+- ✅ Formatting inconsistencies
+
+### 3.2 Demo Video (5 points)
+
+#### Excellent (5 points)
+- ✅ 1080p or higher resolution
+- ✅ Clear, professional narration
+- ✅ Smooth editing with transitions
+- ✅ Shows all required capabilities
+- ✅ Picture-in-picture or split screen views
+- ✅ Text overlays explain what's happening
+- ✅ Demonstrates failure recovery
+- ✅ 3-5 minute duration (not too long or short)
+
+#### Good (4 points)
+- ✅ 720p+ resolution
+- ✅ Clear narration
+- ✅ Basic editing
+- ✅ Shows all capabilities
+- ✅ Single camera view
+- ✅ Verbal explanations only
+
+#### Acceptable (3 points)
+- ✅ 480p+ resolution
+- ✅ Understandable audio
+- ✅ Minimal editing
+- ✅ Shows most capabilities
+- ✅ Raw footage
+
+### 3.3 Code Documentation (5 points)
+
+#### Excellent (5 points)
+- ✅ Comprehensive README with setup instructions
+- ✅ ARCHITECTURE.md explaining system design
+- ✅ All packages documented
+- ✅ API documentation generated (Sphinx/Doxygen)
+- ✅ Usage examples provided
+- ✅ Known issues documented
+- ✅ Contributing guide (if open source)
+
+#### Good (4 points)
+- ✅ Good README
+- ✅ System design explained in README
+- ✅ Most packages documented
+- ✅ Some usage examples
+
+#### Acceptable (3 points)
+- ✅ Basic README
+- ✅ Installation instructions present
+- ✅ Minimal package documentation
+
+---
+
+## Part 4: Bonus Features (up to +30 points)
+
+### Multi-Modal Perception (+10 points)
+
+**Full Credit (10 points)**:
+- Implements sensor fusion (camera + LiDAR + IMU)
+- Uses Extended Kalman Filter or Particle Filter
+- Quantitatively demonstrates improved accuracy
+- Handles sensor failures gracefully
+- Documented in technical report
+
+**Partial Credit (5-9 points)**:
+- Basic sensor fusion
+- Simple averaging or voting schemes
+- Some improvement shown
+- Limited failure handling
+
+### Reinforcement Learning (+15 points)
+
+**Full Credit (15 points)**:
+- Trains RL policy from scratch for meaningful subtask
+- Uses modern RL framework (Isaac Gym, Stable Baselines3)
+- Shows learning curves and ablation studies
+- Demonstrates sim-to-real transfer
+- Policy outperforms hand-coded baseline
+- Thoroughly documented
+
+**Partial Credit (8-14 points)**:
+- Uses pre-trained policy with fine-tuning (8-10 pts)
+- Training in simulation only, no transfer (10-12 pts)
+- Comparable performance to baseline (12-14 pts)
+
+### Human-Robot Collaboration (+10 points)
+
+**Full Credit (10 points)**:
+- Detects and tracks humans in environment
+- Recognizes gestures (pointing, waving, etc.)
+- Responds to non-verbal cues
+- Maintains safe distances
+- Hands objects to humans safely
+- Demonstrated in realistic scenarios
+
+**Partial Credit (5-9 points)**:
+- Basic human detection
+- Limited gesture recognition
+- Static interaction only
+
+### Dynamic Environments (+10 points)
+
+**Full Credit (10 points)**:
+- Navigates around 3+ moving obstacles
+- Real-time replanning (`<`500ms)
+- Predictive obstacle avoidance
+- Tested in challenging scenarios
+- Success rate `>`80%
+
+**Partial Credit (5-9 points)**:
+- Handles 1-2 moving obstacles
+- Replanning takes 1-2 seconds
+- Reactive avoidance only
+
+### Real Hardware Deployment (+20 points)
+
+**Full Credit (20 points)**:
+- All core features work on physical robot
+- Comprehensive sim-to-real transfer analysis
+- Video demonstration on hardware
+- Handles real-world uncertainties
+- Documented calibration process
+- Compare hardware vs simulation results
+
+**Partial Credit (10-19 points)**:
+- Most features work on hardware (10-12 pts)
+- Limited transfer analysis (13-15 pts)
+- Some features degraded on hardware (16-19 pts)
+
+---
+
+## Grading Examples
+
+### Example 1: A-Grade Project (92/100)
+
+**Core Functionality**: 92/100
+- Navigation: 18/20 (excellent SLAM, minor path optimization issues)
+- Manipulation: 22/25 (good detection, 75% grasp success rate)
+- Locomotion: 17/20 (stable walking, climbed 2 stairs)
+- Conversation: 17/20 (9 commands, 92% accuracy)
+- Integration: 14/15 (smooth system, minor latency issues)
+
+**Code Quality**: 8/10 (well-organized, some documentation gaps)
+
+**Documentation**: 17/20
+- Report: 8/10 (good content, formatting issues)
+- Video: 4/5 (clear demo, basic editing)
+- Code Docs: 5/5 (excellent README)
+
+**Bonus**: +5 (basic sensor fusion)
+
+**Total**: 92 + 5 = 97 → **A (97%)**
+
+### Example 2: B-Grade Project (85/100)
+
+**Core Functionality**: 80/100
+- Navigation: 15/20 (works in simple environments)
+- Manipulation: 18/25 (60% grasp rate, slow detection)
+- Locomotion: 15/20 (flat ground only, no stairs)
+- Conversation: 16/20 (8 commands, 88% accuracy)
+- Integration: 12/15 (some manual startup needed)
+
+**Code Quality**: 7/10 (acceptable structure, inconsistent style)
+
+**Documentation**: 15/20
+- Report: 7/10 (missing some details)
+- Video: 3/5 (low resolution)
+- Code Docs: 5/5 (good README)
+
+**Bonus**: +0
+
+**Total**: 80 + 7 + 15 = **102/130 → B (85%)**
+
+---
+
+## Common Deductions
+
+### Functionality Issues
+- Missing required capability: **-20 to -25 points** each
+- Feature works but unreliably: **-5 to -10 points**
+- Hardcoded/cheated solution: **-15 to -20 points**
+
+### Code Quality Issues
+- No documentation: **-3 points**
+- Hardcoded paths: **-2 points**
+- Poor organization: **-3 points**
+- Doesn't follow conventions: **-2 points**
+
+### Documentation Issues
+- Missing section in report: **-2 points** each
+- Poor video quality: **-2 points**
+- No README: **-3 points**
+- Plagiarism: **0 points** (automatic failure)
+
+---
+
+## Self-Evaluation Worksheet
+
+Use this before submission:
+
+| Category | Self Score | Notes |
+|----------|-----------|-------|
+| Navigation | ___/20 | |
+| Manipulation | ___/25 | |
+| Locomotion | ___/20 | |
+| Conversation | ___/20 | |
+| Integration | ___/15 | |
+| **Core Total** | **___/100** | |
+| Code Quality | ___/10 | |
+| Report | ___/10 | |
+| Video | ___/5 | |
+| Code Docs | ___/5 | |
+| **Docs Total** | **___/20** | |
+| Bonus Features | +___ | |
+| **FINAL** | **___%** | |
+
+**Target Grade**: ___
+**Estimated Grade**: ___
+**Gap Analysis**: ___
+
+---
+
+## Grade Appeals
+
+If you believe your grade is incorrect:
+
+1. **Review rubric carefully** - most disputes come from misunderstanding criteria
+2. **Check for partial credit** - you may have received points you didn't notice
+3. **Prepare evidence** - video timestamps, code references, metrics
+4. **Submit written appeal** within 1 week of grade release
+5. **Meet with instructor** to discuss
+
+**Note**: Grade appeals may result in lower scores if errors in your favor are discovered.
+
+---
+
+## Tips for Maximizing Your Score
+
+1. **Start with core requirements** - don't attempt bonus features until all base functionality works
+2. **Test thoroughly** - record metrics from 10+ trials, not just one successful run
+3. **Document as you go** - don't wait until the end
+4. **Follow the rubric** - check each criterion specifically
+5. **Proofread everything** - spelling/grammar errors hurt professionalism
+6. **Record backup videos** - if one demo fails, you have alternatives
+7. **Ask for feedback early** - office hours are your friend
+
+---
+
+**Ready to submit?**
+
+Use the [Requirements Checklist](/docs/09-capstone/requirements.mdx) for final verification!
+
+**Questions about grading?** Post on the course forum or attend office hours.
+
+**Good luck!** 🎓🤖

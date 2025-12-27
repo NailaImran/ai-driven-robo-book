@@ -1,0 +1,562 @@
+---
+title: Jetson Robot Kit Assembly
+description: Complete guide to building a physical robot with NVIDIA Jetson AGX Orin
+sidebar_position: 4
+---
+
+# Jetson Robot Kit Assembly
+
+Build a real physical robot powered by NVIDIA Jetson AGX Orin for deploying AI models on edge hardware.
+
+---
+
+## Bill of Materials
+
+### Core Components
+
+| Component | Specification | Vendor | Price |
+|-----------|---------------|--------|-------|
+| **NVIDIA Jetson AGX Orin 64GB** | Developer Kit | NVIDIA/Authorized | $2,000 |
+| **Robot Chassis** | TurtleBot4 or custom build | Clearpath Robotics | $800-1,500 |
+| **RGB-D Camera** | Intel RealSense D435i | Intel | $300 |
+| **2D LiDAR** | RPLIDAR A2 (360° 12m range) | Slamtec | $400 |
+| **IMU** | Adafruit BNO055 9-DOF | Adafruit | $35 |
+| **Motor Controller** | Roboclaw 2x15A | Basicmicro | $150 |
+| **DC Motors** | 12V geared motors (2x) | Pololu | $80 |
+| **Wheels** | 100mm diameter (2x) | - | $30 |
+| **Caster Wheel** | Ball caster | - | $15 |
+| **Battery** | 14.8V 5000mAh LiPo | Venom | $80 |
+| **Power Distribution** | DC-DC converter 12V/5V | DROK | $25 |
+| **Emergency Stop** | Mushroom button | - | $12 |
+| **Mounting Plates** | Aluminum/acrylic | - | $50 |
+| **Cables & Connectors** | USB-C, power cables, XT60 | - | $40 |
+| **Total** | | | **~$4,017** |
+
+### Optional Enhancements
+
+| Component | Purpose | Price |
+|-----------|---------|-------|
+| Jetson Nano (secondary) | Offload vision processing | $200 |
+| Force/Torque Sensor | Manipulation feedback | $300 |
+| Wi-Fi 6 Router | Low-latency teleoperation | $150 |
+| GPS Module | Outdoor navigation | $100 |
+| Speaker | Audio feedback | $30 |
+
+---
+
+## Assembly Overview
+
+```
+┌─────────────────────────────────────────┐
+│         Top Level View                   │
+│  ┌────────────┐                          │
+│  │  LiDAR     │  ← Mounted at ~40cm high │
+│  └────────────┘                          │
+│                                          │
+│  ┌──────────────────────────────┐       │
+│  │   Jetson AGX Orin (Level 2)   │      │
+│  │   + D435i Camera (front)      │      │
+│  └──────────────────────────────┘       │
+│                                          │
+│  ┌──────────────────────────────┐       │
+│  │  Battery + Motor Controller   │      │
+│  │       (Level 1)               │      │
+│  └──────────────────────────────┘       │
+│                                          │
+│    [Motor]  ████████  [Motor]           │
+│             Chassis                      │
+│                                          │
+│            [Caster]                      │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## Step-by-Step Assembly
+
+### Step 1: Chassis Preparation
+
+**If Using TurtleBot4**:
+```text
+1. Unbox TurtleBot4 base
+2. Verify all components (motors, wheels, encoders)
+3. Skip to Step 3 (chassis comes pre-assembled)
+```
+
+**If Building Custom Chassis**:
+
+**Materials Needed**:
+- 2x aluminum plates (30cm x 40cm, 3mm thick)
+- 4x M4 standoffs (10cm height)
+- Motor mounts (3D printed or metal brackets)
+
+```text
+1. Cut aluminum plates:
+   - Bottom plate: 30cm x 40cm (motor mount level)
+   - Top plate: 30cm x 35cm (Jetson mount level)
+
+2. Drill holes for:
+   - Motor mounts (front corners)
+   - Caster wheel (rear center)
+   - Standoffs (4 corners)
+   - Cable pass-throughs
+
+3. Attach motors to bottom plate:
+   - Use M4 screws and motor brackets
+   - Ensure motor shafts parallel to plate
+
+4. Install wheels on motor shafts
+
+5. Attach caster wheel at rear
+
+6. Install standoffs between bottom and top plates
+```
+
+### Step 2: Power System Installation
+
+**Safety First**: Disconnect battery during installation!
+
+```text
+1. Mount battery on bottom plate:
+   - Use velcro straps (for easy removal)
+   - Position near center for balance
+   - Secure firmly (no movement during driving)
+
+2. Install DC-DC converters:
+   - Input: 14.8V from LiPo
+   - Output 1: 12V for motors (5A)
+   - Output 2: 5V for peripherals (3A)
+   - Jetson uses its own 19V power supply
+
+3. Create power distribution:
+   - Main switch: Between battery and all loads
+   - Emergency stop: Cuts motor power only
+   - Fuse: 10A on battery output
+
+4. Wire emergency stop button:
+   Battery (+) → E-Stop → Main Switch → Loads
+```
+
+**Power Budget**:
+```
+Jetson AGX Orin:    60W (19V @ 3.2A)
+Motors (2x):        24W peak (12V @ 2A each)
+LiDAR:              5W  (5V @ 1A)
+Camera:             3W  (5V @ 0.6A)
+IMU:                0.5W
+Total Peak:         ~92.5W
+Runtime (5000mAh):  ~45 minutes continuous
+```
+
+### Step 3: Mount Jetson AGX Orin
+
+```text
+1. Attach heatsink to Jetson (comes with thermal pads)
+
+2. Mount Jetson on top plate:
+   - Use M3 screws and standoffs
+   - Ensure ventilation (2cm clearance on sides)
+   - Orient USB ports toward front for easy access
+
+3. Connect power:
+   - Use included 19V power adapter
+   - For mobile use: Add DC-DC 14.8V→19V converter
+   - Power cable: Battery → Converter → Jetson barrel jack
+
+4. Verify boot:
+   - Connect monitor via DisplayPort
+   - Power on Jetson
+   - Should see Ubuntu boot screen
+```
+
+### Step 4: Sensor Installation
+
+**Intel RealSense D435i Camera**:
+```text
+1. Mount on front of top plate (aligned with Jetson)
+2. Use camera tripod mount screw (1/4"-20)
+3. Tilt downward 10-15° for better floor view
+4. Connect via USB 3.0 to Jetson
+```
+
+**RPLIDAR A2**:
+```text
+1. Mount on vertical pole (40cm height above ground)
+2. Ensure 360° clear view (no obstructions)
+3. Connect via USB to Jetson
+4. Verify spin motor works (should rotate continuously)
+```
+
+**Adafruit BNO055 IMU**:
+```text
+1. Mount on top plate near center
+2. Orientation: X-axis pointing forward, Z-axis pointing up
+3. Connect via I2C to Jetson (use GPIO header)
+4. Wiring:
+   - VIN → 5V
+   - GND → GND
+   - SCL → Pin 5 (GPIO3)
+   - SDA → Pin 3 (GPIO2)
+```
+
+### Step 5: Motor Controller Setup
+
+**Roboclaw 2x15A Wiring**:
+```text
+1. Mount Roboclaw on bottom plate near motors
+
+2. Motor connections:
+   - M1A/M1B: Left motor
+   - M2A/M2B: Right motor
+
+3. Power:
+   - B+ / B-: Connect to 12V DC-DC output
+   - Logic power: 5V from Jetson GPIO or separate 5V rail
+
+4. Communication:
+   - USB: Connect to Jetson for initial setup
+   - UART (production): TX/RX to Jetson GPIO pins
+
+5. Encoder feedback (if available):
+   - Connect encoder A/B/GND to Roboclaw encoder inputs
+```
+
+**Roboclaw Configuration** (using Motion Studio software):
+```text
+1. Download Motion Studio for Linux
+2. Connect via USB
+3. Set parameters:
+   - Max current: 10A per motor
+   - Acceleration: 1000 (adjust for smoothness)
+   - PID tuning: P=1.0, I=0.5, D=0.25 (tune later)
+4. Save to EEPROM
+```
+
+### Step 6: Cable Management
+
+```text
+1. Use cable ties and adhesive mounts
+2. Group cables by function:
+   - Power (red/black): Along chassis edges
+   - Data (USB): Center channel
+   - Sensors: Star topology from Jetson
+
+3. Label all connectors with tape
+
+4. Leave slack for vibration (no tight cables)
+
+5. Protect cables from wheels:
+   - Route inside chassis perimeter
+   - Use cable shields near moving parts
+```
+
+---
+
+## Software Setup
+
+### 1. Flash Jetson AGX Orin
+
+```bash
+# On host Linux machine (Ubuntu 20.04+):
+# Download NVIDIA SDK Manager
+wget https://developer.nvidia.com/nvidia-sdk-manager
+
+# Install and launch
+sudo dpkg -i sdkmanager_[version]_amd64.deb
+sdkmanager
+
+# In SDK Manager:
+# 1. Select Jetson AGX Orin
+# 2. Choose JetPack 5.1 (Ubuntu 20.04 + ROS 2 Foxy)
+# 3. Flash OS to Jetson (follow on-screen instructions)
+# 4. Install CUDA, cuDNN, TensorRT
+```
+
+### 2. Install ROS 2 Humble on Jetson
+
+```bash
+# SSH into Jetson
+ssh nvidia@jetson-agx-orin.local
+
+# Add ROS 2 repository
+sudo apt update
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Install ROS 2 Humble Base (lighter than Desktop for edge device)
+sudo apt update
+sudo apt install -y ros-humble-ros-base
+
+# Install hardware interface packages
+sudo apt install -y \
+  ros-humble-robot-state-publisher \
+  ros-humble-joint-state-publisher \
+  ros-humble-xacro \
+  ros-humble-tf2-ros \
+  ros-humble-tf2-tools
+
+# Setup environment
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+### 3. Install Sensor Drivers
+
+**RealSense Camera**:
+```bash
+# Install Intel RealSense SDK
+sudo apt install -y ros-humble-realsense2-camera
+
+# Test camera
+ros2 launch realsense2_camera rs_launch.py
+
+# In another terminal:
+ros2 topic list  # Should see /camera/color/image_raw, /camera/depth/image_rect_raw
+```
+
+**RPLIDAR**:
+```bash
+# Install RPLIDAR ROS 2 driver
+sudo apt install -y ros-humble-rplidar-ros
+
+# Give permission to USB port
+sudo chmod 666 /dev/ttyUSB0
+
+# Test LiDAR
+ros2 launch rplidar_ros rplidar_a2_launch.py
+
+# Visualize in RViz (on remote machine)
+ros2 run rviz2 rviz2
+# Add LaserScan display, topic: /scan
+```
+
+**IMU (BNO055)**:
+```bash
+# Install I2C tools
+sudo apt install -y i2c-tools python3-smbus
+
+# Verify IMU detected
+sudo i2cdetect -y -r 1
+# Should show address 0x28
+
+# Install BNO055 ROS 2 package
+cd ~/ros2_ws/src
+git clone https://github.com/flynneva/bno055.git -b ros2
+cd ~/ros2_ws
+colcon build --packages-select bno055
+source install/setup.bash
+
+# Launch IMU node
+ros2 launch bno055 bno055.launch.py
+```
+
+### 4. Setup Motor Controller
+
+```bash
+# Install Roboclaw ROS 2 driver
+cd ~/ros2_ws/src
+git clone https://github.com/sheaffej/roboclaw_driver.git -b ros2
+cd ~/ros2_ws
+colcon build --packages-select roboclaw_driver
+source install/setup.bash
+
+# Configure parameters (edit config/roboclaw_params.yaml):
+# - Serial port: /dev/ttyACM0
+# - Baud rate: 115200
+# - Base width: 0.30 (30cm between wheels)
+# - Wheel radius: 0.05 (5cm)
+
+# Launch motor driver
+ros2 launch roboclaw_driver roboclaw.launch.py
+```
+
+### 5. Create Robot Description (URDF)
+
+```bash
+# Create package
+cd ~/ros2_ws/src
+ros2 pkg create my_robot_description --build-type ament_cmake
+
+# Create URDF file (simplified):
+mkdir -p my_robot_description/urdf
+cat > my_robot_description/urdf/robot.urdf.xacro << 'EOF'
+<?xml version="1.0"?>
+<robot name="jetson_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Base link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.30 0.40 0.15"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- LiDAR -->
+  <link name="laser_frame"/>
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+    <origin xyz="0.0 0.0 0.40" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Camera -->
+  <link name="camera_link"/>
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.15 0.0 0.20" rpy="0 -0.2618 0"/>
+  </joint>
+
+</robot>
+EOF
+
+# Build
+cd ~/ros2_ws
+colcon build --packages-select my_robot_description
+```
+
+---
+
+## Testing & Calibration
+
+### 1. Sensor Verification
+
+```bash
+# Check all topics publishing
+ros2 topic list
+
+# Expected topics:
+# /camera/color/image_raw
+# /camera/depth/image_rect_raw
+# /scan (LiDAR)
+# /imu/data
+# /cmd_vel (motor controller)
+# /odom (odometry)
+
+# Monitor message rates
+ros2 topic hz /scan  # Should be ~10 Hz
+ros2 topic hz /camera/color/image_raw  # ~30 Hz
+```
+
+### 2. Motor Calibration
+
+```bash
+# Send test velocity command
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.1}, angular: {z: 0.0}}"
+
+# Robot should move forward slowly
+
+# Test rotation
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {z: 0.5}}"
+
+# Measure actual vs commanded velocities
+# Adjust PID gains in Roboclaw if needed
+```
+
+### 3. Create Launch File
+
+```python
+# ~/ros2_ws/src/my_robot_bringup/launch/robot.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='realsense2_camera',
+            executable='realsense2_camera_node',
+            name='camera'
+        ),
+        Node(
+            package='rplidar_ros',
+            executable='rplidar_composition',
+            name='rplidar',
+            parameters=[{'serial_port': '/dev/ttyUSB0'}]
+        ),
+        Node(
+            package='bno055',
+            executable='bno055',
+            name='imu'
+        ),
+        Node(
+            package='roboclaw_driver',
+            executable='roboclaw_node',
+            name='roboclaw'
+        ),
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            parameters=[{'robot_description': ...}]
+        ),
+    ])
+```
+
+---
+
+## Safety Guidelines
+
+1. **Emergency Stop**: Always test e-stop before autonomous operation
+2. **Battery Safety**:
+   - Never leave LiPo charging unattended
+   - Store at 50% charge for long-term
+   - Use fireproof LiPo bag
+3. **Workspace**: Clear 3m radius when testing
+4. **Software Kill Switch**: Implement in teleoperation code
+5. **Firmware Updates**: Keep motor controller firmware current
+
+---
+
+## Troubleshooting
+
+### Motors Not Responding
+```bash
+# Check Roboclaw connection
+ls /dev/ttyACM*
+
+# Check ROS node running
+ros2 node list | grep roboclaw
+
+# Verify cmd_vel topic
+ros2 topic echo /cmd_vel
+```
+
+### LiDAR Not Spinning
+```bash
+# Check USB connection
+lsusb | grep Silicon
+
+# Check permissions
+sudo chmod 666 /dev/ttyUSB0
+
+# Test motor
+# Should hear spinning sound when node launches
+```
+
+### Camera No Image
+```bash
+# Verify camera detected
+realsense-viewer
+
+# Check USB 3.0 connection (blue port, not black)
+
+# Reinstall drivers
+sudo apt reinstall ros-humble-realsense2-camera
+```
+
+---
+
+## Next Steps
+
+✅ **Your Jetson robot is operational!**
+
+**Try These Projects**:
+1. **Autonomous Navigation**: Implement SLAM with Nav2
+2. **Object Detection**: Deploy YOLOv8 for real-time detection
+3. **Person Following**: Use depth camera for tracking
+4. **Teleoperation**: Create web interface with ROS bridge
+
+**Resources**:
+- [Nav2 Documentation](https://navigation.ros.org/)
+- [Jetson AI Courses](https://courses.nvidia.com/courses/course-v1:DLI+S-RX-02+V2/)
+- [ROS 2 Tutorials](https://docs.ros.org/en/humble/Tutorials.html)

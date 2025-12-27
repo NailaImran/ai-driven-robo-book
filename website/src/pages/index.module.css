@@ -1,0 +1,93 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.features {
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+  width: 100%;
+}
+
+.featureIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.curriculumSection {
+  padding: 4rem 0;
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.curriculumSection h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.curriculumSection h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-color-primary);
+}
+
+.capstoneSection {
+  padding: 4rem 0;
+}
+
+.capstoneSection h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.capstoneList {
+  font-size: 1.25rem;
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.capstoneList li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.capstoneList li:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .heroBanner {
+    padding: 2rem 0;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .curriculumSection h2,
+  .capstoneSection h2 {
+    font-size: 2rem;
+  }
+
+  .capstoneList {
+    font-size: 1rem;
+  }
+}

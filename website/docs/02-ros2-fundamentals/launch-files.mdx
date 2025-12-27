@@ -1,0 +1,716 @@
+---
+title: Launch Files & Orchestration
+description: Automating multi-node system startup with ROS 2 launch files
+sidebar_position: 5
+---
+
+# Launch Files & Orchestration
+
+## Learning Objectives
+
+By the end of this lesson, you will be able to:
+
+1. Create Python launch files to start multiple nodes simultaneously
+2. Pass parameters and arguments to nodes via launch files
+3. Use conditional logic and includes for complex launch configurations
+4. Organize launch files for different environments (dev, sim, production)
+5. Debug multi-node systems efficiently
+
+---
+
+## Why Launch Files?
+
+Imagine starting a robot system manually:
+
+```bash
+# Terminal 1
+ros2 run sensor_pkg camera_node
+
+# Terminal 2
+ros2 run sensor_pkg lidar_node
+
+# Terminal 3
+ros2 run perception_pkg object_detector --ros-args -p threshold:=0.8
+
+# Terminal 4
+ros2 run navigation_pkg path_planner
+
+# Terminal 5
+ros2 run control_pkg motor_controller
+```
+
+**Problems**:
+- ❌ Tedious and error-prone
+- ❌ Hard to reproduce exact configuration
+- ❌ No coordination (nodes start in random order)
+- ❌ Difficult to share with team
+
+**Solution: Launch Files**
+
+```bash
+# Start entire system with one command
+ros2 launch my_robot robot_bringup.launch.py
+```
+
+---
+
+## Basic Launch File Structure
+
+Launch files in ROS 2 are Python scripts (`.launch.py`).
+
+### Minimal Example
+
+Create `launch/simple.launch.py`:
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='demo_nodes_cpp',
+            executable='talker',
+            name='my_talker'
+        ),
+        Node(
+            package='demo_nodes_cpp',
+            executable='listener',
+            name='my_listener'
+        ),
+    ])
+```
+
+**Run**:
+
+```bash
+ros2 launch my_package simple.launch.py
+```
+
+**Explanation**:
+- `generate_launch_description()`: Required function that returns `LaunchDescription`
+- `Node()`: Launches a ROS 2 node
+  - `package`: Package name
+  - `executable`: Node executable name (from `setup.py` or `CMakeLists.txt`)
+  - `name`: Override node name (optional)
+
+---
+
+## Passing Parameters
+
+### Method 1: Inline Parameters
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='my_robot_controller',
+            executable='teleop',
+            name='teleop_node',
+            parameters=[{
+                'linear_speed': 2.0,
+                'angular_speed': 1.5,
+                'enable_logging': True
+            }]
+        ),
+    ])
+```
+
+### Method 2: YAML Parameter File
+
+Create `config/robot_params.yaml`:
+
+```yaml
+/**:
+  ros__parameters:
+    linear_speed: 2.0
+    angular_speed: 1.5
+    enable_logging: true
+```
+
+Load in launch file:
+
+```python
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    config_file = os.path.join(
+        get_package_share_directory('my_robot_controller'),
+        'config',
+        'robot_params.yaml'
+    )
+
+    return LaunchDescription([
+        Node(
+            package='my_robot_controller',
+            executable='teleop',
+            parameters=[config_file]
+        ),
+    ])
+```
+
+### Method 3: Launch Arguments
+
+Allow users to override parameters:
+
+```python
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Declare arguments
+    speed_arg = DeclareLaunchArgument(
+        'max_speed',
+        default_value='1.0',
+        description='Maximum robot speed (m/s)'
+    )
+
+    # Use argument value
+    return LaunchDescription([
+        speed_arg,
+        Node(
+            package='my_robot_controller',
+            executable='teleop',
+            parameters=[{
+                'linear_speed': LaunchConfiguration('max_speed')
+            }]
+        ),
+    ])
+```
+
+**Run with custom argument**:
+
+```bash
+ros2 launch my_package teleop.launch.py max_speed:=2.5
+```
+
+---
+
+## Real-World Example: Mobile Robot System
+
+Let's launch a complete mobile robot with sensors, perception, and control.
+
+```python
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    # Package directories
+    pkg_share = get_package_share_directory('my_robot')
+    config_dir = os.path.join(pkg_share, 'config')
+
+    # Launch arguments
+    use_sim_time_arg = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description='Use simulation time'
+    )
+
+    enable_camera_arg = DeclareLaunchArgument(
+        'enable_camera',
+        default_value='true',
+        description='Enable camera node'
+    )
+
+    # Sensor nodes
+    lidar_node = Node(
+        package='rplidar_ros',
+        executable='rplidar_composition',
+        name='rplidar_node',
+        parameters=[{
+            'serial_port': '/dev/ttyUSB0',
+            'serial_baudrate': 115200,
+            'frame_id': 'laser_frame',
+            'angle_compensate': True
+        }],
+        output='screen'
+    )
+
+    camera_node = Node(
+        package='usb_cam',
+        executable='usb_cam_node_exe',
+        name='camera_node',
+        parameters=[os.path.join(config_dir, 'camera_params.yaml')],
+        condition=IfCondition(LaunchConfiguration('enable_camera'))
+    )
+
+    # Perception
+    object_detector_node = Node(
+        package='perception_pkg',
+        executable='yolo_detector',
+        name='object_detector',
+        parameters=[{
+            'model_path': os.path.join(pkg_share, 'models', 'yolov5.pt'),
+            'confidence_threshold': 0.7
+        }],
+        remappings=[
+            ('/image_raw', '/camera/image_raw'),
+            ('/detections', '/objects')
+        ]
+    )
+
+    # Navigation
+    path_planner_node = Node(
+        package='nav2_planner',
+        executable='planner_server',
+        name='planner_server',
+        parameters=[os.path.join(config_dir, 'nav2_params.yaml')],
+        output='screen'
+    )
+
+    # Control
+    motor_controller_node = Node(
+        package='my_robot',
+        executable='motor_controller',
+        name='motor_controller',
+        parameters=[{
+            'wheel_radius': 0.05,
+            'wheel_separation': 0.3,
+            'max_linear_velocity': 1.0,
+            'max_angular_velocity': 2.0
+        }]
+    )
+
+    return LaunchDescription([
+        use_sim_time_arg,
+        enable_camera_arg,
+        lidar_node,
+        camera_node,
+        object_detector_node,
+        path_planner_node,
+        motor_controller_node,
+    ])
+```
+
+**Features**:
+- ✅ 5 nodes launched together
+- ✅ Parameters loaded from YAML files
+- ✅ Conditional node launching (`enable_camera`)
+- ✅ Topic remapping (`/image_raw` → `/camera/image_raw`)
+- ✅ Launch arguments for customization
+
+**Run**:
+
+```bash
+# Default (camera enabled)
+ros2 launch my_robot robot_bringup.launch.py
+
+# Without camera
+ros2 launch my_robot robot_bringup.launch.py enable_camera:=false
+
+# Simulation mode
+ros2 launch my_robot robot_bringup.launch.py use_sim_time:=true
+```
+
+---
+
+## Advanced Launch Features
+
+### 1. **Including Other Launch Files**
+
+Compose large systems from smaller launch files:
+
+```python
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    # Include sensor launch file
+    sensors_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('my_sensors'), 'launch'),
+            '/sensors.launch.py'
+        ]),
+        launch_arguments={
+            'use_sim_time': 'false',
+            'lidar_enabled': 'true'
+        }.items()
+    )
+
+    # Include navigation launch file
+    nav_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('nav2_bringup'), 'launch'),
+            '/navigation_launch.py'
+        ])
+    )
+
+    return LaunchDescription([
+        sensors_launch,
+        nav_launch,
+    ])
+```
+
+### 2. **Conditional Execution**
+
+```python
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration
+
+def generate_launch_description():
+    return LaunchDescription([
+        DeclareLaunchArgument('use_rviz', default_value='true'),
+
+        # Launch RViz only if use_rviz is true
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            condition=IfCondition(LaunchConfiguration('use_rviz'))
+        ),
+
+        # Launch alternative visualizer if RViz disabled
+        Node(
+            package='my_viz',
+            executable='simple_viz',
+            condition=UnlessCondition(LaunchConfiguration('use_rviz'))
+        ),
+    ])
+```
+
+### 3. **Event Handlers**
+
+Execute actions when events occur (e.g., node exits):
+
+```python
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessExit, OnProcessStart
+
+def generate_launch_description():
+    camera_node = Node(
+        package='usb_cam',
+        executable='usb_cam_node_exe',
+        name='camera'
+    )
+
+    detector_node = Node(
+        package='perception',
+        executable='detector',
+        name='detector'
+    )
+
+    # Start detector only after camera starts
+    detector_event = RegisterEventHandler(
+        OnProcessStart(
+            target_action=camera_node,
+            on_start=[detector_node]
+        )
+    )
+
+    return LaunchDescription([
+        camera_node,
+        detector_event,
+    ])
+```
+
+### 4. **Namespaces and Remapping**
+
+```python
+def generate_launch_description():
+    return LaunchDescription([
+        # Robot 1
+        Node(
+            package='my_robot',
+            executable='controller',
+            name='controller',
+            namespace='robot1',  # All topics under /robot1/
+            remappings=[
+                ('/cmd_vel', '/robot1/commands/velocity')
+            ]
+        ),
+
+        # Robot 2
+        Node(
+            package='my_robot',
+            executable='controller',
+            name='controller',
+            namespace='robot2',
+            remappings=[
+                ('/cmd_vel', '/robot2/commands/velocity')
+            ]
+        ),
+    ])
+```
+
+---
+
+## Lifecycle Nodes in Launch Files
+
+Lifecycle nodes require explicit configuration and activation:
+
+```python
+from launch_ros.actions import LifecycleNode
+from launch_ros.events.lifecycle import ChangeState
+from lifecycle_msgs.msg import Transition
+
+def generate_launch_description():
+    camera_driver = LifecycleNode(
+        package='camera_pkg',
+        executable='camera_driver',
+        name='camera_driver',
+        namespace='',
+        parameters=[{'device_id': 0}],
+        output='screen'
+    )
+
+    # Configure the node
+    configure_event = RegisterEventHandler(
+        OnProcessStart(
+            target_action=camera_driver,
+            on_start=[
+                EmitEvent(event=ChangeState(
+                    lifecycle_node_matcher=matches_action(camera_driver),
+                    transition_id=Transition.TRANSITION_CONFIGURE
+                ))
+            ]
+        )
+    )
+
+    # Activate after configuration
+    activate_event = RegisterEventHandler(
+        OnStateTransition(
+            target_lifecycle_node=camera_driver,
+            goal_state='inactive',
+            entities=[
+                EmitEvent(event=ChangeState(
+                    lifecycle_node_matcher=matches_action(camera_driver),
+                    transition_id=Transition.TRANSITION_ACTIVATE
+                ))
+            ]
+        )
+    )
+
+    return LaunchDescription([
+        camera_driver,
+        configure_event,
+        activate_event,
+    ])
+```
+
+---
+
+## Organizing Launch Files
+
+### Recommended Structure
+
+```
+my_robot/
+├── launch/
+│   ├── robot_bringup.launch.py        # Main entry point
+│   ├── sensors.launch.py              # Sensor nodes
+│   ├── perception.launch.py           # Perception pipeline
+│   ├── navigation.launch.py           # Navigation stack
+│   ├── simulation.launch.py           # Gazebo + robot
+│   └── teleop.launch.py               # Teleoperation
+├── config/
+│   ├── robot_params.yaml
+│   ├── nav2_params.yaml
+│   └── sensor_params.yaml
+└── package.xml
+```
+
+### Environment-Specific Launch Files
+
+```python
+# development.launch.py - Local testing
+def generate_launch_description():
+    return LaunchDescription([
+        # Use local config, enable debugging
+        Node(..., parameters=['/tmp/dev_config.yaml'], output='screen')
+    ])
+
+# simulation.launch.py - Gazebo testing
+def generate_launch_description():
+    return LaunchDescription([
+        IncludeLaunchDescription(..., 'gazebo.launch.py'),
+        # Use sim time, fake sensors
+        Node(..., parameters=[{'use_sim_time': True}])
+    ])
+
+# production.launch.py - Real robot
+def generate_launch_description():
+    return LaunchDescription([
+        # Real hardware, production config
+        Node(..., parameters=['/etc/robot/config.yaml'])
+    ])
+```
+
+---
+
+## Debugging Launch Files
+
+### 1. **Verbose Output**
+
+```bash
+# Show all node output
+ros2 launch my_package robot.launch.py --ros-args --log-level debug
+
+# Show launch file execution
+ros2 launch -d my_package robot.launch.py
+```
+
+### 2. **Inspect Running Nodes**
+
+```bash
+# List all nodes
+ros2 node list
+
+# Check node info
+ros2 node info /camera_node
+
+# View computation graph
+rqt_graph
+```
+
+### 3. **Common Errors**
+
+**Error: "Package not found"**
+```bash
+# Solution: Source workspace
+source ~/ros2_ws/install/setup.bash
+```
+
+**Error: "Executable not found"**
+```bash
+# Check executable name in setup.py or CMakeLists.txt
+# Rebuild package
+colcon build --packages-select my_package
+```
+
+**Error: "Parameter file not found"**
+```python
+# Use absolute path
+config_file = os.path.join(
+    get_package_share_directory('my_package'),
+    'config',
+    'params.yaml'
+)
+
+# Install config files in CMakeLists.txt or setup.py
+install(
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+)
+```
+
+---
+
+## Hands-On Exercise: Multi-Robot System
+
+**Goal**: Launch 3 robots in simulation with unique namespaces.
+
+**Requirements**:
+
+1. **Launch File**: `three_robots.launch.py`
+2. **Nodes**: Each robot has:
+   - Teleoperation controller
+   - Odometry publisher
+   - Laser scanner
+3. **Namespaces**: `/robot1/`, `/robot2/`, `/robot3/`
+4. **Parameters**: Different speeds for each robot
+5. **Visualization**: Single RViz showing all 3 robots
+
+**Starter Code**:
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    robots = []
+
+    for i in range(1, 4):
+        namespace = f'robot{i}'
+        speed = 0.5 * i  # robot1: 0.5, robot2: 1.0, robot3: 1.5
+
+        # Teleop node
+        teleop = Node(
+            package='teleop_pkg',
+            executable='teleop_node',
+            name='teleop',
+            namespace=namespace,
+            parameters=[{'max_speed': speed}]
+        )
+
+        # Odometry node
+        odom = Node(
+            package='odom_pkg',
+            executable='odom_publisher',
+            name='odometry',
+            namespace=namespace,
+            parameters=[{'frame_id': f'{namespace}/base_link'}]
+        )
+
+        # Laser node
+        laser = Node(
+            package='laser_pkg',
+            executable='laser_node',
+            name='laser',
+            namespace=namespace,
+            remappings=[('/scan', f'/{namespace}/scan')]
+        )
+
+        robots.extend([teleop, odom, laser])
+
+    # RViz
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', '/path/to/multi_robot.rviz']
+    )
+
+    return LaunchDescription(robots + [rviz])
+```
+
+**Test**:
+
+```bash
+ros2 launch my_package three_robots.launch.py
+ros2 topic list  # Should see /robot1/scan, /robot2/scan, /robot3/scan
+```
+
+---
+
+## Key Takeaways
+
+✅ **Launch files automate startup**: One command for entire system
+✅ **Python launch files**: Full programming language, not XML
+✅ **Arguments for flexibility**: Override parameters at runtime
+✅ **Include for composition**: Build large systems from smaller launch files
+✅ **Conditions for environments**: Dev, sim, production configs
+✅ **Namespaces for multi-robot**: Run multiple instances of same nodes
+
+---
+
+## What's Next?
+
+You've completed ROS 2 Fundamentals! Now let's simulate robots in high-fidelity environments:
+
+👉 **[Module 2: Robot Simulation with Gazebo](/docs/03-gazebo-simulation/)** — Build realistic robot simulations
+
+---
+
+## Additional Resources
+
+- [ROS 2 Launch System Tutorial](https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Launch-Main.html)
+- [Launch File Examples](https://github.com/ros2/launch/tree/humble/launch/examples)
+- [ROS 2 Launch XML vs Python](https://docs.ros.org/en/humble/How-To-Guides/Launch-file-different-formats.html)
+- [Lifecycle Nodes Documentation](https://design.ros2.org/articles/node_lifecycle.html)

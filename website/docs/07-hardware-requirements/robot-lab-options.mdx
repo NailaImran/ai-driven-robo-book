@@ -1,0 +1,565 @@
+---
+title: Robot Lab Infrastructure
+description: Setting up a professional robotics laboratory for research and development
+sidebar_position: 5
+---
+
+# Robot Lab Infrastructure
+
+Design and build a complete robotics laboratory for research, education, or commercial development.
+
+---
+
+## Lab Planning
+
+### Space Requirements
+
+**Minimum Lab** (Academic/Small Team):
+- **Floor space**: 20m² (4m x 5m)
+- **Ceiling height**: 2.5m minimum
+- **Power**: 20A dedicated circuit
+- **Network**: Gigabit Ethernet, Wi-Fi 6
+
+**Professional Lab** (Research/Industry):
+- **Floor space**: 100m² (10m x 10m)
+- **Ceiling height**: 3.5m (for overhead sensors/cameras)
+- **Power**: 50A three-phase
+- **Network**: 10 Gigabit fiber backbone
+
+---
+
+## Essential Equipment
+
+### 1. Robotics Testing Area
+
+**Safety Enclosure** ($2,000-10,000):
+```text
+Purpose: Contain autonomous robots during testing
+Options:
+  - Basic: Portable barriers (safety tape + plastic barriers)
+  - Mid-tier: Modular fence panels (aluminum, 2m high)
+  - Professional: Industrial safety cage with interlocked gates
+```
+
+**Floor Surface**:
+```text
+Recommended: Smooth concrete or industrial vinyl
+Avoid: Carpet (interferes with wheels), glossy tile (LiDAR reflections)
+Markings: Paint grid lines (1m squares) for calibration
+```
+
+**Overhead Camera System** ($1,500-5,000):
+```text
+Purpose: Ground truth position tracking (motion capture lite)
+Components:
+  - 4-8x USB cameras (1080p, wide-angle)
+  - Ceiling mounts
+  - AprilTag markers on robots
+  - Computer running OpenCV tracking
+```
+
+### 2. Workbench & Tools
+
+**Electronics Workstation** ($1,500):
+```text
+- ESD-safe workbench (1.5m x 0.75m)
+- Magnifying lamp
+- Soldering station (Hakko FX-888D)
+- Hot air rework station
+- Multimeter (Fluke 115)
+- Oscilloscope (Rigol DS1054Z)
+- Power supply (0-30V, 0-5A)
+- Wire strippers, crimpers, heat gun
+- Component storage organizers
+```
+
+**Mechanical Workshop** ($2,500):
+```text
+- Drill press
+- Bandsaw or miter saw
+- Dremel rotary tool
+- Tap and die set (M2-M8)
+- Precision measuring tools (calipers, micrometer)
+- Vise and clamps
+- Hand tools (screwdrivers, Allen keys, wrenches)
+```
+
+**3D Printing Station** ($800-5,000):
+```text
+Entry: Creality Ender 3 V2 ($280)
+Mid-tier: Prusa MK4 ($1,000)
+Professional: Ultimaker S5 ($6,000)
+
+Materials:
+  - PLA (prototyping)
+  - PETG (functional parts)
+  - TPU (flexible parts)
+  - Nylon/CF-Nylon (structural)
+```
+
+### 3. Computing Infrastructure
+
+**Workstation Cluster**:
+```text
+1x High-end workstation (AI training):
+   - AMD Ryzen 9 7950X
+   - NVIDIA RTX 4090 24GB
+   - 128GB RAM
+   - 4TB NVMe SSD
+   Cost: ~$5,000
+
+2-3x Mid-tier workstations (simulation):
+   - AMD Ryzen 7 5800X
+   - NVIDIA RTX 3060 12GB
+   - 32GB RAM
+   - 1TB SSD
+   Cost: ~$1,500 each
+
+1x NAS (Network Attached Storage):
+   - Synology DS920+ or QNAP TS-464
+   - 4x 4TB HDDs (RAID 5 = 12TB usable)
+   - Backup for datasets, code, logs
+   Cost: ~$1,200
+```
+
+**Networking** ($500):
+```text
+- Managed switch (24-port Gigabit)
+- Wi-Fi 6 router (Ubiquiti UniFi or similar)
+- Ethernet cables (Cat6a)
+- Rack mount (6U minimum)
+```
+
+### 4. Robot Fleet
+
+**Starter Fleet** ($5,000-8,000):
+```text
+2x TurtleBot 4 Standard ($2,500 each)
+  - For multi-robot experiments
+  - Standardized platform
+
+1x Jetson-based custom robot ($3,000)
+  - See Jetson Kit Build guide
+  - For custom development
+```
+
+**Advanced Fleet** ($20,000+):
+```text
+2x TurtleBot 4 Pro ($4,000 each)
+1x Clearpath Jackal UGV ($15,000)
+1x UR5e Robotic Arm ($35,000)
+1x Franka Emika Panda ($25,000)
+```
+
+### 5. Sensors & Instruments
+
+**Vision Sensors** ($2,000):
+```text
+- 3x Intel RealSense D435i ($300 each)
+- 1x Stereolabs ZED 2i ($600)
+- 1x Thermal camera (FLIR Lepton, $200)
+```
+
+**Range Sensors** ($1,500):
+```text
+- 2x RPLIDAR A2 ($400 each)
+- 1x Velodyne VLP-16 Puck (used, $2,500) - optional
+- 1x Ultrasonic array (HC-SR04 x 8, $50)
+```
+
+**Motion Tracking** ($500):
+```text
+- 2x IMU (Adafruit BNO055)
+- 1x GPS (u-blox ZED-F9P RTK)
+- 1x OptiTrack motion capture (if budget allows, $10,000+)
+```
+
+---
+
+## Lab Layout Example
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    ROBOTICS LAB (10m x 10m)                  │
+│                                                              │
+│  ┌──────────────┐                      ┌─────────────────┐  │
+│  │   STORAGE    │                      │   ELECTRONICS   │  │
+│  │   SHELVES    │                      │   WORKBENCH     │  │
+│  └──────────────┘                      └─────────────────┘  │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                                                       │   │
+│  │           TESTING ARENA (5m x 5m)                    │   │
+│  │                                                       │   │
+│  │    [Robot 1]          [Robot 2]                      │   │
+│  │                                                       │   │
+│  │                   [Obstacles]                         │   │
+│  │                                                       │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │ Workstation │  │ Workstation │  │ Workstation │         │
+│  │      1      │  │      2      │  │      3      │         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                                                              │
+│  ┌──────────────┐                      ┌─────────────────┐  │
+│  │   3D PRINT   │                      │   MECHANICAL    │  │
+│  │   STATION    │                      │   WORKSHOP      │  │
+│  └──────────────┘                      └─────────────────┘  │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Networking Architecture
+
+### Network Topology
+
+```
+                   Internet
+                      │
+                  [Router]
+                      │
+              [Managed Switch]
+         ┌────────┼────────┬────────┐
+         │        │        │        │
+    Workstation Robot    Robot    NAS
+       Cluster   Fleet    WiFi   Storage
+```
+
+### VLAN Configuration
+
+```bash
+# VLAN 10: Development workstations
+# VLAN 20: Robot control network (isolated)
+# VLAN 30: Sensor data network (high bandwidth)
+# VLAN 40: Guest Wi-Fi (internet only)
+
+# Example switch config (pseudo-code):
+vlan 10
+  name DEV_WORKSTATIONS
+  ports 1-8
+
+vlan 20
+  name ROBOT_CONTROL
+  ports 9-16
+  priority high
+
+vlan 30
+  name SENSOR_DATA
+  ports 17-20
+  bandwidth 10Gbps
+```
+
+### ROS 2 Multi-Machine Setup
+
+```bash
+# On each machine, set ROS_DOMAIN_ID
+export ROS_DOMAIN_ID=42
+
+# Enable multicast (required for DDS discovery)
+sudo ip route add 224.0.0.0/4 dev eth0
+
+# For large networks, use Fast DDS discovery server
+# On server machine:
+fastdds discovery -i 0
+
+# On client machines:
+export ROS_DISCOVERY_SERVER=192.168.1.100:11811
+```
+
+---
+
+## Safety Systems
+
+### Emergency Stop (E-Stop)
+
+**Hardware**:
+```text
+- Wireless e-stop transmitter/receiver ($300)
+- Hardwired e-stop buttons on walls (4 corners)
+- Relay to cut power to all robot actuators
+```
+
+**Software**:
+```python
+# ROS 2 emergency stop node
+import rclpy
+from std_msgs.msg import Bool
+
+class EStopNode:
+    def __init__(self):
+        self.estop_sub = self.create_subscription(
+            Bool, '/emergency_stop', self.estop_callback, 10)
+
+    def estop_callback(self, msg):
+        if msg.data:
+            # Publish zero velocity to all robots
+            # Log incident
+            # Send alerts
+            pass
+```
+
+### Safety Procedures
+
+1. **Pre-Test Checklist**:
+   - [ ] Testing area clear
+   - [ ] E-stop functional
+   - [ ] Observers present (minimum 2 people)
+   - [ ] Robot battery charged
+   - [ ] Software kill switch tested
+
+2. **During Testing**:
+   - One person as "safety officer" with e-stop
+   - No one inside test area during autonomous operation
+   - Monitor battery levels
+
+3. **Incident Reporting**:
+   - Log all collisions, near-misses, software crashes
+   - Review weekly for patterns
+
+---
+
+## Power Distribution
+
+### Electrical Layout
+
+```text
+Main Panel (50A)
+  ├── Circuit 1 (20A): Workstation cluster
+  ├── Circuit 2 (20A): Testing arena (robot charging)
+  ├── Circuit 3 (15A): Workshop tools
+  ├── Circuit 4 (15A): Lighting
+  └── UPS (1500VA): Critical equipment (NAS, router)
+```
+
+**Battery Charging Station** ($500):
+```text
+- 4x smart LiPo chargers (ISDT Q6 Plus)
+- Fireproof charging cabinet
+- Smoke detector
+- Fire extinguisher (Type C - electrical)
+```
+
+---
+
+## Environmental Controls
+
+### Climate
+
+```text
+Temperature: 20-25°C (68-77°F)
+Humidity: 40-60% RH
+  - Too dry: Static electricity damages electronics
+  - Too humid: Corrosion, condensation
+
+Solutions:
+  - HVAC with humidity control
+  - Dehumidifier in summer
+  - Anti-static mats at workbenches
+```
+
+### Lighting
+
+```text
+Overhead: 500 lux (bright, uniform)
+Workbench: 1000 lux (task lighting)
+Options:
+  - LED panels (energy efficient, no flicker)
+  - Adjustable desk lamps
+  - Avoid fluorescent (can interfere with cameras)
+```
+
+---
+
+## Software Infrastructure
+
+### Version Control & CI/CD
+
+```bash
+# Setup local GitLab instance
+docker run --detach \
+  --hostname gitlab.lab.local \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  gitlab/gitlab-ce:latest
+
+# Setup CI runner for automated testing
+docker run -d --name gitlab-runner --restart always \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  gitlab/gitlab-runner:latest
+```
+
+### Data Management
+
+```bash
+# Automated backup script (run daily via cron)
+#!/bin/bash
+# backup_lab_data.sh
+
+DATE=$(date +%Y%m%d)
+BACKUP_DIR="/mnt/nas/backups/$DATE"
+
+# Backup ROS bags
+rsync -av /home/*/ros2_ws/logs/ $BACKUP_DIR/ros_logs/
+
+# Backup datasets
+rsync -av /datasets/ $BACKUP_DIR/datasets/
+
+# Backup git repositories
+find /home/*/ros2_ws/src -name .git -execdir git bundle create $BACKUP_DIR/repos/{}.bundle --all \;
+
+# Backup system configs
+tar -czf $BACKUP_DIR/configs.tar.gz /etc/ros/ ~/.bashrc ~/.config/
+
+# Clean old backups (keep 30 days)
+find /mnt/nas/backups/ -mtime +30 -delete
+```
+
+---
+
+## Budget Breakdown
+
+### Minimum Viable Lab ($15,000)
+
+| Category | Items | Cost |
+|----------|-------|------|
+| Computing | 2x workstations, NAS | $5,000 |
+| Robots | 1x TurtleBot 4, 1x custom | $5,000 |
+| Tools | Electronics bench, 3D printer | $2,000 |
+| Sensors | 2x RealSense, 1x LiDAR | $1,000 |
+| Infrastructure | Network, power, safety | $1,000 |
+| Consumables | Filament, components, cables | $1,000 |
+| **Total** | | **$15,000** |
+
+### Professional Lab ($75,000)
+
+| Category | Items | Cost |
+|----------|-------|------|
+| Computing | 4x workstations (RTX 4090), NAS, servers | $20,000 |
+| Robots | 3x TurtleBot 4, 1x Jackal, 1x UR5e arm | $30,000 |
+| Tools | Full workshop, laser cutter | $10,000 |
+| Sensors | Motion capture, advanced sensors | $8,000 |
+| Infrastructure | Safety cage, HVAC, electrical | $5,000 |
+| Furniture | Desks, chairs, shelving | $2,000 |
+| **Total** | | **$75,000** |
+
+---
+
+## Maintenance Schedule
+
+### Daily
+- [ ] Check robot battery levels
+- [ ] Clear testing area
+- [ ] Backup critical work
+
+### Weekly
+- [ ] Test e-stop system
+- [ ] Clean 3D printer bed
+- [ ] Update software packages
+- [ ] Review incident logs
+
+### Monthly
+- [ ] Calibrate sensors (IMU, cameras)
+- [ ] Deep clean robots (compressed air)
+- [ ] Check tool calibration
+- [ ] Review and restock consumables
+
+### Quarterly
+- [ ] Full system backups
+- [ ] Network security audit
+- [ ] Replace worn cables/connectors
+- [ ] Train new users on safety
+
+---
+
+## Training & Onboarding
+
+### New User Checklist
+
+```markdown
+## Lab Orientation (2 hours)
+
+1. Safety training
+   - E-stop locations and operation
+   - Battery safety (LiPo handling)
+   - Lab access hours and rules
+
+2. Equipment overview
+   - Workstation login
+   - Robot checkout procedure
+   - Tool usage policies
+
+3. Software setup
+   - ROS 2 installation
+   - Git repository access
+   - Development workflow
+
+4. Hands-on practice
+   - Teleoperate robot
+   - Launch simulation
+   - Record ROS bag
+
+## Sign-off
+[ ] Passed safety quiz
+[ ] Completed supervised robot operation
+[ ] Understands data backup procedures
+```
+
+---
+
+## Expansion Roadmap
+
+### Year 1: Foundation
+- Core equipment operational
+- 2-3 robots in fleet
+- Basic safety systems
+
+### Year 2: Capabilities
+- Add robotic arm
+- Implement motion capture
+- Expand workstation cluster
+
+### Year 3: Advanced
+- Outdoor testing area
+- Multi-robot swarms
+- Industry partnerships
+
+---
+
+## Resources
+
+**Robotics Lab Design**:
+- [OSRF Lab Setup Guide](https://www.openrobotics.org/)
+- [IEEE Robotics Lab Standards](https://www.ieee-ras.org/)
+
+**Safety Standards**:
+- ANSI/RIA R15.06 (Industrial Robot Safety)
+- ISO 10218 (Robot Safety)
+
+**Suppliers**:
+- Electronics: DigiKey, Mouser, Adafruit
+- Robotics: Clearpath, PAL Robotics
+- Tools: McMaster-Carr, Amazon Business
+
+---
+
+## Next Steps
+
+**Planning Your Lab**:
+1. Assess available space and budget
+2. Prioritize equipment (start with essentials)
+3. Design layout for workflow efficiency
+4. Implement safety systems first
+5. Grow incrementally based on research needs
+
+**Getting Started**:
+- [Cloud Lab Setup](/docs/07-hardware-requirements/cloud-native-lab.mdx) (if no physical space)
+- [Workstation Build](/docs/07-hardware-requirements/digital-twin-workstation.mdx) (for individuals)
+- [Jetson Kit](/docs/07-hardware-requirements/jetson-kit.mdx) (first robot)

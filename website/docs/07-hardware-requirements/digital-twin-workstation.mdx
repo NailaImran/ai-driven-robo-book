@@ -1,0 +1,483 @@
+---
+title: Digital Twin Workstation Build
+description: Complete guide to building a high-performance local robotics development workstation
+sidebar_position: 3
+---
+
+# Digital Twin Workstation Build
+
+Build a powerful local workstation for robotics simulation, AI development, and digital twin creation.
+
+---
+
+## Bill of Materials (BOM)
+
+### Budget Build ($1,500-2,000)
+
+| Component | Specification | Price |
+|-----------|---------------|-------|
+| **CPU** | AMD Ryzen 7 5800X (8-core, 16-thread) | $250 |
+| **GPU** | NVIDIA RTX 3060 12GB | $350 |
+| **Motherboard** | MSI B550-A PRO | $130 |
+| **RAM** | 32GB DDR4-3200 (2x16GB) | $90 |
+| **Storage** | 1TB NVMe SSD (Samsung 980) | $80 |
+| **Storage** | 2TB HDD (WD Blue) | $50 |
+| **PSU** | 650W 80+ Gold (EVGA) | $80 |
+| **Case** | NZXT H510 | $70 |
+| **CPU Cooler** | Noctua NH-U12S | $70 |
+| **Fans** | 3x 120mm case fans | $30 |
+| **Peripherals** | Keyboard, mouse, monitor | $200 |
+| **Total** | | **~$1,400** |
+
+### Recommended Build ($2,500-3,500)
+
+| Component | Specification | Price |
+|-----------|---------------|-------|
+| **CPU** | AMD Ryzen 9 7950X (16-core, 32-thread) | $550 |
+| **GPU** | NVIDIA RTX 4080 16GB | $1,200 |
+| **Motherboard** | ASUS ROG Strix X670E-E | $350 |
+| **RAM** | 64GB DDR5-5600 (2x32GB) | $250 |
+| **Storage** | 2TB NVMe Gen4 SSD (Samsung 990 Pro) | $200 |
+| **Storage** | 4TB HDD (Seagate BarraCuda) | $90 |
+| **PSU** | 850W 80+ Platinum (Corsair RM850x) | $140 |
+| **Case** | Fractal Design Meshify 2 | $140 |
+| **CPU Cooler** | Noctua NH-D15 chromax.black | $110 |
+| **Fans** | 5x 140mm Noctua fans | $120 |
+| **Total** | | **~$3,150** |
+
+### Professional Build ($4,000-6,000)
+
+| Component | Specification | Price |
+|-----------|---------------|-------|
+| **CPU** | AMD Threadripper PRO 5975WX (32-core) | $2,500 |
+| **GPU** | NVIDIA RTX 4090 24GB | $1,800 |
+| **Motherboard** | ASUS Pro WS WRX80E-SAGE SE WIFI | $800 |
+| **RAM** | 128GB DDR4-3200 ECC (4x32GB) | $600 |
+| **Storage** | 4TB NVMe Gen4 SSD (2x 2TB RAID 0) | $500 |
+| **Storage** | 8TB HDD (WD Red Plus) | $180 |
+| **PSU** | 1000W 80+ Platinum | $200 |
+| **Case** | Fractal Design Define 7 XL | $200 |
+| **CPU Cooler** | NZXT Kraken Z73 360mm AIO | $280 |
+| **Total** | | **~$7,060** |
+
+---
+
+## Assembly Guide
+
+### Step 1: Prepare Workspace
+
+**Tools Needed**:
+- Phillips #2 screwdriver
+- Anti-static wrist strap
+- Cable ties
+- Thermal paste (often included with cooler)
+- Flashlight (for case interior)
+
+**Workspace**:
+- Clean, flat surface (wooden table preferred)
+- Anti-static mat (optional but recommended)
+- Good lighting
+
+### Step 2: Install CPU
+
+```text
+1. Open motherboard CPU socket (lift retention arm)
+2. Align CPU with socket (match triangle markers)
+3. Gently place CPU (no force needed)
+4. Close retention arm (will require slight pressure)
+5. Apply thermal paste (pea-sized dot in center)
+```
+
+**Warning**: Never touch CPU pins or socket contacts. Handle CPU by edges only.
+
+### Step 3: Install RAM
+
+```text
+1. Open RAM slot clips (push outward)
+2. Align RAM stick notch with socket key
+3. Press down firmly until clips snap into place
+4. For dual-channel, use slots A2 and B2 (check motherboard manual)
+```
+
+### Step 4: Install M.2 NVMe SSD
+
+```text
+1. Locate M.2 slot on motherboard (usually near CPU)
+2. Remove M.2 heatsink/cover (if present)
+3. Insert SSD at 30° angle
+4. Press down and secure with screw
+5. Replace heatsink
+```
+
+### Step 5: Install Motherboard in Case
+
+```text
+1. Install I/O shield in case
+2. Install motherboard standoffs (brass screws)
+3. Align motherboard with standoffs and I/O shield
+4. Secure with motherboard screws (don't overtighten)
+5. Connect case front panel headers:
+   - Power button
+   - Reset button
+   - Power LED
+   - HDD LED
+   - USB 3.0 header
+   - Audio header
+```
+
+### Step 6: Install CPU Cooler
+
+**Air Cooler (Noctua NH-U12S/NH-D15)**:
+```text
+1. Install backplate behind motherboard
+2. Apply thermal paste to CPU (if not pre-applied)
+3. Mount cooler brackets
+4. Attach heatsink with mounting clips
+5. Connect fan cable to CPU_FAN header
+```
+
+**AIO Liquid Cooler (NZXT Kraken)**:
+```text
+1. Mount radiator to case (top or front)
+2. Apply thermal paste
+3. Mount pump block to CPU
+4. Connect pump cable to CPU_FAN header
+5. Connect fans to radiator and AIO_PUMP header
+```
+
+### Step 7: Install GPU
+
+```text
+1. Remove PCIe slot covers from case (2-3 slots)
+2. Open PCIe x16 slot clip on motherboard
+3. Align GPU with slot and press down firmly
+4. Secure GPU bracket to case with screws
+5. Connect PCIe power cables from PSU (6+2 pin, usually 2-3 connectors)
+```
+
+### Step 8: Install Storage and PSU
+
+```text
+1. Mount PSU in case (fan facing downward for bottom intake)
+2. Install 3.5" HDD in drive bay
+3. Connect SATA cables to motherboard and drives
+4. Connect power cables:
+   - 24-pin ATX to motherboard
+   - 8-pin EPS to CPU (top left of motherboard)
+   - 6+2 pin PCIe to GPU
+   - SATA power to drives
+```
+
+### Step 9: Cable Management
+
+```text
+1. Route cables behind motherboard tray
+2. Use cable ties to bundle cables
+3. Ensure good airflow (cables away from fans)
+4. Connect all case fans to motherboard or fan hub
+```
+
+### Step 10: First Boot
+
+```text
+1. Double-check all connections
+2. Connect monitor to GPU (not motherboard!)
+3. Plug in power cable
+4. Press power button
+5. Enter BIOS (usually DEL or F2 key)
+6. Verify all components detected
+7. Enable XMP/DOCP for RAM (sets to rated speed)
+8. Save and exit
+```
+
+---
+
+## Operating System Installation
+
+### Ubuntu 22.04 LTS (Recommended)
+
+**Create Bootable USB**:
+```bash
+# On Linux:
+sudo dd if=ubuntu-22.04-desktop-amd64.iso of=/dev/sdX bs=4M status=progress
+
+# On Windows: Use Rufus or Etcher
+```
+
+**Installation Steps**:
+1. Boot from USB (press F12/F11 for boot menu)
+2. Select "Try Ubuntu" or "Install Ubuntu"
+3. Choose "Install Ubuntu"
+4. Partitioning:
+   - **EFI**: 512MB
+   - **Swap**: 32GB (equal to RAM for hibernation)
+   - **/**: 100GB (root filesystem)
+   - **/home**: Remaining space
+5. Create user account
+6. Wait for installation (15-20 minutes)
+7. Reboot
+
+### Post-Installation Setup
+
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install essential build tools
+sudo apt install -y \
+  build-essential \
+  git \
+  vim \
+  tmux \
+  htop \
+  curl \
+  wget \
+  net-tools
+
+# Install NVIDIA drivers (critical!)
+sudo ubuntu-drivers autoinstall
+sudo reboot
+
+# Verify GPU
+nvidia-smi
+```
+
+---
+
+## Software Installation
+
+### 1. NVIDIA CUDA Toolkit
+
+```bash
+# Add NVIDIA repository
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+sudo dpkg -i cuda-keyring_1.0-1_all.deb
+sudo apt update
+
+# Install CUDA 12.0
+sudo apt install -y cuda-12-0
+
+# Add to PATH
+echo 'export PATH=/usr/local/cuda-12.0/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.0/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify
+nvcc --version
+```
+
+### 2. ROS 2 Humble
+
+```bash
+# Add ROS 2 repository
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Install ROS 2 Desktop (includes RViz, Gazebo)
+sudo apt update
+sudo apt install -y ros-humble-desktop
+
+# Install development tools
+sudo apt install -y \
+  python3-colcon-common-extensions \
+  python3-rosdep \
+  python3-vcstool
+
+# Initialize rosdep
+sudo rosdep init
+rosdep update
+
+# Setup environment
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+### 3. Gazebo Garden
+
+```bash
+# Add Gazebo repository
+sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+
+# Install Gazebo Garden
+sudo apt update
+sudo apt install gz-garden
+
+# Verify
+gz sim --version
+```
+
+### 4. NVIDIA Isaac Sim
+
+```bash
+# Install Omniverse Launcher
+cd ~/Downloads
+wget https://install.launcher.omniverse.nvidia.com/installers/omniverse-launcher-linux.AppImage
+chmod +x omniverse-launcher-linux.AppImage
+./omniverse-launcher-linux.AppImage
+
+# In Omniverse Launcher:
+# 1. Go to "Exchange" tab
+# 2. Search for "Isaac Sim"
+# 3. Click "Install" (requires NVIDIA account)
+# 4. Launch Isaac Sim from "Library" tab
+```
+
+### 5. Python Environment
+
+```bash
+# Install Python 3.10
+sudo apt install -y python3.10 python3.10-dev python3-pip
+
+# Install PyTorch with CUDA support
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# Install ML/Robotics packages
+pip3 install \
+  numpy \
+  scipy \
+  matplotlib \
+  pandas \
+  opencv-python \
+  scikit-learn \
+  jupyter \
+  tensorboard
+
+# Verify PyTorch GPU
+python3 -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'GPU: {torch.cuda.get_device_name(0)}')"
+```
+
+### 6. Development IDEs
+
+```bash
+# VS Code
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+sudo apt update
+sudo apt install code
+
+# Install VS Code extensions
+code --install-extension ms-python.python
+code --install-extension ms-vscode.cpptools
+code --install-extension ms-iot.vscode-ros
+```
+
+---
+
+## Performance Benchmarks
+
+### Expected Performance (RTX 4080 Build)
+
+| Workload | Performance | Notes |
+|----------|-------------|-------|
+| **Gazebo simulation** | 60 FPS (real-time) | TurtleBot3 world |
+| **Isaac Sim** | 30-60 FPS | Humanoid robot, RTX On |
+| **PyTorch training** | 800 img/sec | ResNet-50, batch 64 |
+| **ROS 2 node count** | 500+ nodes | Before latency issues |
+| **Simultaneous tasks** | 3-4 workflows | Sim + training + IDE |
+
+### Stress Testing
+
+```bash
+# GPU stress test
+sudo apt install mesa-utils
+glxgears -info
+
+# CPU stress test
+sudo apt install stress
+stress --cpu 16 --timeout 60s
+
+# Monitor temperatures
+watch -n 1 sensors
+
+# Check GPU utilization
+watch -n 1 nvidia-smi
+```
+
+---
+
+## Troubleshooting
+
+### GPU Not Detected in Ubuntu
+
+```bash
+# Check if GPU is visible
+lspci | grep -i nvidia
+
+# Reinstall drivers
+sudo apt purge nvidia-*
+sudo ubuntu-drivers autoinstall
+sudo reboot
+```
+
+### Slow Gazebo Performance
+
+```bash
+# Check GPU acceleration
+glxinfo | grep "OpenGL renderer"
+
+# Should show your NVIDIA GPU, not "llvmpipe" (CPU rendering)
+
+# If showing CPU rendering, fix with:
+export __NV_PRIME_RENDER_OFFLOAD=1
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+```
+
+### High CPU Temperatures
+
+```bash
+# Check cooler mounting (re-seat if needed)
+# Reapply thermal paste
+# Improve case airflow (add fans)
+# Adjust fan curves in BIOS
+```
+
+---
+
+## Maintenance Schedule
+
+### Weekly
+- Check temperatures during heavy workloads
+- Monitor disk space usage
+- Update system packages: `sudo apt update && sudo apt upgrade`
+
+### Monthly
+- Clean dust filters on case
+- Verify all fans spinning
+- Check for driver updates
+
+### Yearly
+- Deep clean case interior (compressed air)
+- Replace thermal paste on CPU
+- Check GPU thermal pads (if temps increasing)
+
+---
+
+## Cost Analysis vs Cloud
+
+**Workstation**: $3,000 upfront
+**Cloud (g4dn.xlarge)**: $0.526/hour = $379/month
+
+**Break-even point**: ~8 months of full-time usage
+
+**After 2 years**:
+- Workstation: $3,000 (one-time)
+- Cloud: $9,096 (24 months × $379)
+
+**Savings**: $6,096 over 2 years with local workstation
+
+---
+
+## Next Steps
+
+✅ **Your workstation is ready for robotics development!**
+
+Continue to:
+- [ROS 2 Fundamentals](/docs/02-ros2-fundamentals/)
+- [Gazebo Simulation](/docs/03-gazebo-simulation/)
+- [NVIDIA Isaac Platform](/docs/04-nvidia-isaac/)
+
+**Tip**: Join r/homelab and r/ROS for hardware/software support!

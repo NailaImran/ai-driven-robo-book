@@ -1,0 +1,403 @@
+---
+title: Cloud-Native Lab Setup
+description: Complete guide to setting up a cloud-based robotics development environment
+sidebar_position: 2
+---
+
+# Cloud-Native Lab Setup
+
+Deploy a complete robotics development environment in the cloud with GPU acceleration, simulation tools, and remote access.
+
+---
+
+## Prerequisites
+
+- **Cloud Account**: AWS, GCP, or Azure account with billing enabled
+- **Budget**: $50-200/month depending on usage
+- **Internet**: 10+ Mbps download, 5+ Mbps upload
+- **Local Machine**: Any laptop/desktop with web browser
+
+---
+
+## Option A: AWS Setup (Recommended)
+
+### Step 1: Launch EC2 Instance
+
+```bash
+# Instance type: g4dn.xlarge (NVIDIA T4 GPU)
+# OS: Ubuntu 22.04 LTS Deep Learning AMI
+# Storage: 100GB gp3 SSD
+# Security Group: Allow ports 22 (SSH), 6080 (VNC), 8888 (Jupyter)
+```
+
+**Using AWS Console**:
+1. Go to EC2 Dashboard → Launch Instance
+2. Select **Deep Learning AMI GPU TensorFlow 2.x (Ubuntu 22.04)**
+3. Choose **g4dn.xlarge** ($0.526/hour on-demand)
+4. Configure storage: 100GB
+5. Add security group rules:
+   - SSH (22): Your IP
+   - Custom TCP (6080): Your IP (for VNC)
+   - Custom TCP (8888): Your IP (for Jupyter)
+
+**Using AWS CLI**:
+```bash
+aws ec2 run-instances \
+  --image-id ami-0c7217cdde317cfec \
+  --instance-type g4dn.xlarge \
+  --key-name your-key-pair \
+  --security-group-ids sg-xxxxxx \
+  --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":100}}]'
+```
+
+### Step 2: Connect to Instance
+
+```bash
+# SSH into the instance
+ssh -i your-key.pem ubuntu@<instance-public-ip>
+
+# Verify GPU access
+nvidia-smi
+
+# Expected output:
+# +-----------------------------------------------------------------------------+
+# | NVIDIA-SMI 525.xx.xx    Driver Version: 525.xx.xx    CUDA Version: 12.0   |
+# |-------------------------------+----------------------+----------------------+
+# | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+# | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+# |===============================+======================+======================|
+# |   0  Tesla T4            Off  | 00000000:00:1E.0 Off |                    0 |
+# | N/A   35C    P0    25W /  70W |      0MiB / 15109MiB |      0%      Default |
+# +-------------------------------+----------------------+----------------------+
+```
+
+### Step 3: Install ROS 2 Humble
+
+```bash
+# Add ROS 2 repository
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Install ROS 2 Humble
+sudo apt update
+sudo apt install -y ros-humble-desktop
+
+# Setup environment
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+
+# Verify installation
+ros2 --version
+```
+
+### Step 4: Install NVIDIA Isaac Sim (Cloud)
+
+```bash
+# Install Omniverse dependencies
+sudo apt install -y libvulkan1 vulkan-utils
+
+# Download Isaac Sim
+cd ~
+wget https://install.launcher.omniverse.nvidia.com/installers/omniverse-launcher-linux.AppImage
+chmod +x omniverse-launcher-linux.AppImage
+
+# For headless mode (cloud), use Isaac Sim Python API
+pip install isaacsim
+```
+
+### Step 5: Setup Remote Desktop (NoMachine)
+
+```bash
+# Install NoMachine server
+cd ~
+wget https://download.nomachine.com/download/8.11/Linux/nomachine_8.11.3_1_amd64.deb
+sudo dpkg -i nomachine_8.11.3_1_amd64.deb
+
+# Start NoMachine service
+sudo /etc/NX/nxserver --restart
+
+# Access from local machine:
+# 1. Install NoMachine client: https://www.nomachine.com/download
+# 2. Connect to <instance-public-ip>:4000
+# 3. Login with ubuntu user
+```
+
+**Alternative: VNC Setup**:
+```bash
+# Install TightVNC server
+sudo apt install -y tightvncserver
+
+# Set VNC password
+vncserver
+
+# Start VNC on port 5901
+vncserver :1 -geometry 1920x1080 -depth 24
+
+# Connect from local:
+# Use VNC client to connect to <instance-public-ip>:5901
+```
+
+---
+
+## Option B: Google Cloud Platform (GCP)
+
+### Step 1: Create VM Instance
+
+```bash
+gcloud compute instances create robotics-vm \
+  --zone=us-central1-a \
+  --machine-type=n1-standard-4 \
+  --accelerator=type=nvidia-tesla-t4,count=1 \
+  --image-family=ubuntu-2204-lts \
+  --image-project=ubuntu-os-cloud \
+  --boot-disk-size=100GB \
+  --boot-disk-type=pd-ssd \
+  --maintenance-policy=TERMINATE \
+  --metadata=install-nvidia-driver=True
+```
+
+### Step 2: SSH and Install Drivers
+
+```bash
+# SSH into instance
+gcloud compute ssh robotics-vm --zone=us-central1-a
+
+# Verify GPU driver installation
+nvidia-smi
+
+# Install CUDA toolkit (if needed)
+sudo apt install -y nvidia-cuda-toolkit
+```
+
+### Step 3: Install ROS 2 and Tools
+
+Follow the same ROS 2 installation steps as AWS (Step 3 above).
+
+---
+
+## Option C: Microsoft Azure
+
+### Create GPU VM
+
+```bash
+az vm create \
+  --resource-group robotics-rg \
+  --name robotics-vm \
+  --image UbuntuLTS \
+  --size Standard_NC4as_T4_v3 \
+  --admin-username azureuser \
+  --generate-ssh-keys \
+  --public-ip-sku Standard
+```
+
+Follow similar installation steps for ROS 2 and drivers.
+
+---
+
+## Development Environment Setup
+
+### Install Additional Tools
+
+```bash
+# Development tools
+sudo apt install -y \
+  git \
+  vim \
+  tmux \
+  htop \
+  build-essential \
+  cmake \
+  python3-pip \
+  python3-dev
+
+# ROS 2 development packages
+sudo apt install -y \
+  ros-humble-gazebo-ros-pkgs \
+  ros-humble-rviz2 \
+  ros-humble-rqt \
+  python3-colcon-common-extensions
+
+# Python ML libraries
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip3 install numpy scipy matplotlib jupyter
+```
+
+### Setup Jupyter Notebook (Optional)
+
+```bash
+# Install Jupyter
+pip3 install jupyter jupyterlab
+
+# Generate config
+jupyter notebook --generate-config
+
+# Set password
+jupyter notebook password
+
+# Start Jupyter on public IP
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser
+
+# Access from local: http://<instance-public-ip>:8888
+```
+
+---
+
+## Cost Optimization
+
+### Spot Instances (AWS)
+
+Save 70% by using spot instances for non-critical workloads:
+
+```bash
+aws ec2 request-spot-instances \
+  --spot-price "0.20" \
+  --instance-count 1 \
+  --type "one-time" \
+  --launch-specification file://specification.json
+```
+
+### Auto-Shutdown
+
+Set up automatic shutdown during idle hours:
+
+```bash
+# Create cron job to shutdown at 6 PM
+crontab -e
+
+# Add line:
+0 18 * * * sudo shutdown -h now
+```
+
+### Storage Optimization
+
+```bash
+# Use S3/GCS for large datasets instead of expensive EBS/persistent disks
+aws s3 sync s3://my-robotics-datasets /home/ubuntu/datasets
+
+# Clean up Docker images
+docker system prune -a
+```
+
+---
+
+## Testing Your Setup
+
+### Verify ROS 2 Installation
+
+```bash
+# Terminal 1: Start talker
+ros2 run demo_nodes_cpp talker
+
+# Terminal 2: Start listener
+ros2 run demo_nodes_py listener
+```
+
+### Launch Gazebo Simulation
+
+```bash
+# Install TurtleBot3 simulation
+sudo apt install ros-humble-turtlebot3*
+
+# Set TurtleBot3 model
+export TURTLEBOT3_MODEL=waffle
+
+# Launch Gazebo world
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+
+### Test Isaac Sim (Headless)
+
+```python
+from isaacsim import SimulationApp
+
+simulation_app = SimulationApp({"headless": True})
+
+from omni.isaac.core import World
+
+# Create world
+world = World()
+world.scene.add_default_ground_plane()
+
+# Run simulation
+world.reset()
+for i in range(100):
+    world.step(render=False)
+
+simulation_app.close()
+```
+
+---
+
+## Troubleshooting
+
+### GPU Not Detected
+
+```bash
+# Check if driver is loaded
+lsmod | grep nvidia
+
+# Reinstall driver
+sudo apt purge nvidia-*
+sudo apt install nvidia-driver-525
+
+# Reboot
+sudo reboot
+```
+
+### VNC Connection Issues
+
+```bash
+# Check VNC server status
+ps aux | grep vnc
+
+# Kill and restart
+vncserver -kill :1
+vncserver :1 -geometry 1920x1080
+```
+
+### ROS 2 Not Found
+
+```bash
+# Check if sourced
+echo $ROS_DISTRO
+
+# Re-source
+source /opt/ros/humble/setup.bash
+
+# Make permanent
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+```
+
+---
+
+## Monthly Cost Estimate
+
+### AWS Pricing (us-east-1)
+
+| Usage Pattern | Instance Type | Hours/Month | Monthly Cost |
+|---------------|---------------|-------------|--------------|
+| Light (evenings only) | g4dn.xlarge | 60 hours | ~$32 |
+| Medium (weekdays) | g4dn.xlarge | 160 hours | ~$84 |
+| Heavy (full-time) | g4dn.xlarge | 720 hours | ~$379 |
+| Spot (70% off) | g4dn.xlarge spot | 720 hours | ~$114 |
+
+**Additional Costs**:
+- Storage (100GB): $10/month
+- Data transfer: $5-20/month
+- **Total (Medium)**: ~$100-120/month
+
+---
+
+## Next Steps
+
+✅ **You now have a cloud robotics lab!**
+
+Continue to:
+- [Week 3: ROS 2 Architecture](/docs/02-ros2-fundamentals/)
+- [Week 6: Gazebo Simulation](/docs/03-gazebo-simulation/)
+- [Week 8: NVIDIA Isaac Platform](/docs/04-nvidia-isaac/)
+
+**Tip**: Take EC2/VM snapshots weekly to preserve your configuration!

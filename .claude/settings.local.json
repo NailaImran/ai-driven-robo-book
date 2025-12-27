@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/create-phr.sh:*)",
+      "Bash(git fetch:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
+      "SlashCommand(/sp.tasks)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(if [ -d \"/mnt/e/learn-robotics/learn-humanoid-robotics/specs/001-textbook-content/checklists\" ])",
+      "Bash(then ls -la /mnt/e/learn-robotics/learn-humanoid-robotics/specs/001-textbook-content/checklists/)",
+      "Bash(else echo \"No checklists directory found\")",
+      "Bash(fi)",
+      "Bash(git rev-parse:*)"
+    ]
+  }
+}

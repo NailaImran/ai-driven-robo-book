@@ -1,0 +1,670 @@
+---
+title: Building ROS 2 Packages
+description: Creating, configuring, and managing ROS 2 packages and workspaces
+sidebar_position: 4
+---
+
+# Building ROS 2 Packages
+
+## Learning Objectives
+
+By the end of this lesson, you will be able to:
+
+1. Create ROS 2 packages using Python and C++
+2. Organize code with proper package structure and dependencies
+3. Build and install packages using colcon
+4. Configure packages with parameters and launch files
+5. Share packages via version control and distribution
+
+---
+
+## What is a ROS 2 Package?
+
+A **package** is the fundamental unit of organization in ROS 2. It contains:
+
+- **Nodes**: Executable programs
+- **Launch files**: Scripts to start multiple nodes
+- **Configuration**: Parameters, YAML files
+- **Messages/Services**: Custom data types
+- **Documentation**: README, examples
+
+### Package Types
+
+| Type | Language | Build System | Use Case |
+|------|----------|--------------|----------|
+| **ament_python** | Python | `setuptools` | Rapid prototyping, research |
+| **ament_cmake** | C++ | `CMake` | Performance-critical, production |
+| **ament_cmake (Python)** | Python | `CMake` | Mixed C++/Python projects |
+
+---
+
+## Creating a Python Package
+
+### Step 1: Create Workspace
+
+```bash
+# Create workspace directory
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+```
+
+### Step 2: Create Package
+
+```bash
+ros2 pkg create my_robot_controller \
+  --build-type ament_python \
+  --dependencies rclpy geometry_msgs sensor_msgs
+```
+
+**Generated structure**:
+
+```
+my_robot_controller/
+├── package.xml              # Package metadata and dependencies
+├── setup.py                 # Python build configuration
+├── setup.cfg                # Install configuration
+├── resource/                # Resource index marker
+├── test/                    # Unit tests
+└── my_robot_controller/     # Python module
+    └── __init__.py
+```
+
+### Step 3: Add Node Code
+
+Create `my_robot_controller/my_robot_controller/teleop_node.py`:
+
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class TeleopNode(Node):
+    def __init__(self):
+        super().__init__('teleop_node')
+
+        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+
+        # Parameters
+        self.declare_parameter('linear_speed', 0.5)
+        self.declare_parameter('angular_speed', 1.0)
+
+        self.get_logger().info('TeleopNode started')
+
+    def move_forward(self):
+        msg = Twist()
+        msg.linear.x = self.get_parameter('linear_speed').value
+        self.publisher_.publish(msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TeleopNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Step 4: Configure `setup.py`
+
+Edit `setup.py` to register the node as an executable:
+
+```python
+from setuptools import setup
+
+package_name = 'my_robot_controller'
+
+setup(
+    name=package_name,
+    version='0.0.1',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='Your Name',
+    maintainer_email='you@example.com',
+    description='Robot teleoperation controller',
+    license='Apache License 2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'teleop = my_robot_controller.teleop_node:main',
+        ],
+    },
+)
+```
+
+The `entry_points` section creates an executable called `teleop` that runs the `main()` function.
+
+### Step 5: Update `package.xml`
+
+Ensure dependencies are declared:
+
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_robot_controller</name>
+  <version>0.0.1</version>
+  <description>Robot teleoperation controller</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>Apache License 2.0</license>
+
+  <!-- Build dependencies -->
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <!-- Runtime dependencies -->
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+
+  <!-- Test dependencies -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+```
+
+### Step 6: Build Package
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select my_robot_controller
+
+# Source the workspace
+source install/setup.bash
+```
+
+### Step 7: Run the Node
+
+```bash
+ros2 run my_robot_controller teleop
+```
+
+---
+
+## Creating a C++ Package
+
+### Step 1: Create Package
+
+```bash
+cd ~/ros2_ws/src
+ros2 pkg create my_cpp_controller \
+  --build-type ament_cmake \
+  --dependencies rclcpp std_msgs
+```
+
+**Generated structure**:
+
+```
+my_cpp_controller/
+├── CMakeLists.txt           # Build configuration
+├── package.xml              # Package metadata
+├── include/my_cpp_controller/  # Header files
+└── src/                     # Source files
+```
+
+### Step 2: Add Node Code
+
+Create `src/simple_publisher.cpp`:
+
+```cpp
+#include <chrono>
+#include <memory>
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
+
+using namespace std::chrono_literals;
+
+class SimplePublisher : public rclcpp::Node
+{
+public:
+  SimplePublisher()
+  : Node("simple_publisher"), count_(0)
+  {
+    publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    timer_ = this->create_wall_timer(
+      500ms, std::bind(&SimplePublisher::timer_callback, this));
+
+    RCLCPP_INFO(this->get_logger(), "SimplePublisher started");
+  }
+
+private:
+  void timer_callback()
+  {
+    auto message = std_msgs::msg::String();
+    message.data = "Hello, ROS 2! " + std::to_string(count_++);
+    publisher_->publish(message);
+    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
+  }
+
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+  size_t count_;
+};
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<SimplePublisher>());
+  rclcpp::shutdown();
+  return 0;
+}
+```
+
+### Step 3: Configure `CMakeLists.txt`
+
+```cmake
+cmake_minimum_required(VERSION 3.8)
+project(my_cpp_controller)
+
+# Compiler settings
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+
+# Add executable
+add_executable(simple_publisher src/simple_publisher.cpp)
+
+# Link dependencies
+ament_target_dependencies(simple_publisher
+  rclcpp
+  std_msgs
+)
+
+# Install executable
+install(TARGETS
+  simple_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Export dependencies
+ament_package()
+```
+
+### Step 4: Build and Run
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select my_cpp_controller
+source install/setup.bash
+
+ros2 run my_cpp_controller simple_publisher
+```
+
+---
+
+## Working with Parameters
+
+Parameters allow runtime configuration without recompiling code.
+
+### Python Parameters
+
+```python
+class ConfigurableNode(Node):
+    def __init__(self):
+        super().__init__('configurable_node')
+
+        # Declare parameters with defaults
+        self.declare_parameter('robot_name', 'default_robot')
+        self.declare_parameter('max_speed', 2.0)
+        self.declare_parameter('enable_logging', True)
+
+    def use_parameters(self):
+        name = self.get_parameter('robot_name').get_parameter_value().string_value
+        max_speed = self.get_parameter('max_speed').get_parameter_value().double_value
+        logging = self.get_parameter('enable_logging').get_parameter_value().bool_value
+
+        self.get_logger().info(f'Robot: {name}, Max Speed: {max_speed}, Logging: {logging}')
+```
+
+**Run with parameters**:
+
+```bash
+# Command-line parameters
+ros2 run my_package configurable_node --ros-args \
+  -p robot_name:=my_robot \
+  -p max_speed:=3.5 \
+  -p enable_logging:=false
+
+# YAML file parameters
+ros2 run my_package configurable_node --ros-args \
+  --params-file config/params.yaml
+```
+
+### YAML Parameter File
+
+Create `config/params.yaml`:
+
+```yaml
+configurable_node:
+  ros__parameters:
+    robot_name: "autonomous_bot"
+    max_speed: 2.5
+    enable_logging: true
+    sensor_rate: 50
+```
+
+---
+
+## Custom Messages and Services
+
+### Creating Custom Messages
+
+**Step 1: Create Package for Interfaces**
+
+```bash
+ros2 pkg create my_robot_interfaces \
+  --build-type ament_cmake
+```
+
+**Step 2: Define Message**
+
+Create `msg/RobotStatus.msg`:
+
+```
+# RobotStatus.msg
+string robot_name
+float64 battery_level
+float64 temperature
+bool is_moving
+geometry_msgs/Pose current_pose
+```
+
+**Step 3: Update `CMakeLists.txt`**
+
+```cmake
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/RobotStatus.msg"
+  DEPENDENCIES geometry_msgs
+)
+
+ament_package()
+```
+
+**Step 4: Update `package.xml`**
+
+```xml
+<build_depend>rosidl_default_generators</build_depend>
+<exec_depend>rosidl_default_runtime</exec_depend>
+<member_of_group>rosidl_interface_packages</member_of_group>
+
+<depend>geometry_msgs</depend>
+```
+
+**Step 5: Build**
+
+```bash
+colcon build --packages-select my_robot_interfaces
+source install/setup.bash
+```
+
+### Using Custom Messages
+
+```python
+from my_robot_interfaces.msg import RobotStatus
+
+class StatusPublisher(Node):
+    def __init__(self):
+        super().__init__('status_publisher')
+        self.publisher_ = self.create_publisher(RobotStatus, '/robot_status', 10)
+
+    def publish_status(self):
+        msg = RobotStatus()
+        msg.robot_name = "R2D2"
+        msg.battery_level = 85.5
+        msg.temperature = 42.3
+        msg.is_moving = True
+        self.publisher_.publish(msg)
+```
+
+---
+
+## Package Dependencies
+
+### Dependency Types
+
+```xml
+<!-- Build-time only -->
+<build_depend>some_package</build_depend>
+
+<!-- Runtime only -->
+<exec_depend>some_package</exec_depend>
+
+<!-- Both build and runtime -->
+<depend>some_package</depend>
+
+<!-- Testing only -->
+<test_depend>pytest</test_depend>
+
+<!-- Build tool -->
+<buildtool_depend>ament_cmake</buildtool_depend>
+```
+
+### Installing Dependencies
+
+```bash
+# Install all dependencies for workspace
+cd ~/ros2_ws
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+---
+
+## Colcon Build System
+
+### Basic Commands
+
+```bash
+# Build all packages
+colcon build
+
+# Build specific package
+colcon build --packages-select my_package
+
+# Build with verbose output
+colcon build --event-handlers console_direct+
+
+# Build in parallel
+colcon build --parallel-workers 4
+
+# Clean build
+rm -rf build install log
+colcon build
+
+# Build with debug symbols
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug
+```
+
+### Source Setup Script
+
+```bash
+# Source workspace
+source install/setup.bash
+
+# Add to .bashrc for automatic sourcing
+echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+```
+
+---
+
+## Package Best Practices
+
+### 1. **Organized Structure**
+
+```
+my_robot_package/
+├── config/               # YAML configuration files
+│   ├── params.yaml
+│   └── rviz_config.rviz
+├── launch/               # Launch files
+│   ├── robot.launch.py
+│   └── simulation.launch.py
+├── msg/                  # Custom messages
+│   └── CustomMsg.msg
+├── srv/                  # Custom services
+│   └── CustomSrv.srv
+├── my_robot_package/     # Python source
+│   ├── __init__.py
+│   ├── node1.py
+│   └── utils.py
+├── test/                 # Tests
+│   ├── test_node1.py
+│   └── test_integration.py
+├── package.xml
+├── setup.py
+└── README.md
+```
+
+### 2. **Versioning**
+
+Use semantic versioning in `package.xml`:
+
+```xml
+<version>1.2.3</version>
+<!-- MAJOR.MINOR.PATCH -->
+<!-- MAJOR: Breaking changes -->
+<!-- MINOR: New features (backward compatible) -->
+<!-- PATCH: Bug fixes -->
+```
+
+### 3. **Documentation**
+
+```markdown
+# my_robot_controller
+
+Robot teleoperation controller with keyboard and gamepad support.
+
+## Dependencies
+
+- ROS 2 Humble
+- Python 3.10+
+
+## Installation
+
+```bash
+cd ~/ros2_ws/src
+git clone https://github.com/user/my_robot_controller.git
+cd ~/ros2_ws
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --packages-select my_robot_controller
+```
+
+## Usage
+
+```bash
+ros2 run my_robot_controller teleop
+```
+
+## Parameters
+
+- `linear_speed` (double, default: 0.5): Max linear velocity
+- `angular_speed` (double, default: 1.0): Max angular velocity
+```
+
+### 4. **Testing**
+
+Add unit tests in `test/`:
+
+```python
+# test/test_teleop.py
+import pytest
+from my_robot_controller.teleop_node import TeleopNode
+
+def test_node_creation():
+    node = TeleopNode()
+    assert node.get_name() == 'teleop_node'
+```
+
+Run tests:
+
+```bash
+colcon test --packages-select my_robot_controller
+colcon test-result --verbose
+```
+
+---
+
+## Hands-On Exercise: Multi-Node Package
+
+**Goal**: Create a package with 3 nodes (publisher, processor, subscriber) and custom message.
+
+**Requirements**:
+
+1. **Custom Message**: `SensorData.msg` with `temperature`, `humidity`, `timestamp`
+2. **Publisher Node**: Publishes random sensor data at 10 Hz
+3. **Processor Node**: Subscribes to sensor data, calculates moving average, publishes to `/processed_data`
+4. **Logger Node**: Subscribes to `/processed_data`, logs to file
+5. **Launch File**: Starts all 3 nodes
+6. **Config File**: Adjustable sampling rate and window size
+
+**Package structure**:
+
+```
+sensor_package/
+├── msg/
+│   └── SensorData.msg
+├── config/
+│   └── sensor_params.yaml
+├── launch/
+│   └── sensor_system.launch.py
+├── sensor_package/
+│   ├── publisher_node.py
+│   ├── processor_node.py
+│   └── logger_node.py
+├── package.xml
+└── setup.py
+```
+
+**Test**:
+
+```bash
+ros2 launch sensor_package sensor_system.launch.py
+ros2 topic echo /processed_data
+```
+
+---
+
+## Key Takeaways
+
+✅ **Packages organize code**: Nodes, messages, launch files, config
+✅ **Python packages use `ament_python`**: Fast iteration, research
+✅ **C++ packages use `ament_cmake`**: Performance, production
+✅ **Custom messages**: Define in separate package, share across nodes
+✅ **Colcon builds workspaces**: `colcon build`, `source install/setup.bash`
+✅ **Parameters for configurability**: YAML files, command-line args
+
+---
+
+## What's Next?
+
+With packages built, let's orchestrate multi-node systems with launch files:
+
+👉 **[Launch Files & Parameters](/docs/02-ros2-fundamentals/launch-files)** — Automate node startup
+
+---
+
+## Additional Resources
+
+- [ROS 2 Package Creation Guide](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)
+- [Custom Interfaces Tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html)
+- [Colcon Documentation](https://colcon.readthedocs.io/)
+- [ament_cmake User Documentation](https://docs.ros.org/en/humble/How-To-Guides/Ament-CMake-Documentation.html)
