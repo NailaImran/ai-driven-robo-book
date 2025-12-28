@@ -14,11 +14,11 @@ const config = {
   url: 'https://nailaimran.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/learn-humanoid-robotics/',
+  baseUrl: '/ai-driven-robo-book/',
 
   // GitHub pages deployment config.
   organizationName: 'NailaImran', // Usually your GitHub org/user name.
-  projectName: 'learn-humanoid-robotics', // Usually your repo name.
+  projectName: 'ai-driven-robo-book', // Usually your repo name.
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
@@ -51,7 +51,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/your-username/learn-humanoid-robotics/tree/main/website/',
+          editUrl: 'https://github.com/NailaImran/ai-driven-robo-book/tree/main/website/',
           // Math plugins disabled until packages are installed
           // remarkPlugins: [require('remark-math')],
           // rehypePlugins: [require('rehype-katex')],
@@ -100,7 +100,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/your-username/learn-humanoid-robotics',
+            href: 'https://github.com/NailaImran/ai-driven-robo-book',
             label: 'GitHub',
             position: 'right',
           },
@@ -149,11 +149,11 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/your-username/learn-humanoid-robotics',
+                href: 'https://github.com/NailaImran/ai-driven-robo-book',
               },
               {
                 label: 'Discussions',
-                href: 'https://github.com/your-username/learn-humanoid-robotics/discussions',
+                href: 'https://github.com/NailaImran/ai-driven-robo-book/discussions',
               },
             ],
           },
@@ -186,7 +186,7 @@ const config = {
       announcementBar: {
         id: 'announcement_bar',
         content:
-          '⭐ If you find this textbook helpful, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/your-username/learn-humanoid-robotics">GitHub</a>!',
+          '⭐ If you find this textbook helpful, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/NailaImran/ai-driven-robo-book">GitHub</a>!',
         backgroundColor: '#4CAF50',
         textColor: '#FFFFFF',
         isCloseable: true,
