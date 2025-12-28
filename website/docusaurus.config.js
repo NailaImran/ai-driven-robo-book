@@ -192,13 +192,6 @@ const config = {
         isCloseable: true,
       },
 
-      // Color mode
-      colorMode: {
-        defaultMode: 'light',
-        disableSwitch: false,
-        respectPrefersColorScheme: true,
-      },
-
       // Table of contents
       tableOfContents: {
         minHeadingLevel: 2,
