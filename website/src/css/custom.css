@@ -27,19 +27,51 @@
 
   /* Navbar */
   --ifm-navbar-height: 60px;
+
+  /* Smooth transitions for theme switching */
+  --ifm-transition-fast: 200ms;
+  --ifm-transition-slow: 400ms;
 }
 
-/* Dark mode colors */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+/* Smooth color transitions */
+* {
+  transition: background-color var(--ifm-transition-fast) ease,
+              color var(--ifm-transition-fast) ease,
+              border-color var(--ifm-transition-fast) ease;
+}
 
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+/* Dark mode colors - Robotics theme */
+[data-theme='dark'] {
+  /* Primary colors - Cyan/Blue tech theme */
+  --ifm-color-primary: #00d9ff;
+  --ifm-color-primary-dark: #00c3e6;
+  --ifm-color-primary-darker: #00b8d9;
+  --ifm-color-primary-darkest: #0097b3;
+  --ifm-color-primary-light: #1ae1ff;
+  --ifm-color-primary-lighter: #33e6ff;
+  --ifm-color-primary-lightest: #66edff;
+
+  /* Background colors */
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #242424;
+
+  /* Code block styling */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 217, 255, 0.1);
+
+  /* Navbar and footer */
+  --ifm-navbar-background-color: #1e1e1e;
+  --ifm-footer-background-color: #141414;
+
+  /* Enhanced contrast for readability */
+  --ifm-font-color-base: #e0e0e0;
+  --ifm-heading-color: #ffffff;
+
+  /* Link colors */
+  --ifm-link-color: #00d9ff;
+  --ifm-link-hover-color: #33e6ff;
+
+  /* Borders and dividers */
+  --ifm-color-emphasis-300: #3a3a3a;
 }
 
 /* Typography improvements */
@@ -87,6 +119,31 @@
   border-radius: 8px;
 }
 
+[data-theme='dark'] .admonition {
+  background-color: #242424;
+}
+
+/* Dark mode enhancements for specific admonition types */
+[data-theme='dark'] .alert--success {
+  background-color: rgba(0, 217, 100, 0.1);
+  border-color: #00d964;
+}
+
+[data-theme='dark'] .alert--info {
+  background-color: rgba(0, 217, 255, 0.1);
+  border-color: #00d9ff;
+}
+
+[data-theme='dark'] .alert--warning {
+  background-color: rgba(255, 176, 32, 0.1);
+  border-color: #ffb020;
+}
+
+[data-theme='dark'] .alert--danger {
+  background-color: rgba(255, 64, 64, 0.1);
+  border-color: #ff4040;
+}
+
 /* Tables */
 table {
   display: table;
@@ -101,9 +158,18 @@ th {
   padding: 0.75rem;
 }
 
+[data-theme='dark'] th {
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+}
+
 td {
   padding: 0.75rem;
   border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] td {
+  border-color: #3a3a3a;
 }
 
 /* Mermaid diagrams */
@@ -117,6 +183,11 @@ td {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 4rem 2rem;
+}
+
+[data-theme='dark'] .hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+  color: white;
 }
 
 .hero__title {
@@ -214,6 +285,11 @@ a:focus {
   border-radius: 4px;
 }
 
+[data-theme='dark'] .learning-outcomes {
+  background-color: #2a2a2a;
+  border-left-color: #00d9ff;
+}
+
 /* Assessment boxes */
 .assessment-box {
   background-color: var(--ifm-color-warning-contrast-background);
@@ -221,6 +297,11 @@ a:focus {
   padding: 1.5rem;
   border-radius: 8px;
   margin: 1.5rem 0;
+}
+
+[data-theme='dark'] .assessment-box {
+  background-color: #2d2416;
+  border-color: #ffb020;
 }
 
 /* Success/completion indicators */

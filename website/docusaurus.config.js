@@ -75,6 +75,13 @@ const config = {
       // Replace with your project's social card
       image: 'img/social-card.png',
 
+      // Color mode configuration
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
+      },
+
       navbar: {
         title: 'Physical AI & Humanoid Robotics',
         logo: {
