@@ -12,7 +12,13 @@
       "Bash(then ls -la /mnt/e/learn-robotics/learn-humanoid-robotics/specs/001-textbook-content/checklists/)",
       "Bash(else echo \"No checklists directory found\")",
       "Bash(fi)",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "Bash(while read file)",
+      "Bash(do sed -i -E 's|/docs/00-introduction|/docs/introduction|g; s|/docs/01-physical-ai-intro|/docs/physical-ai-intro|g; s|/docs/02-ros2-fundamentals|/docs/ros2-fundamentals|g; s|/docs/03-gazebo-simulation|/docs/gazebo-simulation|g; s|/docs/04-nvidia-isaac|/docs/nvidia-isaac|g; s|/docs/05-humanoid-development|/docs/humanoid-development|g; s|/docs/06-conversational-robotics|/docs/conversational-robotics|g; s|/docs/07-hardware-requirements|/docs/hardware-requirements|g; s|/docs/08-assessments|/docs/assessments|g; s|/docs/09-capstone|/docs/capstone|g; s|\\\\.\\\\./00-introduction|../introduction|g; s|\\\\.\\\\./01-physical-ai-intro|../physical-ai-intro|g; s|\\\\.\\\\./02-ros2-fundamentals|../ros2-fundamentals|g; s|\\\\.\\\\./03-gazebo-simulation|../gazebo-simulation|g; s|\\\\.\\\\./04-nvidia-isaac|../nvidia-isaac|g; s|\\\\.\\\\./05-humanoid-development|../humanoid-development|g; s|\\\\.\\\\./06-conversational-robotics|../conversational-robotics|g; s|\\\\.\\\\./07-hardware-requirements|../hardware-requirements|g; s|\\\\.\\\\./08-assessments|../assessments|g; s|\\\\.\\\\./09-capstone|../capstone|g' \"$file\")",
+      "Bash(done)"
     ]
   }
 }

@@ -108,15 +108,15 @@ const config = {
             items: [
               {
                 label: 'Introduction',
-                to: '/docs/00-introduction',
+                to: '/docs/introduction',
               },
               {
                 label: 'Course Overview',
-                to: '/docs/00-introduction/course-overview',
+                to: '/docs/introduction/course-overview',
               },
               {
                 label: 'Capstone Project',
-                to: '/docs/09-capstone',
+                to: '/docs/capstone',
               },
             ],
           },

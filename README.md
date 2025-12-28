@@ -114,6 +114,66 @@ API documentation available at `http://localhost:8000/docs`
 - Railway (backend)
 - GitHub Actions (CI/CD)
 
+## 🚢 Deployment
+
+### GitHub Pages (Frontend)
+
+The frontend is automatically deployed to GitHub Pages on every push to the `main` branch.
+
+**Setup Instructions:**
+
+1. **Enable GitHub Pages** in your repository:
+   - Go to repository **Settings** → **Pages**
+   - Under "Build and deployment":
+     - Source: **GitHub Actions**
+   - Save settings
+
+2. **Configure Repository Secrets** (if using custom domain):
+   - Go to **Settings** → **Secrets and variables** → **Actions**
+   - Add any required secrets (currently none needed for basic deployment)
+
+3. **Trigger Deployment**:
+   ```bash
+   git add .
+   git commit -m "Deploy to GitHub Pages"
+   git push origin main
+   ```
+
+4. **Access Your Site**:
+   - Default URL: `https://<username>.github.io/<repository-name>/`
+   - This project: `https://nailaimran.github.io/learn-humanoid-robotics/`
+
+**Workflow Features:**
+- ✅ Automatic build on push to `main`
+- ✅ Linting and type checking
+- ✅ Link validation during build
+- ✅ Production-optimized build
+- ✅ Manual deployment trigger via GitHub UI
+
+**Local Build Test:**
+```bash
+cd website
+npm run build
+npm run serve  # Test production build locally
+```
+
+### Backend Deployment (Railway)
+
+The backend FastAPI service deploys to Railway:
+
+1. Install Railway CLI: `npm install -g @railway/cli`
+2. Login: `railway login`
+3. Link project: `railway link`
+4. Deploy: `railway up`
+
+**Environment Variables** (set in Railway dashboard):
+- `OPENAI_API_KEY`
+- `NEON_DATABASE_URL`
+- `QDRANT_URL`
+- `QDRANT_API_KEY`
+- `BETTER_AUTH_SECRET`
+- `JWT_SECRET_KEY`
+
 ## 🧪 Testing
 
 ### Frontend Tests
@@ -121,6 +181,7 @@ API documentation available at `http://localhost:8000/docs`
 cd website
 npm run typecheck
 npm run lint
+npm run build  # Validates links during build
 ```
 
 ### Backend Tests

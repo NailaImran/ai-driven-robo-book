@@ -157,7 +157,7 @@ function CurriculumOverview(): JSX.Element {
         <div className="text--center margin-top--lg">
           <Link
             className="button button--primary button--lg"
-            to="/docs/00-introduction/course-overview">
+            to="/docs/introduction/course-overview">
             View Full Curriculum →
           </Link>
         </div>
@@ -185,7 +185,7 @@ function CapstoneProject(): JSX.Element {
             <div className="text--center margin-top--lg">
               <Link
                 className="button button--secondary button--lg"
-                to="/docs/09-capstone">
+                to="/docs/capstone">
                 Learn About Capstone →
               </Link>
             </div>
